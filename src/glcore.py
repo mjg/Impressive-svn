@@ -153,31 +153,6 @@ class GLBase(object):
         if n == 1: return bufs[0]
         return list(bufs)
 
-    def make_texture(self, target=TEXTURE_2D, wrap=CLAMP_TO_EDGE, min_filter=LINEAR_MIPMAP_NEAREST):
-        tex = self.GenTextures()
-        if min_filter < self.NEAREST_MIPMAP_NEAREST:
-            mag_filter = min_filter
-        else:
-            mag_filter = self.NEAREST + (min_filter & 1)
-        self.BindTexture(target, tex)
-        self.TexParameteri(target, self.TEXTURE_WRAP_S, wrap)
-        self.TexParameteri(target, self.TEXTURE_WRAP_T, wrap)
-        self.TexParameteri(target, self.TEXTURE_MIN_FILTER, min_filter)
-        self.TexParameteri(target, self.TEXTURE_MAG_FILTER, mag_filter)
-        return tex
-
-    def load_texture(self, target, tex_or_img, img=None):
-        if img:
-            gl.BindTexture(target, tex_or_img)
-        else:
-            img = tex_or_img
-        if   img.mode == 'RGBA': format = self.RGBA
-        elif img.mode == 'RGB':  format = self.RGB
-        elif img.mode == 'LA':   format = self.LUMINANCE_ALPHA
-        elif img.mode == 'L':    format = self.LUMINANCE
-        else: raise TypeError("image has unsupported color format '%s'" % img.mode)
-        gl.TexImage2D(target, 0, format, img.size[0], img.size[1], 0, format, self.UNSIGNED_BYTE, img.tostring())
-
     def ActiveTexture(self, tmu):
         if tmu < self.TEXTURE0:
             tmu += self.TEXTURE0
@@ -250,10 +225,52 @@ class GLBase(object):
             elif l == 3: self.Uniform3i(location, values[0], values[1], values[2])
             else:        self.Uniform4i(location, values[0], values[1], values[2], values[3])
 
+    ##### Convenience Functions #####
+
+    def __init__(self):
+        self.enabled_attribs = set()
+
+    def set_enabled_attribs(self, *attrs):
+        want = set(attrs)
+        for a in (want - self.enabled_attribs):
+            self.EnableVertexAttribArray(a)
+        for a in (self.enabled_attribs - want):
+            self.DisableVertexAttribArray(a)
+        self.enabled_attribs = want
+
+    def make_texture(self, target=TEXTURE_2D, wrap=CLAMP_TO_EDGE, filter=LINEAR_MIPMAP_NEAREST, img=None):
+        tex = self.GenTextures()
+        min_filter = filter
+        if min_filter < self.NEAREST_MIPMAP_NEAREST:
+            mag_filter = min_filter
+        else:
+            mag_filter = self.NEAREST + (min_filter & 1)
+        self.BindTexture(target, tex)
+        self.TexParameteri(target, self.TEXTURE_WRAP_S, wrap)
+        self.TexParameteri(target, self.TEXTURE_WRAP_T, wrap)
+        self.TexParameteri(target, self.TEXTURE_MIN_FILTER, min_filter)
+        self.TexParameteri(target, self.TEXTURE_MAG_FILTER, mag_filter)
+        if img:
+            self.load_texture(target, img)
+        return tex
+
+    def load_texture(self, target, tex_or_img, img=None):
+        if img:
+            gl.BindTexture(target, tex_or_img)
+        else:
+            img = tex_or_img
+        if   img.mode == 'RGBA': format = self.RGBA
+        elif img.mode == 'RGB':  format = self.RGB
+        elif img.mode == 'LA':   format = self.LUMINANCE_ALPHA
+        elif img.mode == 'L':    format = self.LUMINANCE
+        else: raise TypeError("image has unsupported color format '%s'" % img.mode)
+        gl.TexImage2D(target, 0, format, img.size[0], img.size[1], 0, format, self.UNSIGNED_BYTE, img.tostring())
+
 class SDL_OpenGL(GLBase):
     _is_desktop_gl = True
 
     def __init__(self):
+        GLBase.__init__(self)
         try:
             if os.name == 'nt':
                 sdl = CDLL("SDL", RTLD_GLOBAL)
@@ -388,3 +405,12 @@ class GLShader(object):
             print >>sys.stderr, "-!!!-", e
             self._instance = InvalidShader()
         return self._instance
+
+# NOTE: OpenGL drawing code in Impressive uses the following conventions:
+# - program binding is undefined
+# - vertex attribute layout is undefined
+# - vertex attribute enable/disable is managed by gl.set_enabled_attribs()
+# - texture bindings are undefined
+# - ActiveTexure is TEXTURE0
+# - array and element array buffer bindings are undefined
+# - BLEND is disabled, BlendFunc is undefined

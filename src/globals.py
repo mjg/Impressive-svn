@@ -59,6 +59,7 @@ WantStatus = False
 GLVendor = None
 GLRenderer = None
 GLVersion = None
+RequiredShaders = []
 
 # tool constants (used in info scripts)
 FirstTimeOnly = 2

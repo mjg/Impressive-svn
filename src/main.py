@@ -173,12 +173,14 @@ def main():
         glver = gl.GetString(gl.VERSION)
         if glver < "2":
             raise ImportError("OpenGL (ES) version %r is below 2.0" % glver)
+
+        # compile all stock shaders
+        for shader in RequiredShaders:
+            shader.get_instance()
     except (ImportError, GLShaderCompileError), e:
         print >>sys.stderr, "FATAL:", e
         print >>sys.stderr, "This likely means that your graphics driver or hardware is too old."
         sys.exit(1)
-
-    None.foo()
 
     # setup the OpenGL texture size
     TexWidth  = (ScreenWidth + 3) & (-4)
@@ -197,10 +199,7 @@ def main():
 
     # prepare logo image
     LogoImage = Image.open(StringIO.StringIO(LOGO))
-    LogoTexture = XXXNOGLXXX.glGenTextures(1)
-    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, LogoTexture)
-    XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, 1, 256, 64, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, LogoImage.tostring())
-    XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    LogoTexture = gl.make_texture(gl.TEXTURE_2D, filter=gl.NEAREST, img=LogoImage)
     DrawLogo()
     pygame.display.flip()
 

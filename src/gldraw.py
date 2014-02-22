@@ -181,26 +181,21 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
 
 # draw a black screen with the Impressive logo at the center
 def DrawLogo():
-    XXXNOGLXXX.glClear(GL_COLOR_BUFFER_BIT)
-    XXXNOGLXXX.glColor3ub(255, 255, 255)
+    gl.Clear(gl.COLOR_BUFFER_BIT)
     if not ShowLogo:
         return
     if HalfScreen:
-        x0 = 0.25
+        x0 = -0.5
     else:
-        x0 = 0.5
-    XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
-    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, LogoTexture)
-    XXXNOGLXXX.glBegin(GL_QUADS)
-    XXXNOGLXXX.glTexCoord2d(0, 0);  glVertex2d(x0 - 128.0 / ScreenWidth, 0.5 - 32.0 / ScreenHeight)
-    XXXNOGLXXX.glTexCoord2d(1, 0);  glVertex2d(x0 + 128.0 / ScreenWidth, 0.5 - 32.0 / ScreenHeight)
-    XXXNOGLXXX.glTexCoord2d(1, 1);  glVertex2d(x0 + 128.0 / ScreenWidth, 0.5 + 32.0 / ScreenHeight)
-    XXXNOGLXXX.glTexCoord2d(0, 1);  glVertex2d(x0 - 128.0 / ScreenWidth, 0.5 + 32.0 / ScreenHeight)
-    XXXNOGLXXX.glEnd()
+        x0 = 0.0
+    TexturedRectShader.get_instance().draw(
+        x0 - 256.0 / ScreenWidth,  +64.0 / ScreenHeight,
+        x0 + 256.0 / ScreenWidth,  -64.0 / ScreenHeight,
+        tex=LogoTexture
+    )
     if OSDFont:
         OSDFont.Draw((int(ScreenWidth * x0), ScreenHeight / 2 + 48), \
                      __version__.split()[0], align=Center, alpha=0.25)
-    XXXNOGLXXX.glDisable(GL_TEXTURE_2D)
 
 # draw the prerender progress bar
 def DrawProgress(position):
