@@ -60,6 +60,7 @@ GLVendor = None
 GLRenderer = None
 GLVersion = None
 RequiredShaders = []
+ScreenTransform = (-1.0, 1.0, 2.0, -2.0)
 
 # tool constants (used in info scripts)
 FirstTimeOnly = 2

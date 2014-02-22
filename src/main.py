@@ -339,15 +339,7 @@ def main():
     # create buffer textures
     DrawLogo()
     pygame.display.flip()
-    XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
-    Tcurrent = XXXNOGLXXX.glGenTextures(1)
-    Tnext = XXXNOGLXXX.glGenTextures(1)
-    for T in (Tcurrent, Tnext):
-        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, T)
-        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
-        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
+    Tcurrent, Tnext = [gl.make_texture(gl.TEXTURE_2D, gl.CLAMP_TO_EDGE, gl.LINEAR) for dummy in (1,2)]
 
     # prebuffer current and next page
     Pnext = 0

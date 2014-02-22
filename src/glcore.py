@@ -14,6 +14,12 @@ class GLFunction(object):
 class GLBase(object):
     FALSE = 0
     TRUE = 1
+    GL_NO_ERROR = 0
+    GL_INVALID_ENUM = 0x0500
+    GL_INVALID_VALUE = 0x0501
+    GL_INVALID_OPERATION = 0x0502
+    GL_OUT_OF_MEMORY = 0x0505
+    GL_INVALID_FRAMEBUFFER_OPERATION = 0x0506
     VENDOR = 0x1F00
     RENDERER = 0x1F01
     VERSION = 0x1F02
@@ -77,6 +83,7 @@ class GLBase(object):
     _funcs = [
         GLFunction(True,  "Enable",                   None, c_uint),
         GLFunction(True,  "Disable",                  None, c_uint),
+        GLFunction(True,  "GetError",                 c_uint),
         GLFunction(True,  "GetString",                c_char_p, c_uint),
         GLFunction(True,  "Viewport",                 None, c_int, c_int, c_int, c_int),
         GLFunction(True,  "Clear",                    None, c_uint),

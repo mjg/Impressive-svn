@@ -305,11 +305,11 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
 
 # render a page to an OpenGL texture
 def RenderPage(page, target):
-    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, target)
-    try:
-        XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, 3, TexWidth, TexHeight, 0,\
-                     GL_RGB, GL_UNSIGNED_BYTE, PageImage(page))
-    except GLerror:
+    gl.BindTexture(gl.TEXTURE_2D, target)
+    while gl.GetError():
+        pass  # clear all OpenGL errors
+    gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, TexWidth, TexHeight, 0, gl.RGB, gl.UNSIGNED_BYTE, PageImage(page))
+    if gl.GetError():
         print >>sys.stderr, "I'm sorry, but your graphics card is not capable of rendering presentations"
         print >>sys.stderr, "in this resolution. Either the texture memory is exhausted, or there is no"
         print >>sys.stderr, "support for large textures (%dx%d). Please try to run Impressive in a" % (TexWidth, TexHeight)

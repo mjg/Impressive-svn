@@ -82,24 +82,26 @@ def DrawOverlays(trans_time=0.0):
 
 # draw the complete image of the current page
 def DrawCurrentPage(dark=1.0, do_flip=True):
+    global ScreenTransform
     if VideoPlaying: return
     boxes = GetPageProp(Pcurrent, 'boxes')
-    XXXNOGLXXX.glClear(GL_COLOR_BUFFER_BIT)
+    gl.Clear(gl.COLOR_BUFFER_BIT)
 
     # pre-transform for zoom
     XXXNOGLXXX.glLoadIdentity()
     XXXNOGLXXX.glOrtho(ZoomX0, ZoomX0 + ZoomArea,  ZoomY0 + ZoomArea, ZoomY0,  -10.0, 10.0)
+    # (TODO here: update ScreenTransform)
 
     # background layer -- the page's image, darkened if it has boxes
-    XXXNOGLXXX.glDisable(GL_BLEND)
-    XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
-    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
     if boxes or Tracing:
         light = 1.0 - BoxFadeDarkness * dark
     else:
         light = 1.0
-    XXXNOGLXXX.glColor3d(light, light, light)
-    DrawFullQuad()
+    TexturedRectShader.get_instance().draw(
+        0.0, 0.0, 1.0, 1.0,
+        s1=TexMaxS, t1=TexMaxT,
+        tex=Tcurrent, color=light
+    )
 
     if boxes or Tracing:
         # alpha-blend the same image some times to blur it
@@ -185,12 +187,12 @@ def DrawLogo():
     if not ShowLogo:
         return
     if HalfScreen:
-        x0 = -0.5
+        x0 = 0.25
     else:
-        x0 = 0.0
+        x0 = 0.5
     TexturedRectShader.get_instance().draw(
-        x0 - 256.0 / ScreenWidth,  +64.0 / ScreenHeight,
-        x0 + 256.0 / ScreenWidth,  -64.0 / ScreenHeight,
+        x0 - 128.0 / ScreenWidth,  0.5 - 32.0 / ScreenHeight,
+        x0 + 128.0 / ScreenWidth,  0.5 + 32.0 / ScreenHeight,
         tex=LogoTexture
     )
     if OSDFont:
