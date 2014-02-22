@@ -79,10 +79,10 @@ class GLFont:
         self.alpha = Image.new('L', (width, height))
         self.extend = ImageFilter.MaxFilter()
         self.blur = ImageFilter.Kernel((3, 3), [1,2,1,2,4,2,1,2,1])
-        self.tex = glGenTextures(1)
-        glBindTexture(GL_TEXTURE_2D, self.tex)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        self.tex = XXXNOGLXXX.glGenTextures(1)
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, self.tex)
+        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
         self.AddString(range(32, 128))
 
     def AddCharacter(self, c):
@@ -120,8 +120,8 @@ class GLFont:
                 raise
         if not update_count: return
         self.img.putalpha(self.alpha)
-        glBindTexture(GL_TEXTURE_2D, self.tex)
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, \
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, self.tex)
+        XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE_ALPHA, \
                      self.width, self.height, 0, \
                      GL_LUMINANCE_ALPHA, GL_UNSIGNED_BYTE, self.img.tostring())
 
@@ -183,22 +183,22 @@ class GLFont:
         x0, y0 = origin
         x0 -= self.feather
         y0 -= self.feather
-        glEnable(GL_TEXTURE_2D)
-        glEnable(GL_BLEND)
-        glBindTexture(GL_TEXTURE_2D, self.tex)
+        XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
+        XXXNOGLXXX.glEnable(GL_BLEND)
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, self.tex)
         if beveled:
-            glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA)
-            glColor4d(0.0, 0.0, 0.0, alpha)
+            XXXNOGLXXX.glBlendFunc(GL_ZERO, GL_ONE_MINUS_SRC_ALPHA)
+            XXXNOGLXXX.glColor4d(0.0, 0.0, 0.0, alpha)
             self.DrawLinesEx(x0, y0, lines, align)
-        glBlendFunc(GL_ONE, GL_ONE)
-        glColor3d(color[0] * alpha, color[1] * alpha, color[2] * alpha)
+        XXXNOGLXXX.glBlendFunc(GL_ONE, GL_ONE)
+        XXXNOGLXXX.glColor3d(color[0] * alpha, color[1] * alpha, color[2] * alpha)
         self.DrawLinesEx(x0, y0, lines, align)
-        glDisable(GL_BLEND)
-        glDisable(GL_TEXTURE_2D)
+        XXXNOGLXXX.glDisable(GL_BLEND)
+        XXXNOGLXXX.glDisable(GL_TEXTURE_2D)
 
     def DrawLinesEx(self, x0, y, lines, align=Left):
         global PixelX, PixelY
-        glBegin(GL_QUADS)
+        XXXNOGLXXX.glBegin(GL_QUADS)
         for line in lines:
             sy = y * PixelY
             x = self.AlignTextEx(x0, line, align)
@@ -207,14 +207,14 @@ class GLFont:
                 self.boxes[c].render(x * PixelX, sy)
                 x += self.widths[c]
             y += self.line_height
-        glEnd()
+        XXXNOGLXXX.glEnd()
 
     class GlyphBox:
         def render(self, sx=0.0, sy=0.0):
-            glTexCoord2d(self.x0, self.y0); glVertex2d(sx,          sy)
-            glTexCoord2d(self.x0, self.y1); glVertex2d(sx,          sy+self.dsy)
-            glTexCoord2d(self.x1, self.y1); glVertex2d(sx+self.dsx, sy+self.dsy)
-            glTexCoord2d(self.x1, self.y0); glVertex2d(sx+self.dsx, sy)
+            XXXNOGLXXX.glTexCoord2d(self.x0, self.y0); glVertex2d(sx,          sy)
+            XXXNOGLXXX.glTexCoord2d(self.x0, self.y1); glVertex2d(sx,          sy+self.dsy)
+            XXXNOGLXXX.glTexCoord2d(self.x1, self.y1); glVertex2d(sx+self.dsx, sy+self.dsy)
+            XXXNOGLXXX.glTexCoord2d(self.x1, self.y0); glVertex2d(sx+self.dsx, sy)
 
 # high-level draw function
 def DrawOSD(x, y, text, halign=Auto, valign=Auto, alpha=1.0):
@@ -236,8 +236,6 @@ def DrawOSD(x, y, text, halign=Auto, valign=Auto, alpha=1.0):
             valign = Down
         if valign != Down:
             y -= OSDFont.GetLineHeight() / valign
-    if TextureTarget != GL_TEXTURE_2D:
-        glDisable(TextureTarget)
     OSDFont.Draw((x, y), text, align=halign, alpha=alpha)
 
 # very high-level draw function

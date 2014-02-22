@@ -2,10 +2,10 @@
 
 def UpdateOverviewTexture():
     global OverviewNeedUpdate
-    glBindTexture(TextureTarget, Tnext)
+    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
     Loverview.acquire()
     try:
-        glTexImage2D(TextureTarget, 0, 3, TexWidth, TexHeight, 0, \
+        XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, 3, TexWidth, TexHeight, 0, \
                      GL_RGB, GL_UNSIGNED_BYTE, OverviewImage.tostring())
     finally:
         Loverview.release()
@@ -14,11 +14,11 @@ def UpdateOverviewTexture():
 # draw the overview page
 def DrawOverview():
     if VideoPlaying: return
-    glClear(GL_COLOR_BUFFER_BIT)
-    glDisable(GL_BLEND)
-    glEnable(TextureTarget)
-    glBindTexture(TextureTarget, Tnext)
-    glColor3ub(192, 192, 192)
+    XXXNOGLXXX.glClear(GL_COLOR_BUFFER_BIT)
+    XXXNOGLXXX.glDisable(GL_BLEND)
+    XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
+    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
+    XXXNOGLXXX.glColor3ub(192, 192, 192)
     DrawFullQuad()
 
     pos = OverviewPos(OverviewSelection)
@@ -26,13 +26,13 @@ def DrawOverview():
     Y0 = PixelY *  pos[1]
     X1 = PixelX * (pos[0] + OverviewCellX)
     Y1 = PixelY * (pos[1] + OverviewCellY)
-    glColor3d(1.0, 1.0, 1.0)
-    glBegin(GL_QUADS)
+    XXXNOGLXXX.glColor3d(1.0, 1.0, 1.0)
+    XXXNOGLXXX.glBegin(GL_QUADS)
     DrawPoint(X0, Y0)
     DrawPoint(X1, Y0)
     DrawPoint(X1, Y1)
     DrawPoint(X0, Y1)
-    glEnd()
+    XXXNOGLXXX.glEnd()
 
     DrawOSDEx(OSDTitlePos,  CurrentOSDCaption)
     DrawOSDEx(OSDPagePos,   CurrentOSDPage)
@@ -66,31 +66,31 @@ def OverviewZoom(func):
         OX = t * X0 - zoom * X0
         OY = t * Y0 - zoom * Y0
 
-        glDisable(GL_BLEND)
-        glEnable(TextureTarget)
-        glBindTexture(TextureTarget, Tnext)
-        glBegin(GL_QUADS)
-        glColor3ub(192, 192, 192)
-        glTexCoord2d(    0.0,     0.0);  glVertex2d(OX,        OY)
-        glTexCoord2d(TexMaxS,     0.0);  glVertex2d(OX + zoom, OY)
-        glTexCoord2d(TexMaxS, TexMaxT);  glVertex2d(OX + zoom, OY + zoom)
-        glTexCoord2d(    0.0, TexMaxT);  glVertex2d(OX,        OY + zoom)
-        glColor3ub(255, 255, 255)
-        glTexCoord2d(X0 * TexMaxS, Y0 * TexMaxT);  glVertex2d(OX + X0*zoom, OY + Y0 * zoom)
-        glTexCoord2d(X1 * TexMaxS, Y0 * TexMaxT);  glVertex2d(OX + X1*zoom, OY + Y0 * zoom)
-        glTexCoord2d(X1 * TexMaxS, Y1 * TexMaxT);  glVertex2d(OX + X1*zoom, OY + Y1 * zoom)
-        glTexCoord2d(X0 * TexMaxS, Y1 * TexMaxT);  glVertex2d(OX + X0*zoom, OY + Y1 * zoom)
-        glEnd()
+        XXXNOGLXXX.glDisable(GL_BLEND)
+        XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
+        XXXNOGLXXX.glBegin(GL_QUADS)
+        XXXNOGLXXX.glColor3ub(192, 192, 192)
+        XXXNOGLXXX.glTexCoord2d(    0.0,     0.0);  glVertex2d(OX,        OY)
+        XXXNOGLXXX.glTexCoord2d(TexMaxS,     0.0);  glVertex2d(OX + zoom, OY)
+        XXXNOGLXXX.glTexCoord2d(TexMaxS, TexMaxT);  glVertex2d(OX + zoom, OY + zoom)
+        XXXNOGLXXX.glTexCoord2d(    0.0, TexMaxT);  glVertex2d(OX,        OY + zoom)
+        XXXNOGLXXX.glColor3ub(255, 255, 255)
+        XXXNOGLXXX.glTexCoord2d(X0 * TexMaxS, Y0 * TexMaxT);  glVertex2d(OX + X0*zoom, OY + Y0 * zoom)
+        XXXNOGLXXX.glTexCoord2d(X1 * TexMaxS, Y0 * TexMaxT);  glVertex2d(OX + X1*zoom, OY + Y0 * zoom)
+        XXXNOGLXXX.glTexCoord2d(X1 * TexMaxS, Y1 * TexMaxT);  glVertex2d(OX + X1*zoom, OY + Y1 * zoom)
+        XXXNOGLXXX.glTexCoord2d(X0 * TexMaxS, Y1 * TexMaxT);  glVertex2d(OX + X0*zoom, OY + Y1 * zoom)
+        XXXNOGLXXX.glEnd()
 
         EnableAlphaBlend()
-        glBindTexture(TextureTarget, Tcurrent)
-        glColor4d(1.0, 1.0, 1.0, 1.0 - t * t * t)
-        glBegin(GL_QUADS)
-        glTexCoord2d(    0.0,     0.0);  glVertex2d(t * X0,      t * Y0)
-        glTexCoord2d(TexMaxS,     0.0);  glVertex2d(t * X1 + t1, t * Y0)
-        glTexCoord2d(TexMaxS, TexMaxT);  glVertex2d(t * X1 + t1, t * Y1 + t1)
-        glTexCoord2d(    0.0, TexMaxT);  glVertex2d(t * X0,      t * Y1 + t1)
-        glEnd()
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
+        XXXNOGLXXX.glColor4d(1.0, 1.0, 1.0, 1.0 - t * t * t)
+        XXXNOGLXXX.glBegin(GL_QUADS)
+        XXXNOGLXXX.glTexCoord2d(    0.0,     0.0);  glVertex2d(t * X0,      t * Y0)
+        XXXNOGLXXX.glTexCoord2d(TexMaxS,     0.0);  glVertex2d(t * X1 + t1, t * Y0)
+        XXXNOGLXXX.glTexCoord2d(TexMaxS, TexMaxT);  glVertex2d(t * X1 + t1, t * Y1 + t1)
+        XXXNOGLXXX.glTexCoord2d(    0.0, TexMaxT);  glVertex2d(t * X0,      t * Y1 + t1)
+        XXXNOGLXXX.glEnd()
 
         DrawOSDEx(OSDTitlePos,  CurrentOSDCaption, alpha_factor=t)
         DrawOSDEx(OSDPagePos,   CurrentOSDPage,    alpha_factor=t)

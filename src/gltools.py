@@ -2,39 +2,39 @@
 
 # draw a fullscreen quad
 def DrawFullQuad():
-    glBegin(GL_QUADS)
-    glTexCoord2d(    0.0,     0.0);  glVertex2i(0, 0)
-    glTexCoord2d(TexMaxS,     0.0);  glVertex2i(1, 0)
-    glTexCoord2d(TexMaxS, TexMaxT);  glVertex2i(1, 1)
-    glTexCoord2d(    0.0, TexMaxT);  glVertex2i(0, 1)
-    glEnd()
+    XXXNOGLXXX.glBegin(GL_QUADS)
+    XXXNOGLXXX.glTexCoord2d(    0.0,     0.0);  glVertex2i(0, 0)
+    XXXNOGLXXX.glTexCoord2d(TexMaxS,     0.0);  glVertex2i(1, 0)
+    XXXNOGLXXX.glTexCoord2d(TexMaxS, TexMaxT);  glVertex2i(1, 1)
+    XXXNOGLXXX.glTexCoord2d(    0.0, TexMaxT);  glVertex2i(0, 1)
+    XXXNOGLXXX.glEnd()
 
 # draw a generic 2D quad
 def DrawQuad(x0=0.0, y0=0.0, x1=1.0, y1=1.0):
-    glBegin(GL_QUADS)
-    glTexCoord2d(    0.0,     0.0);  glVertex2d(x0, y0)
-    glTexCoord2d(TexMaxS,     0.0);  glVertex2d(x1, y0)
-    glTexCoord2d(TexMaxS, TexMaxT);  glVertex2d(x1, y1)
-    glTexCoord2d(    0.0, TexMaxT);  glVertex2d(x0, y1)
-    glEnd()
+    XXXNOGLXXX.glBegin(GL_QUADS)
+    XXXNOGLXXX.glTexCoord2d(    0.0,     0.0);  glVertex2d(x0, y0)
+    XXXNOGLXXX.glTexCoord2d(TexMaxS,     0.0);  glVertex2d(x1, y0)
+    XXXNOGLXXX.glTexCoord2d(TexMaxS, TexMaxT);  glVertex2d(x1, y1)
+    XXXNOGLXXX.glTexCoord2d(    0.0, TexMaxT);  glVertex2d(x0, y1)
+    XXXNOGLXXX.glEnd()
 
 # helper function: draw a translated fullscreen quad
 def DrawTranslatedFullQuad(dx, dy, i, a):
-    glColor4d(i, i, i, a)
-    glPushMatrix()
-    glTranslated(dx, dy, 0.0)
+    XXXNOGLXXX.glColor4d(i, i, i, a)
+    XXXNOGLXXX.glPushMatrix()
+    XXXNOGLXXX.glTranslated(dx, dy, 0.0)
     DrawFullQuad()
-    glPopMatrix()
+    XXXNOGLXXX.glPopMatrix()
 
 # draw a vertex in normalized screen coordinates,
 # setting texture coordinates appropriately
 def DrawPoint(x, y):
-    glTexCoord2d(x *TexMaxS, y * TexMaxT)
-    glVertex2d(x, y)
+    XXXNOGLXXX.glTexCoord2d(x *TexMaxS, y * TexMaxT)
+    XXXNOGLXXX.glVertex2d(x, y)
 def DrawPointEx(x, y, a):
-    glColor4d(1.0, 1.0, 1.0, a)
-    glTexCoord2d(x * TexMaxS, y * TexMaxT)
-    glVertex2d(x, y)
+    XXXNOGLXXX.glColor4d(1.0, 1.0, 1.0, a)
+    XXXNOGLXXX.glTexCoord2d(x * TexMaxS, y * TexMaxT)
+    XXXNOGLXXX.glVertex2d(x, y)
 
 # a mesh transformation function: it gets the relative transition time (in the
 # [0.0,0.1) interval) and the normalized 2D screen coordinates, and returns a
@@ -49,13 +49,13 @@ def DrawMeshQuad(time=0.0, f=meshtrans_null):
     line0 = [f(time, u * MeshStepX, 0.0) for u in xrange(MeshResX + 1)]
     for v in xrange(1, MeshResY + 1):
         line1 = [f(time, u * MeshStepX, v * MeshStepY) for u in xrange(MeshResX + 1)]
-        glBegin(GL_QUAD_STRIP)
+        XXXNOGLXXX.glBegin(GL_QUAD_STRIP)
         for col in zip(line0, line1):
             for x, y, z, s, t, i, a in col:
-                glColor4d(i, i, i, a)
-                glTexCoord2d(s * TexMaxS, t * TexMaxT)
-                glVertex3d(x, y, z)
-        glEnd()
+                XXXNOGLXXX.glColor4d(i, i, i, a)
+                XXXNOGLXXX.glTexCoord2d(s * TexMaxS, t * TexMaxT)
+                XXXNOGLXXX.glVertex3d(x, y, z)
+        XXXNOGLXXX.glEnd()
         line0 = line1
 
 def GenerateSpotMesh():

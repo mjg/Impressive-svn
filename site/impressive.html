@@ -68,7 +68,6 @@ A more comfortable method is installing Impressive in the &raquo;Send To&laquo; 
 <ul>
 <li><strong>Python</strong> 2.5 to 2.7 &mdash; <a href="http://www.python.org/">www.python.org</a> <em>(required)</em> &ndash; Python 3.x will <em>not</em> work!</li>
 <li><strong>PyGame</strong> (the SDL binding for Python) &mdash; <a href="http://www.pygame.org/">www.pygame.org</a> <em>(required)</em></li>
-<li><strong>PyOpenGL</strong> (the OpenGL binding for Python) &mdash; <a href="http://pyopengl.sourceforge.net/">pyopengl.sourceforge.net</a> <em>(required)</em></li>
 <li><strong>PIL</strong>, the Python Imaging Library &mdash; <a href="http://www.pythonware.com/products/pil/">www.pythonware.com/products/pil</a> <em>(required)</em></li>
 <li><strong>pdftk</strong> 1.44 or 1.45 for retrieving PDF metadata (page titles, hyperlinks) &mdash; <a href="http://www.accesspdf.com/pdftk/">www.accesspdf.com/pdftk</a> <em>(required)</em></li>
 <li><strong>Xpdf</strong> or the <strong>Poppler utilties</strong> for PDF rendering &mdash; <a href="http://www.foolabs.com/xpdf/">www.foolabs.com/xpdf/</a> or <a href="http://poppler.freedesktop.org/">http://poppler.freedesktop.org/</a> <em>(required)</em></li>
@@ -80,10 +79,10 @@ A more comfortable method is installing Impressive in the &raquo;Send To&laquo; 
 
 <p>On Unix-like systems, these dependencies are typically available in the major distributions' package repositories and can be installed easily with the package managers, e.g.:</p>
 <ul>
-<li><strong>Debian</strong>/<strong>Ubuntu</strong>: <code>aptitude install python-pygame python-opengl python-imaging pdftk poppler-utils xdg-utils mplayer</code></li>
-<li><strong>Fedora</strong>: <code>yum -i pygame PyOpenGL python-pillow pdftk poppler-utils xdg-utils mplayer</code></li>
-<li><strong>Arch Linux</strong> with AUR: <code>pacman -S python2-pygame python2-opengl python2-pillow pdftk poppler xdg-utils mplayer</code></li>
-<li>Mac OS X with <strong>MacPorts</strong>: <code>port install py27-game py27-opengl py27-pil pdftk poppler xdg-utils mplayer</code></li>
+<li><strong>Debian</strong>/<strong>Ubuntu</strong>: <code>aptitude install python-pygame python-imaging pdftk poppler-utils xdg-utils mplayer</code></li>
+<li><strong>Fedora</strong>: <code>yum -i pygame python-pillow pdftk poppler-utils xdg-utils mplayer</code></li>
+<li><strong>Arch Linux</strong> with AUR: <code>pacman -S python2-pygame python2-pillow pdftk poppler xdg-utils mplayer</code></li>
+<li>Mac OS X with <strong>MacPorts</strong>: <code>port install py27-game py27-pil pdftk poppler xdg-utils mplayer</code></li>
 </ul>
 
 <h3>Using the latest version from SVN</h3>
@@ -139,9 +138,6 @@ If an expected duration is specified, Impressive will show a semi-transparent gr
 
 <dt><code>--darkness <em>&lt;percentage&gt;</em></code></dt>
 <dd>Specifies how much the screen shall become darker when using highlight boxes or spotlight mode. The value is specified in percent, with 25 being the default. A value of zero would mean no darkening at all (the screen would just be blurred slightly), and a value of 100 would make everything but the highlighted parts of the screen black.</dd>
-
-<dt><code>-e</code> or <code>--noext</code></dt>
-<dd>OpenGL normally only supports textures with power-of-two dimensions. This means that for a 1024x768 screen, the actual texture size will be 1024x1024, for 1600x1200 it will even be 2048x2048. To overcome this limit and save texture memory, Impressive will automatically use the OpenGL extensions <code>GL_ARB_texture_rectangle</code> (available on most graphics cards) or <code>GL_ARB_texture_non_power_of_two</code> (available on modern graphics cards with current drivers). If these cause any trouble, the <code>-e</code> option may be used to prevent Impressive from using the problematic extensions.</dd>
 
 <dt><code>-f</code></dt>
 <dd>Sets the window/fullscreen mode Impressive shall start up with. This option can be specified multiple times; each times it is found, the next of the three options is selected, in the follwing order:<ul style="margin-top:0; margin-bottom:0;">

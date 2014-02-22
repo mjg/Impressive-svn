@@ -2,6 +2,7 @@
 import random, getopt, os, types, re, codecs, tempfile, glob, StringIO, re
 import traceback, subprocess, time
 from math import *
+from ctypes import *
 
 # import hashlib for MD5 generation, but fall back to old md5 lib if unavailable
 # (this is the case for Python versions older than 2.5)
@@ -78,7 +79,6 @@ else:
 
 # import special modules
 try:
-    from OpenGL.GL import *
     import pygame
     from pygame.locals import *
     from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops
@@ -86,7 +86,6 @@ try:
 except (ValueError, ImportError), err:
     print >>sys.stderr, "Oops! Cannot load necessary modules:", err
     print >>sys.stderr, """To use Impressive, you need to install the following Python modules:
- - PyOpenGL [python-opengl]   http://pyopengl.sourceforge.net/
  - PyGame   [python-pygame]   http://www.pygame.org/
  - PIL      [python-imaging]  http://www.pythonware.com/products/pil/
    or Pillow                  http://pypi.python.org/pypi/Pillow/
@@ -94,6 +93,28 @@ except (ValueError, ImportError), err:
 Additionally, please be sure to have pdftoppm or GhostScript installed if you
 intend to use PDF input."""
     sys.exit(1)
+
+
+
+
+
+from OpenGL.GL import *
+def _printable_arg(x):
+    if isinstance(x, basestring):
+        return repr(x[:8]) + "..."
+    elif isinstance(x, int):
+        return "0x%04X" % x
+    else:
+        return repr(x)
+class FakeOpenGL(object):
+    def __getattr__(self, name):
+        def func(*args):
+            print >>sys.stderr, "STUB: %s(%s)" % (name, ", ".join(map(_printable_arg, args)))
+            return ""
+        return func
+XXXNOGLXXX = FakeOpenGL()
+
+
 
 try:
     import thread

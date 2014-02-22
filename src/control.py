@@ -106,7 +106,7 @@ def PlayVideo(video):
     try:
         MPlayerProcess = subprocess.Popen([MPlayerPath] + opts + video, stdin=subprocess.PIPE)
         if MPlayerColorKey:
-            glClear(GL_COLOR_BUFFER_BIT)
+            XXXNOGLXXX.glClear(GL_COLOR_BUFFER_BIT)
             pygame.display.flip()
         VideoPlaying = True
     except OSError:
@@ -260,7 +260,7 @@ def TransitionTo(page, allow_transition=True):
             if t >= 1.0: break
             TransitionPhase = t
             if backward: t = 1.0 - t
-            glEnable(TextureTarget)
+            XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
             trans.render(t)
             DrawOverlays(t)
             pygame.display.flip()
@@ -314,27 +314,11 @@ def EnterZoomMode(targetx, targety):
     global ZoomMode, IsZoomed, ZoomWarningIssued
     ZoomAnimation(targetx, targety, lambda t: t)
     ZoomMode = True
-    if TextureTarget != GL_TEXTURE_2D:
-        if not ZoomWarningIssued:
-            print >>sys.stderr, "Sorry, but I can't increase the detail level in zoom mode any further when"
-            print >>sys.stderr, "GL_ARB_texture_rectangle is used. Please try running Impressive with the"
-            print >>sys.stderr, "'-e' parameter. If a modern nVidia or ATI graphics card is used, a driver"
-            print >>sys.stderr, "update may also fix the problem."
-            ZoomWarningIssued = True
-        return
-    if not(HaveNPOT) and (npot(ZoomFactor) != ZoomFactor):
-        if not ZoomWarningIssued:
-            print >>sys.stderr, "Sorry, but I can't increase the detail level in zoom mode any further when"
-            print >>sys.stderr, "conventional power-of-two textures are used and the zoom factor is not a"
-            print >>sys.stderr, "power of two. Please use another zoom factor or a current graphics card"
-            print >>sys.stderr, "with current drivers."
-            ZoomWarningIssued = True
-        return        
     if IsZoomed:
         return
-    glBindTexture(TextureTarget, Tcurrent)
+    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
     try:
-        glTexImage2D(TextureTarget, 0, 3, ZoomFactor * TexWidth, ZoomFactor * TexHeight, 0, \
+        XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, 3, ZoomFactor * TexWidth, ZoomFactor * TexHeight, 0, \
                      GL_RGB, GL_UNSIGNED_BYTE, PageImage(Pcurrent, True))
     except GLerror:
         if not ZoomWarningIssued:

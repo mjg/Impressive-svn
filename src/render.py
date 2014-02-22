@@ -305,9 +305,9 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
 
 # render a page to an OpenGL texture
 def RenderPage(page, target):
-    glBindTexture(TextureTarget, target)
+    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, target)
     try:
-        glTexImage2D(TextureTarget, 0, 3, TexWidth, TexHeight, 0,\
+        XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, 3, TexWidth, TexHeight, 0,\
                      GL_RGB, GL_UNSIGNED_BYTE, PageImage(page))
     except GLerror:
         print >>sys.stderr, "I'm sorry, but your graphics card is not capable of rendering presentations"

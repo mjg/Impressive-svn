@@ -3,13 +3,13 @@
 def main():
     global ScreenWidth, ScreenHeight, TexWidth, TexHeight, TexSize, LogoImage
     global TexMaxS, TexMaxT, MeshStepX, MeshStepY, EdgeX, EdgeY, PixelX, PixelY
-    global OverviewGridSize, OverviewCellX, OverviewCellY, HaveNPOT
+    global OverviewGridSize, OverviewCellX, OverviewCellY
     global OverviewOfsX, OverviewOfsY, OverviewBorder, OverviewImage, OverviewPageCount
     global OverviewPageMap, OverviewPageMapInv, FileName, FileList, PageCount
     global DocumentTitle, PageProps, LogoTexture, OSDFont
     global Pcurrent, Pnext, Tcurrent, Tnext, InitialPage
     global CacheFile, CacheFileName, BaseWorkingDir
-    global Extensions, AllowExtensions, TextureTarget, PAR, DAR, TempFileName
+    global PAR, DAR, TempFileName
     global BackgroundRendering, FileStats, RTrunning, RTrestart, StartTime
     global CursorImage, CursorVisible, InfoScriptPath
     global HalfScreen, AutoAdvance, WindowPos
@@ -143,52 +143,43 @@ def main():
     try:
         pygame.display.set_mode((ScreenWidth, ScreenHeight), flags)
     except:
-        print >>sys.stderr, "FATAL: cannot create rendering surface in the desired resolution (%dx%d)" % (ScreenWidth, ScreenHeight)
+        print >>sys.stderr, "FATAL: failed to create rendering surface in the desired resolution (%dx%d)" % (ScreenWidth, ScreenHeight)
         sys.exit(1)
     pygame.key.set_repeat(500, 30)
     if Fullscreen:
         pygame.mouse.set_visible(False)
         CursorVisible = False
-    glOrtho(0.0, 1.0,  1.0, 0.0,  -10.0, 10.0)
     if (Gamma <> 1.0) or (BlackLevel <> 0):
         SetGamma(force=True)
 
-    # check if graphics are unaccelerated
-    renderer = glGetString(GL_RENDERER)
-    print >>sys.stderr, "OpenGL renderer:", renderer
-    renderer = renderer.lower()
-    if (renderer in ("mesa glx indirect", "gdi generic")) \
-    or renderer.startswith("software"):
-        print >>sys.stderr, "WARNING: Using an OpenGL software renderer. Impressive will work, but it will"
-        print >>sys.stderr, "         very likely be too slow to be usable."
+    # initialize OpenGL
+    try:
+        LoadOpenGL()
 
-    # setup the OpenGL texture mode
-    Extensions = dict([(ext.split('_', 2)[-1], None) for ext in \
-                 glGetString(GL_EXTENSIONS).split()])
-    if AllowExtensions and ("texture_non_power_of_two" in Extensions):
-        print >>sys.stderr, "Using GL_ARB_texture_non_power_of_two."
-        HaveNPOT = True
-        TextureTarget = GL_TEXTURE_2D
-        TexWidth  = (ScreenWidth + 3) & (-4)
-        TexHeight = (ScreenHeight + 3) & (-4)
-        TexMaxS = float(ScreenWidth) / TexWidth
-        TexMaxT = float(ScreenHeight) / TexHeight
-    elif AllowExtensions and ("texture_rectangle" in Extensions):
-        print >>sys.stderr, "Using GL_ARB_texture_rectangle."
-        HaveNPOT = True
-        TextureTarget = 0x84F5  # GL_TEXTURE_RECTANGLE_ARB
-        TexWidth  = (ScreenWidth + 3) & (-4)
-        TexHeight = (ScreenHeight + 3) & (-4)
-        TexMaxS = ScreenWidth
-        TexMaxT = ScreenHeight
-    else:
-        print >>sys.stderr, "Using conventional power-of-two textures with padding."
-        HaveNPOT = False
-        TextureTarget = GL_TEXTURE_2D
-        TexWidth  = npot(ScreenWidth)
-        TexHeight = npot(ScreenHeight)
-        TexMaxS = ScreenWidth  * 1.0 / TexWidth
-        TexMaxT = ScreenHeight * 1.0 / TexHeight
+        # check if graphics are unaccelerated
+        renderer = gl.GetString(gl.RENDERER)
+        print >>sys.stderr, "OpenGL renderer:", renderer
+        renderer = renderer.lower()
+        if (renderer in ("mesa glx indirect", "gdi generic")) \
+        or renderer.startswith("software") \
+        or ("llvmpipe" in renderer):
+            print >>sys.stderr, "WARNING: Using an OpenGL software renderer. Impressive will work, but it will"
+            print >>sys.stderr, "         very likely be too slow to be usable."
+
+        # check the OpenGL version (2.0 needed to ensure NPOT texture support)
+        glver = gl.GetString(gl.VERSION)
+        if glver < "2":
+            raise ImportError("OpenGL (ES) version %r is below 2.0" % glver)
+    except (ImportError, GLShaderCompileError), e:
+        print >>sys.stderr, "FATAL:", e
+        print >>sys.stderr, "This likely means that your graphics driver or hardware is too old."
+        sys.exit(1)
+
+    # setup the OpenGL texture size
+    TexWidth  = (ScreenWidth + 3) & (-4)
+    TexHeight = (ScreenHeight + 3) & (-4)
+    TexMaxS = float(ScreenWidth) / TexWidth
+    TexMaxT = float(ScreenHeight) / TexHeight
     TexSize = TexWidth * TexHeight * 3
 
     # set up some variables
@@ -201,10 +192,10 @@ def main():
 
     # prepare logo image
     LogoImage = Image.open(StringIO.StringIO(LOGO))
-    LogoTexture = glGenTextures(1)
-    glBindTexture(GL_TEXTURE_2D, LogoTexture)
-    glTexImage2D(GL_TEXTURE_2D, 0, 1, 256, 64, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, LogoImage.tostring())
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    LogoTexture = XXXNOGLXXX.glGenTextures(1)
+    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, LogoTexture)
+    XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, 1, 256, 64, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, LogoImage.tostring())
+    XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
     DrawLogo()
     pygame.display.flip()
 
@@ -344,15 +335,15 @@ def main():
     # create buffer textures
     DrawLogo()
     pygame.display.flip()
-    glEnable(TextureTarget)
-    Tcurrent = glGenTextures(1)
-    Tnext = glGenTextures(1)
+    XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
+    Tcurrent = XXXNOGLXXX.glGenTextures(1)
+    Tnext = XXXNOGLXXX.glGenTextures(1)
     for T in (Tcurrent, Tnext):
-        glBindTexture(TextureTarget, T)
-        glTexParameteri(TextureTarget, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTexParameteri(TextureTarget, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTexParameteri(TextureTarget, GL_TEXTURE_WRAP_S, GL_CLAMP)
-        glTexParameteri(TextureTarget, GL_TEXTURE_WRAP_T, GL_CLAMP)
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, T)
+        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP)
+        XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP)
 
     # prebuffer current and next page
     Pnext = 0

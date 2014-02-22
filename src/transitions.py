@@ -19,15 +19,15 @@ AllTransitions=[]
 
 # a helper function doing the common task of directly blitting a background page
 def DrawPageDirect(tex):
-    glDisable(GL_BLEND)
-    glBindTexture(TextureTarget, tex)
-    glColor3d(1, 1, 1)
+    XXXNOGLXXX.glDisable(GL_BLEND)
+    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, tex)
+    XXXNOGLXXX.glColor3d(1, 1, 1)
     DrawFullQuad()
 
 # a helper function that enables alpha blending
 def EnableAlphaBlend():
-    glEnable(GL_BLEND)
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+    XXXNOGLXXX.glEnable(GL_BLEND)
+    XXXNOGLXXX.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
 
 # Crossfade: one of the simplest transition you can think of :)
@@ -36,8 +36,8 @@ class Crossfade(Transition):
     def render(self,t):
        DrawPageDirect(Tcurrent)
        EnableAlphaBlend()
-       glBindTexture(TextureTarget, Tnext)
-       glColor4d(1, 1, 1, t)
+       XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
+       XXXNOGLXXX.glColor4d(1, 1, 1, t)
        DrawFullQuad()
 AllTransitions.append(Crossfade)
 
@@ -47,11 +47,11 @@ class FadeOutFadeIn(Transition):
     """fade out to black and fade in again"""
     def render(self,t):
         if t < 0.5:
-            glBindTexture(TextureTarget, Tcurrent)
+            XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
         else:
-            glBindTexture(TextureTarget, Tnext)
+            XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
         c = fabs(2.0 * t - 1.0)
-        glColor3d(c, c, c)
+        XXXNOGLXXX.glColor3d(c, c, c)
         DrawFullQuad()
 AllTransitions.append(FadeOutFadeIn)
 
@@ -63,9 +63,9 @@ class Slide(Transition):
         raise AbstractError
     def render(self, t):
         cx, cy, nx, ny = self.origin(t)
-    	glBindTexture(TextureTarget, Tcurrent)
+    	XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
     	DrawQuad(cx, cy, cx+1.0, cy+1.0)
-    	glBindTexture(TextureTarget, Tnext)
+    	XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
     	DrawQuad(nx, ny, nx+1.0, ny+1.0)
 
 class SlideLeft(Slide):
@@ -94,9 +94,9 @@ class Squeeze(Transition):
             t1, t2 = (Tnext, Tcurrent)
         else:
             t1, t2 = (Tcurrent, Tnext)
-    	glBindTexture(TextureTarget, t1)
+    	XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, t1)
     	DrawQuad(0.0, 0.0, cx1, cy1)
-    	glBindTexture(TextureTarget, t2)
+    	XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, t2)
     	DrawQuad(nx0, ny0, 1.0, 1.0)
 class SqueezeHorizontal(Squeeze):
     def split(self, t): raise AbstractError
@@ -139,7 +139,7 @@ class Wipe(Transition):
     def render(self, t):
         DrawPageDirect(Tnext)
         EnableAlphaBlend()
-        glBindTexture(TextureTarget, Tcurrent)
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
         self.Wipe_start = t * (1.0 + WipeWidth) - WipeWidth
         DrawMeshQuad(t, lambda t, u, v: \
                      (u, v, 0.0,  u,v,  1.0, self.afunc(self.grad(u, v))))
@@ -192,12 +192,12 @@ AllTransitions.append(WipeBlobs)
 class PagePeel(Transition):
     """an unrealistic, but nice page peel effect"""
     def render(self,t):
-        glDisable(GL_BLEND)
-        glBindTexture(TextureTarget, Tnext)
+        XXXNOGLXXX.glDisable(GL_BLEND)
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
         DrawMeshQuad(t, lambda t, u, v: \
                      (u, v, 0.0,  u, v,  1.0 - 0.5 * (1.0 - u) * (1.0 - t), 1.0))
         EnableAlphaBlend()
-        glBindTexture(TextureTarget, Tcurrent)
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
         DrawMeshQuad(t, lambda t, u, v: \
                      (u * (1.0 - t), 0.5 + (v - 0.5) * (1.0 + u * t) * (1.0 + u * t), 0.0,
                       u, v,  1.0 - u * t * t, 1.0))
@@ -243,12 +243,12 @@ class PageTurn(Transition):
                 alpha = 1.0
         return (x,y,z, u,v, i, alpha)
     def render(self, t):
-        glDisable(GL_BLEND)
-        glBindTexture(TextureTarget, Tnext)
+        XXXNOGLXXX.glDisable(GL_BLEND)
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
         DrawMeshQuad(t,lambda t, u, v: \
                     (u, v, 0.0,  u, v,  1.0 - 0.5 * (1.0 - u) * (1.0 - t), 1.0))
         EnableAlphaBlend()
-        glBindTexture(TextureTarget, Tcurrent)
+        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
         DrawMeshQuad(t, self.warp)
 AllTransitions.append(PageTurn)
 
@@ -257,16 +257,16 @@ AllTransitions.append(PageTurn)
 class ZoomOutIn(Transition):
     """zooms the current page out, and the next one in."""
     def render(self, t):
-        glColor3d(0.0, 0.0, 0.0)
+        XXXNOGLXXX.glColor3d(0.0, 0.0, 0.0)
         DrawFullQuad()
         if t < 0.5:
-            glBindTexture(TextureTarget, Tcurrent)
+            XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
             scalfact = 1.0 - 2.0 * t
             DrawMeshQuad(t, lambda t, u, v: (0.5 + scalfact * (u - 0.5), \
                                              0.5 + scalfact * (v - 0.5), 0.0, \
                                              u, v, 1.0, 1.0))
         else:
-            glBindTexture(TextureTarget, Tnext)
+            XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
             scalfact = 2.0 * t - 1.0
             EnableAlphaBlend()
             DrawMeshQuad(t, lambda t, u, v: (0.5 + scalfact * (u - 0.5), \
@@ -277,13 +277,13 @@ AllTransitions.append(ZoomOutIn)
 class SpinOutIn(Transition):
     """spins the current page out, and the next one in."""
     def render(self, t):
-        glColor3d(0.0, 0.0, 0.0)
+        XXXNOGLXXX.glColor3d(0.0, 0.0, 0.0)
         DrawFullQuad()
         if t < 0.5:
-            glBindTexture(TextureTarget, Tcurrent)
+            XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
             scalfact = 1.0 - 2.0 * t
         else:
-            glBindTexture(TextureTarget, Tnext)
+            XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
             scalfact = 2.0 * t - 1.0
         sa = scalfact * sin(16.0 * t)
         ca = scalfact * cos(16.0 * t)
@@ -295,13 +295,13 @@ AllTransitions.append(SpinOutIn)
 class SpiralOutIn(Transition):
     """flushes the current page away to have the next one overflow"""
     def render(self, t):
-        glColor3d(0.0, 0.0, 0.0)
+        XXXNOGLXXX.glColor3d(0.0, 0.0, 0.0)
         DrawFullQuad()
         if t < 0.5:
-            glBindTexture(TextureTarget,Tcurrent)
+            XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D,Tcurrent)
             scalfact = 1.0 - 2.0 * t
         else:
-          glBindTexture(TextureTarget,Tnext)
+          XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D,Tnext)
           scalfact = 2.0 * t - 1.0
         sa = scalfact * sin(16.0 * t)
         ca = scalfact * cos(16.0 * t)

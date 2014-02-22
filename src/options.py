@@ -83,7 +83,6 @@ Advanced options:
   -b,  --noback           don't pre-render images in the background
   -P,  --gspath <path>    set path to GhostScript or pdftoppm executable
   -R,  --meshres <XxY>    set mesh resolution for effects (default: 48x36)
-  -e,  --noext            don't use OpenGL texture size extensions
   -V,  --overscan <px>    render PDF files <px> pixels larger than the screen
        --nologo           disable startup logo and version number display
        --noclicks         disable page navigation via left/right mouse click
@@ -215,7 +214,7 @@ def ParseOptions(argv):
     global FileName, FileList, Fullscreen, Scaling, Supersample, CacheMode
     global TransitionDuration, MouseHideDelay, BoxFadeDuration, ZoomDuration
     global ScreenWidth, ScreenHeight, MeshResX, MeshResY, InitialPage, Wrap
-    global AutoAdvance, RenderToDirectory, Rotation, AllowExtensions, DAR
+    global AutoAdvance, RenderToDirectory, Rotation, DAR
     global BackgroundRendering, UseAutoScreenSize, PollInterval, CacheFileName
     global PageRangeStart, PageRangeEnd, FontList, FontSize, Gamma, BlackLevel
     global EstimatedDuration, CursorImage, CursorHotspot, MinutesOnly, Overscan
@@ -225,13 +224,13 @@ def ParseOptions(argv):
     global MinBoxSize, AutoAutoAdvance, AutoAdvanceProgress, BoxFadeDarkness
     global PageWheel, WindowPos, FakeFullscreen
 
-    try:  # unused short options: jnvEJKNUY
+    try:  # unused short options: ejnvEJKNUY
         opts, args = getopt.getopt(argv, \
-            "hfg:sc:i:wa:t:lo:r:T:D:B:Z:P:R:eA:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykW", \
+            "hfg:sc:i:wa:t:lo:r:T:D:B:Z:P:R:A:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykW", \
            ["help", "fullscreen", "geometry=", "scale", "supersample", \
             "nocache", "initialpage=", "wrap", "auto", "listtrans", "output=", \
             "rotate=", "transition=", "transtime=", "mousedelay=", "boxfade=", \
-            "zoom=", "gspath=", "meshres=", "noext", "aspect=", "memcache", \
+            "zoom=", "gspath=", "meshres=", "aspect=", "memcache", \
             "noback", "pages=", "poll=", "font=", "fontsize=", "gamma=",
             "duration=", "cursor=", "minutes", "layout=", "script=", "cache=",
             "cachefile=", "autooverview=", "zoomtime=", "fade", "nologo",
@@ -254,8 +253,6 @@ def ParseOptions(argv):
             if FakeFullscreen: Fullscreen, FakeFullscreen = True,  False
             elif   Fullscreen: Fullscreen, FakeFullscreen = False, False
             else:              Fullscreen, FakeFullscreen = True,  True
-        if opt in ("-e", "--noext"):
-            AllowExtensions = not(AllowExtensions)
         if opt in ("-s", "--scale"):
             Scaling = not(Scaling)
         if opt in ("-s", "--supersample"):

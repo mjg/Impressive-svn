@@ -37,7 +37,6 @@ AutoAdvance = None
 AutoAutoAdvance = False
 RenderToDirectory = None
 Rotation = 0
-AllowExtensions = True
 DAR = None
 PAR = 1.0
 Overscan = 3
