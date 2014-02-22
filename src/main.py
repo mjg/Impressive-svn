@@ -14,6 +14,7 @@ def main():
     global CursorImage, CursorVisible, InfoScriptPath
     global HalfScreen, AutoAdvance, WindowPos
     global BoxFadeDarknessBase, SpotRadiusBase
+    global GLVendor, GLRenderer, GLVersion
 
     # allocate temporary file
     TempFileName = tempfile.mktemp(prefix="impressive-", suffix="_tmp")
@@ -155,11 +156,13 @@ def main():
     # initialize OpenGL
     try:
         LoadOpenGL()
+        GLVendor = gl.GetString(gl.VENDOR)
+        GLRenderer = gl.GetString(gl.RENDERER)
+        GLVersion = gl.GetString(gl.VERSION)
+        print >>sys.stderr, "OpenGL renderer:", GLRenderer
 
         # check if graphics are unaccelerated
-        renderer = gl.GetString(gl.RENDERER)
-        print >>sys.stderr, "OpenGL renderer:", renderer
-        renderer = renderer.lower()
+        renderer = GLRenderer.lower()
         if (renderer in ("mesa glx indirect", "gdi generic")) \
         or renderer.startswith("software") \
         or ("llvmpipe" in renderer):
@@ -174,6 +177,8 @@ def main():
         print >>sys.stderr, "FATAL:", e
         print >>sys.stderr, "This likely means that your graphics driver or hardware is too old."
         sys.exit(1)
+
+    None.foo()
 
     # setup the OpenGL texture size
     TexWidth  = (ScreenWidth + 3) & (-4)
@@ -404,7 +409,9 @@ def run_main():
             print >>sys.stderr, "Python version:", sys.version
             print >>sys.stderr, "PyGame version:", pygame.__version__
             print >>sys.stderr, "PIL version:", Image.VERSION
-            print >>sys.stderr, "PyOpenGL version:", OpenGL.__version__
+            if GLVendor: print >>sys.stderr, "OpenGL vendor:", GLVendor
+            if GLRenderer: print >>sys.stderr, "OpenGL renderer:", GLRenderer
+            if GLVersion: print >>sys.stderr, "OpenGL version:", GLVersion
             if hasattr(os, 'uname'):
                 uname = os.uname()
                 print >>sys.stderr, "Operating system: %s %s (%s)" % (uname[0], uname[2], uname[4])

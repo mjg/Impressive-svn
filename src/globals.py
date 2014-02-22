@@ -56,6 +56,9 @@ CursorVisible = True
 OverviewMode = False
 LastPage = 0
 WantStatus = False
+GLVendor = None
+GLRenderer = None
+GLVersion = None
 
 # tool constants (used in info scripts)
 FirstTimeOnly = 2
