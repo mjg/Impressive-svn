@@ -108,14 +108,12 @@ class BlurShader(GLShader):
         varying mediump vec2 vTexCoord;
         void main() {
             gl_FragColor = vec4(uIntensity, uIntensity, uIntensity, 0.125) * (
-                texture2D(uTex, vTexCoord)
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.71, +0.71))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.99, -0.11))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.53, -0.85))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.33, -0.94))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.94, -0.33))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.85, +0.53))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.11, +0.99))
+                texture2D(uTex, vTexCoord) * 3.0
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.89, +0.45))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.71, -0.71))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.45, -0.89))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.99, +0.16))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.16, +0.99))
             );
         }
     """
