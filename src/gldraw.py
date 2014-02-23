@@ -102,44 +102,44 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
             tex=Tcurrent
         )
 
-    if boxes and is_dark:
-        # draw outer box fade
-        #XXXNOGLXXX:EnableAlphaBlend()
-        for X0, Y0, X1, Y1 in boxes:
-            XXXNOGLXXX.glBegin(GL_QUAD_STRIP)
-            XXXNOGLXXX.DrawPointEx(X0, Y0, 1);  XXXNOGLXXX.DrawPointEx(X0 - EdgeX, Y0 - EdgeY, 0)
-            XXXNOGLXXX.DrawPointEx(X1, Y0, 1);  XXXNOGLXXX.DrawPointEx(X1 + EdgeX, Y0 - EdgeY, 0)
-            XXXNOGLXXX.DrawPointEx(X1, Y1, 1);  XXXNOGLXXX.DrawPointEx(X1 + EdgeX, Y1 + EdgeY, 0)
-            XXXNOGLXXX.DrawPointEx(X0, Y1, 1);  XXXNOGLXXX.DrawPointEx(X0 - EdgeX, Y1 + EdgeY, 0)
-            XXXNOGLXXX.DrawPointEx(X0, Y0, 1);  XXXNOGLXXX.DrawPointEx(X0 - EdgeX, Y0 - EdgeY, 0)
-            XXXNOGLXXX.glEnd()
+    if is_dark:
+        gl.Enable(gl.BLEND)
+        # note: BLEND stays enabled during the rest of this function;
+        # it will be disabled at the end of DrawOverlays()
 
-        # draw boxes
-        XXXNOGLXXX.glDisable(GL_BLEND)
-        XXXNOGLXXX.glBegin(GL_QUADS)
+    if boxes and is_dark:
+        TexturedMeshShader.get_instance().setup(
+            0.0, 0.0, 1.0, 1.0,
+            s1=TexMaxS, t1=TexMaxT
+            # tex is already set
+        )
         for X0, Y0, X1, Y1 in boxes:
-            XXXNOGLXXX.DrawPoint(X0, Y0)
-            XXXNOGLXXX.DrawPoint(X1, Y0)
-            XXXNOGLXXX.DrawPoint(X1, Y1)
-            XXXNOGLXXX.DrawPoint(X0, Y1)
-        XXXNOGLXXX.glEnd()
+            vertices = (c_float * 27)(
+                X0, Y0, 1.0,  # note: this produces two degenerate triangles
+                X0,         Y0,         1.0,
+                X0 - EdgeX, Y0 - EdgeY, 0.0,
+                X1,         Y0,         1.0,
+                X1 + EdgeX, Y0 - EdgeY, 0.0,
+                X1,         Y1,         1.0,
+                X1 + EdgeX, Y1 + EdgeY, 0.0,
+                X0,         Y1,         1.0,
+                X0 - EdgeX, Y1 + EdgeY, 0.0,
+            )
+            gl.BindBuffer(gl.ARRAY_BUFFER, 0)
+            gl.VertexAttribPointer(0, 3, gl.FLOAT, False, 0, vertices)
+            BoxIndexBuffer.draw()
 
     if Tracing and is_dark:
         x, y = MouseToScreen(pygame.mouse.get_pos())
-        # outer spot fade
-        #XXXNOGLXXX:EnableAlphaBlend()
-        XXXNOGLXXX.glBegin(GL_TRIANGLE_STRIP)
-        for x0, y0, x1, y1 in SpotMesh:
-            XXXNOGLXXX.DrawPointEx(x + x0, y + y0, 1)
-            XXXNOGLXXX.DrawPointEx(x + x1, y + y1, 0)
-        XXXNOGLXXX.glEnd()
-        # inner spot
-        XXXNOGLXXX.glDisable(GL_BLEND)
-        XXXNOGLXXX.glBegin(GL_TRIANGLE_FAN)
-        XXXNOGLXXX.DrawPoint(x, y)
-        for x0, y0, x1, y1 in SpotMesh:
-            XXXNOGLXXX.DrawPoint(x + x0, y + y0)
-        XXXNOGLXXX.glEnd()
+        TexturedMeshShader.get_instance().setup(
+            x, y, x + 1.0, y + 1.0,
+            x * TexMaxS, y * TexMaxT,
+            (x + 1.0) * TexMaxS, (y + 1.0) * TexMaxT
+            # tex is already set
+        )
+        gl.BindBuffer(gl.ARRAY_BUFFER, SpotVertices)
+        gl.VertexAttribPointer(0, 3, gl.FLOAT, False, 0, 0)
+        SpotIndices.draw()
 
     if Marking:
         # red frame (misusing the progress bar shader as a single-color shader)
@@ -158,7 +158,6 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
             MarkLR[0] * TexMaxS, MarkLR[1] * TexMaxT,
             tex=Tcurrent, color=(1.0, 1.0, 1.0, 1.0 - MarkColor[3])
         )
-        gl.Disable(gl.BLEND)
 
     # unapply the zoom transform
     ScreenTransform = DefaultScreenTransform
@@ -212,11 +211,13 @@ def DrawProgress(position):
 def DrawFadeMode(intensity, alpha):
     if VideoPlaying: return
     DrawCurrentPage(do_flip=False)
-    XXXNOGLXXX.glDisable(GL_TEXTURE_2D)
-    #XXXNOGLXXX:EnableAlphaBlend()
-    XXXNOGLXXX.glColor4d(intensity, intensity, intensity, alpha)
-    #XXXNOGLXXX:DrawFullQuad()
-    XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
+    gl.Enable(gl.BLEND)
+    color = (intensity, intensity, intensity, alpha)
+    ProgressBarShader.get_instance().draw(
+        0.0, 0.0, 1.0, 1.0,
+        color0=color, color1=color
+    )
+    gl.Disable(gl.BLEND)
     pygame.display.flip()
 
 def EnterFadeMode(intensity=0.0):

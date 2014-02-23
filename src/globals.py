@@ -62,6 +62,8 @@ GLVersion = None
 RequiredShaders = []
 DefaultScreenTransform = (-1.0, 1.0, 2.0, -2.0)
 ScreenTransform = DefaultScreenTransform
+SpotVertices = None
+SpotIndices = None
 
 # tool constants (used in info scripts)
 FirstTimeOnly = 2

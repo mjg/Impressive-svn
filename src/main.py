@@ -15,6 +15,7 @@ def main():
     global HalfScreen, AutoAdvance, WindowPos
     global BoxFadeDarknessBase, SpotRadiusBase
     global GLVendor, GLRenderer, GLVersion
+    global BoxIndexBuffer
 
     # allocate temporary file
     TempFileName = tempfile.mktemp(prefix="impressive-", suffix="_tmp")
@@ -182,8 +183,9 @@ def main():
         print >>sys.stderr, "This likely means that your graphics driver or hardware is too old."
         sys.exit(1)
 
-    # set OpenGL defaults
+    # some further OpenGL configuration
     gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+    BoxIndexBuffer = HighlightIndexBuffer(4)
 
     # setup the OpenGL texture size
     TexWidth  = (ScreenWidth + 3) & (-4)
