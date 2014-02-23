@@ -31,9 +31,12 @@ def DrawOverview():
         color=1.0
     )
 
+    gl.Enable(gl.BLEND)
+    OSDFont.BeginDraw()
     DrawOSDEx(OSDTitlePos,  CurrentOSDCaption)
     DrawOSDEx(OSDPagePos,   CurrentOSDPage)
     DrawOSDEx(OSDStatusPos, CurrentOSDStatus)
+    OSDFont.EndDraw()
     DrawOverlays()
     pygame.display.flip()
 
@@ -65,12 +68,12 @@ def OverviewZoom(func):
         OY = t * Y0 - zoom * Y0
 
         gl.Clear(gl.COLOR_BUFFER_BIT)
-        shader.draw(
+        shader.draw(  # base overview page
             OX, OY, OX + zoom, OY + zoom,
             s1=TexMaxS, t1=TexMaxT,
             tex=Tnext, color=0.75
         )
-        shader.draw(
+        shader.draw(  # highlighted part
             OX + X0 * zoom, OY + Y0 * zoom,
             OX + X1 * zoom, OY + Y1 * zoom,
             X0 * TexMaxS, Y0 * TexMaxT,
@@ -78,17 +81,18 @@ def OverviewZoom(func):
             color=1.0
         )
         gl.Enable(gl.BLEND)
-        shader.draw(
+        shader.draw(  # overlay of the original high-res page
             t * X0,      t * Y0,
             t * X1 + t1, t * Y1 + t1,
             s1=TexMaxS, t1=TexMaxT,
             tex=Tcurrent, color=(1.0, 1.0, 1.0, 1.0 - t * t * t)
         )
-        gl.Disable(gl.BLEND)
 
+        OSDFont.BeginDraw()
         DrawOSDEx(OSDTitlePos,  CurrentOSDCaption, alpha_factor=t)
         DrawOSDEx(OSDPagePos,   CurrentOSDPage,    alpha_factor=t)
         DrawOSDEx(OSDStatusPos, CurrentOSDStatus,  alpha_factor=t)
+        OSDFont.EndDraw()
         DrawOverlays()
         pygame.display.flip()
     TransitionRunning = False

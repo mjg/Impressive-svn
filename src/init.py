@@ -94,28 +94,6 @@ Additionally, please be sure to have pdftoppm or GhostScript installed if you
 intend to use PDF input."""
     sys.exit(1)
 
-
-
-
-
-from OpenGL.GL import *
-def _printable_arg(x):
-    if isinstance(x, basestring):
-        return repr(x[:8]) + "..."
-    elif isinstance(x, int):
-        return "0x%04X" % x
-    else:
-        return repr(x)
-class FakeOpenGL(object):
-    def __getattr__(self, name):
-        def func(*args):
-            print >>sys.stderr, "STUB: %s(%s)" % (name, ", ".join(map(_printable_arg, args)))
-            return ""
-        return func
-XXXNOGLXXX = FakeOpenGL()
-
-
-
 try:
     import thread
     EnableBackgroundRendering = True

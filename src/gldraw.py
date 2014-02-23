@@ -4,6 +4,7 @@
 def DrawOverlays(trans_time=0.0):
     reltime = pygame.time.get_ticks() - StartTime
     gl.Enable(gl.BLEND)
+
     if (EstimatedDuration or PageProgress or (PageTimeout and AutoAdvanceProgress)) \
     and (OverviewMode or GetPageProp(Pcurrent, 'progress', True)):
         r, g, b = ProgressBarColorPage
@@ -41,6 +42,8 @@ def DrawOverlays(trans_time=0.0):
             color0=(r, g, b, 0.0),
             color1=(r, g, b, a)
         )
+
+    OSDFont.BeginDraw()
     if WantStatus:
         DrawOSDEx(OSDStatusPos, CurrentOSDStatus)
     if TimeDisplay:
@@ -53,6 +56,8 @@ def DrawOverlays(trans_time=0.0):
         DrawOSD(ScreenWidth/2, \
                 ScreenHeight - 3*OSDMargin - FontSize, \
                 CurrentOSDComment, Center, Up)
+    OSDFont.EndDraw()
+
     if CursorImage and CursorVisible:
         x, y = pygame.mouse.get_pos()
         x -= CursorHotspot[0]
@@ -66,6 +71,7 @@ def DrawOverlays(trans_time=0.0):
             s1=CursorTX, t1=CursorTY,
             tex=CursorTexture
         )
+
     gl.Disable(gl.BLEND)
 
 
@@ -182,8 +188,10 @@ def DrawLogo():
         tex=LogoTexture
     )
     if OSDFont:
+        gl.Enable(gl.BLEND)
         OSDFont.Draw((int(ScreenWidth * x0), ScreenHeight / 2 + 48), \
-                     __version__.split()[0], align=Center, alpha=0.25)
+                     __version__.split()[0], align=Center, alpha=0.25, beveled=False)
+        gl.Disable(gl.BLEND)
 
 # draw the prerender progress bar
 def DrawProgress(position):

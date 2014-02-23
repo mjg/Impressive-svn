@@ -174,11 +174,7 @@ def main():
         glver = gl.GetString(gl.VERSION)
         if glver < "2":
             raise ImportError("OpenGL (ES) version %r is below 2.0" % glver)
-
-        # compile all stock shaders
-        for shader in RequiredShaders:
-            shader.get_instance()
-    except (ImportError, GLShaderCompileError), e:
+    except ImportError, e:
         print >>sys.stderr, "FATAL:", e
         print >>sys.stderr, "This likely means that your graphics driver or hardware is too old."
         sys.exit(1)
@@ -186,6 +182,8 @@ def main():
     # some further OpenGL configuration
     gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
     BoxIndexBuffer = HighlightIndexBuffer(4)
+    for shader in RequiredShaders:
+        shader.get_instance()
 
     # setup the OpenGL texture size
     TexWidth  = (ScreenWidth + 3) & (-4)
