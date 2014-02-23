@@ -9,24 +9,24 @@ class SimpleQuad(object):
         if not self.vbuf:
             self.vbuf = gl.GenBuffers()
             gl.BindBuffer(gl.ARRAY_BUFFER, self.vbuf)
-            gl.BufferData(gl.ARRAY_BUFFER, data=[0.0, 0.0, 0.0, 1.0, 1.0, 0.0, 1.0, 1.0])
+            gl.BufferData(gl.ARRAY_BUFFER, data=[0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 1.0, 1.0, 0.0, 1.0, 0.0, 1.0, 1.0, 1.0, 1.0])
         else:
             gl.BindBuffer(gl.ARRAY_BUFFER, self.vbuf)
-        gl.VertexAttribPointer(0, 2, gl.FLOAT, False, 0, 0)
+        gl.VertexAttribPointer(0, 4, gl.FLOAT, False, 0, 0)
         gl.DrawArrays(gl.TRIANGLE_STRIP, 0, 4)
 
 
 class TexturedRectShader(GLShader):
     vs = """
-        attribute highp vec2 aPos;
+        attribute highp vec4 aPosAndTexCoord;
         uniform highp vec4 uPosTransform;
         uniform highp vec4 uScreenTransform;
         uniform highp vec4 uTexTransform;
         varying mediump vec2 vTexCoord;
         void main() {
-            highp vec2 pos = uPosTransform.xy + aPos * uPosTransform.zw;
+            highp vec2 pos = uPosTransform.xy + aPosAndTexCoord.xy * uPosTransform.zw;
             gl_Position = vec4(uScreenTransform.xy + pos * uScreenTransform.zw, 0.0, 1.0);
-            vTexCoord = uTexTransform.xy + aPos * uTexTransform.zw;
+            vTexCoord = uTexTransform.xy + aPosAndTexCoord.zw * uTexTransform.zw;
         }
     """
     fs = """
@@ -37,7 +37,7 @@ class TexturedRectShader(GLShader):
             gl_FragColor = uColor * texture2D(uTex, vTexCoord);
         }
     """
-    attributes = { 0: 'aPos' }
+    attributes = { 0: 'aPosAndTexCoord' }
     uniforms = ['uPosTransform', 'uScreenTransform', 'uTexTransform', 'uColor']
 
     def draw(self, x0, y0, x1, y1, s0=0.0, t0=0.0, s1=1.0, t1=1.0, tex=None, color=1.0):

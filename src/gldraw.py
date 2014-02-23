@@ -107,21 +107,21 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
         #XXXNOGLXXX:EnableAlphaBlend()
         for X0, Y0, X1, Y1 in boxes:
             XXXNOGLXXX.glBegin(GL_QUAD_STRIP)
-            DrawPointEx(X0, Y0, 1);  DrawPointEx(X0 - EdgeX, Y0 - EdgeY, 0)
-            DrawPointEx(X1, Y0, 1);  DrawPointEx(X1 + EdgeX, Y0 - EdgeY, 0)
-            DrawPointEx(X1, Y1, 1);  DrawPointEx(X1 + EdgeX, Y1 + EdgeY, 0)
-            DrawPointEx(X0, Y1, 1);  DrawPointEx(X0 - EdgeX, Y1 + EdgeY, 0)
-            DrawPointEx(X0, Y0, 1);  DrawPointEx(X0 - EdgeX, Y0 - EdgeY, 0)
+            XXXNOGLXXX.DrawPointEx(X0, Y0, 1);  XXXNOGLXXX.DrawPointEx(X0 - EdgeX, Y0 - EdgeY, 0)
+            XXXNOGLXXX.DrawPointEx(X1, Y0, 1);  XXXNOGLXXX.DrawPointEx(X1 + EdgeX, Y0 - EdgeY, 0)
+            XXXNOGLXXX.DrawPointEx(X1, Y1, 1);  XXXNOGLXXX.DrawPointEx(X1 + EdgeX, Y1 + EdgeY, 0)
+            XXXNOGLXXX.DrawPointEx(X0, Y1, 1);  XXXNOGLXXX.DrawPointEx(X0 - EdgeX, Y1 + EdgeY, 0)
+            XXXNOGLXXX.DrawPointEx(X0, Y0, 1);  XXXNOGLXXX.DrawPointEx(X0 - EdgeX, Y0 - EdgeY, 0)
             XXXNOGLXXX.glEnd()
 
         # draw boxes
         XXXNOGLXXX.glDisable(GL_BLEND)
         XXXNOGLXXX.glBegin(GL_QUADS)
         for X0, Y0, X1, Y1 in boxes:
-            DrawPoint(X0, Y0)
-            DrawPoint(X1, Y0)
-            DrawPoint(X1, Y1)
-            DrawPoint(X0, Y1)
+            XXXNOGLXXX.DrawPoint(X0, Y0)
+            XXXNOGLXXX.DrawPoint(X1, Y0)
+            XXXNOGLXXX.DrawPoint(X1, Y1)
+            XXXNOGLXXX.DrawPoint(X0, Y1)
         XXXNOGLXXX.glEnd()
 
     if Tracing and is_dark:
@@ -130,15 +130,15 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
         #XXXNOGLXXX:EnableAlphaBlend()
         XXXNOGLXXX.glBegin(GL_TRIANGLE_STRIP)
         for x0, y0, x1, y1 in SpotMesh:
-            DrawPointEx(x + x0, y + y0, 1)
-            DrawPointEx(x + x1, y + y1, 0)
+            XXXNOGLXXX.DrawPointEx(x + x0, y + y0, 1)
+            XXXNOGLXXX.DrawPointEx(x + x1, y + y1, 0)
         XXXNOGLXXX.glEnd()
         # inner spot
         XXXNOGLXXX.glDisable(GL_BLEND)
         XXXNOGLXXX.glBegin(GL_TRIANGLE_FAN)
-        DrawPoint(x, y)
+        XXXNOGLXXX.DrawPoint(x, y)
         for x0, y0, x1, y1 in SpotMesh:
-            DrawPoint(x + x0, y + y0)
+            XXXNOGLXXX.DrawPoint(x + x0, y + y0)
         XXXNOGLXXX.glEnd()
 
     if Marking:
@@ -215,7 +215,7 @@ def DrawFadeMode(intensity, alpha):
     XXXNOGLXXX.glDisable(GL_TEXTURE_2D)
     #XXXNOGLXXX:EnableAlphaBlend()
     XXXNOGLXXX.glColor4d(intensity, intensity, intensity, alpha)
-    DrawFullQuad()
+    #XXXNOGLXXX:DrawFullQuad()
     XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
     pygame.display.flip()
 
