@@ -35,18 +35,12 @@ def DrawOverlays(trans_time=0.0):
             rel = 0.5 + 0.5 * rel
         else:
             zero = 0.0
-        XXXNOGLXXX.glDisable(GL_TEXTURE_2D)
-        XXXNOGLXXX.glEnable(GL_BLEND)
-        XXXNOGLXXX.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        XXXNOGLXXX.glBegin(GL_QUADS)
-        XXXNOGLXXX.glColor4ub(r, g, b, 0)
-        XXXNOGLXXX.glVertex2d(zero, 1.0 - ProgressBarSizeFactor)
-        XXXNOGLXXX.glVertex2d(rel, 1.0 - ProgressBarSizeFactor)
-        XXXNOGLXXX.glColor4ub(r, g, b, a)
-        XXXNOGLXXX.glVertex2d(rel, 1.0)
-        XXXNOGLXXX.glVertex2d(zero, 1.0)
-        XXXNOGLXXX.glEnd()
-        XXXNOGLXXX.glDisable(GL_BLEND)
+        ProgressBarShader.get_instance().draw(
+            zero, 1.0 - ProgressBarSizeFactor,
+            rel,  1.0,
+            color0=(r, g, b, 0.0),
+            color1=(r, g, b, a)
+        )
     if WantStatus:
         DrawOSDEx(OSDStatusPos, CurrentOSDStatus)
     if TimeDisplay:
@@ -198,7 +192,6 @@ def DrawLogo():
 
 # draw the prerender progress bar
 def DrawProgress(position):
-    XXXNOGLXXX.glDisable(GL_TEXTURE_2D)
     x0 = 0.1
     x2 = 1.0 - x0
     x1 = position * x2 + (1.0 - position) * x0
@@ -208,13 +201,16 @@ def DrawProgress(position):
         x0 *= 0.5
         x1 *= 0.5
         x2 *= 0.5
-    XXXNOGLXXX.glBegin(GL_QUADS)
-    XXXNOGLXXX.glColor3ub( 64,  64,  64);  glVertex2d(x0, y0);  glVertex2d(x2, y0)
-    XXXNOGLXXX.glColor3ub(128, 128, 128);  glVertex2d(x2, y1);  glVertex2d(x0, y1)
-    XXXNOGLXXX.glColor3ub( 64, 128, 255);  glVertex2d(x0, y0);  glVertex2d(x1, y0)
-    XXXNOGLXXX.glColor3ub(  8,  32, 128);  glVertex2d(x1, y1);  glVertex2d(x0, y1)
-    XXXNOGLXXX.glEnd()
-    XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
+    ProgressBarShader.get_instance().draw(
+        x0, y0, x2, y1,
+        color0=(0.25, 0.25, 0.25, 1.0),
+        color1=(0.50, 0.50, 0.50, 1.0)
+    )
+    ProgressBarShader.get_instance().draw(
+        x0, y0, x1, y1,
+        color0=(0.25, 0.50, 1.00, 1.0),
+        color1=(0.03, 0.12, 0.50, 1.0)
+    )
 
 # fade mode
 def DrawFadeMode(intensity, alpha):

@@ -40,9 +40,8 @@ class Crossfade(Transition):
         shader = self.CrossfadeShader.get_instance(False).use()
         gl.set_texture(gl.TEXTURE_2D, Tnext, 1)
         gl.set_texture(gl.TEXTURE_2D, Tcurrent, 0)
-        TexturedRectShader.set_vbuf()
         gl.Uniform1f(shader.uTime, t)
-        gl.DrawArrays(gl.TRIANGLE_STRIP, 0, 4)
+        SimpleQuad.draw()
 AllTransitions.append(Crossfade)
 
 

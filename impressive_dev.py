@@ -2,9 +2,7 @@
 # -*- coding: iso-8859-1 -*-
 #
 # Impressive, a fancy presentation tool
-# Copyright (C) 2005-2010 Martin J. Fiedler <martin.fiedler@gmx.net>
-# portions Copyright (C) 2005 Rob Reid <rreid@drao.nrc.ca>
-# portions Copyright (C) 2006 Ronan Le Hy <rlehy@free.fr>
+# Copyright (C) 2005-2014 Martin J. Fiedler <martin.fiedler@gmx.net>
 # portions Copyright (C) 2007 Luke Campagnola <luke.campagnola@gmail.com>
 #
 # This program is free software; you can redistribute it and/or modify

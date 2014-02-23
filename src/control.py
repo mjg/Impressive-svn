@@ -106,7 +106,7 @@ def PlayVideo(video):
     try:
         MPlayerProcess = subprocess.Popen([MPlayerPath] + opts + video, stdin=subprocess.PIPE)
         if MPlayerColorKey:
-            XXXNOGLXXX.glClear(GL_COLOR_BUFFER_BIT)
+            gl.Clear(gl.COLOR_BUFFER_BIT)
             pygame.display.flip()
         VideoPlaying = True
     except OSError:
