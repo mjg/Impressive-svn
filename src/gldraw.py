@@ -3,6 +3,7 @@
 # draw OSD overlays
 def DrawOverlays(trans_time=0.0):
     reltime = pygame.time.get_ticks() - StartTime
+    gl.Enable(gl.BLEND)
     if (EstimatedDuration or PageProgress or (PageTimeout and AutoAdvanceProgress)) \
     and (OverviewMode or GetPageProp(Pcurrent, 'progress', True)):
         r, g, b = ProgressBarColorPage
@@ -66,19 +67,12 @@ def DrawOverlays(trans_time=0.0):
         Y0 = y * PixelY
         X1 = X0 + CursorSX
         Y1 = Y0 + CursorSY
-        XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
-        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, CursorTexture)
-        XXXNOGLXXX.glEnable(GL_BLEND)
-        XXXNOGLXXX.glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-        XXXNOGLXXX.glColor4ub(255, 255, 255, 255)
-        XXXNOGLXXX.glBegin(GL_QUADS)
-        XXXNOGLXXX.glTexCoord2d(0.0,      0.0);       glVertex2d(X0, Y0)
-        XXXNOGLXXX.glTexCoord2d(CursorTX, 0.0);       glVertex2d(X1, Y0)
-        XXXNOGLXXX.glTexCoord2d(CursorTX, CursorTY);  glVertex2d(X1, Y1)
-        XXXNOGLXXX.glTexCoord2d(0.0,      CursorTY);  glVertex2d(X0, Y1)
-        XXXNOGLXXX.glEnd()
-        XXXNOGLXXX.glDisable(GL_BLEND)
-        XXXNOGLXXX.glDisable(GL_TEXTURE_2D)
+        TexturedRectShader.get_instance().draw(
+            X0, Y0, X1, Y1,
+            s1=CursorTX, t1=CursorTY,
+            tex=CursorTexture
+        )
+    gl.Disable(gl.BLEND)
 
 # draw the complete image of the current page
 def DrawCurrentPage(dark=1.0, do_flip=True):
@@ -88,9 +82,13 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
     gl.Clear(gl.COLOR_BUFFER_BIT)
 
     # pre-transform for zoom
-    XXXNOGLXXX.glLoadIdentity()
-    XXXNOGLXXX.glOrtho(ZoomX0, ZoomX0 + ZoomArea,  ZoomY0 + ZoomArea, ZoomY0,  -10.0, 10.0)
-    # (TODO here: update ScreenTransform)
+    if ZoomArea != 1.0:
+        ScreenTransform = (
+            -2.0 * ZoomX0 / ZoomArea - 1.0,
+            +2.0 * ZoomY0 / ZoomArea + 1.0,
+            +2.0 / ZoomArea,
+            -2.0 / ZoomArea
+        )
 
     # background layer -- the page's image, darkened if it has boxes
     if boxes or Tracing:
@@ -173,8 +171,7 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
         XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
 
     # unapply the zoom transform
-    XXXNOGLXXX.glLoadIdentity()
-    XXXNOGLXXX.glOrtho(0.0, 1.0,  1.0, 0.0,  -10.0, 10.0)
+    ScreenTransform = DefaultScreenTransform
 
     # Done.
     DrawOverlays()
@@ -294,10 +291,8 @@ def PrepareCustomCursor(cimg):
         return False
     img = Image.new('RGBA', (tw, th))
     img.paste(cimg, (0, 0))
-    CursorTexture = XXXNOGLXXX.glGenTextures(1)
-    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, CursorTexture)
-    XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0, GL_RGBA, GL_UNSIGNED_BYTE, img.tostring())
-    XXXNOGLXXX.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+    CursorTexture = gl.make_texture(gl.TEXTURE_2D, gl.CLAMP_TO_EDGE, gl.NEAREST)
+    gl.load_texture(gl.TEXTURE_2D, img)
     CursorSX = w * PixelX
     CursorSY = h * PixelY
     CursorTX = w / float(tw)

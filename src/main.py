@@ -182,6 +182,9 @@ def main():
         print >>sys.stderr, "This likely means that your graphics driver or hardware is too old."
         sys.exit(1)
 
+    # set OpenGL defaults
+    gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+
     # setup the OpenGL texture size
     TexWidth  = (ScreenWidth + 3) & (-4)
     TexHeight = (ScreenHeight + 3) & (-4)
@@ -194,8 +197,8 @@ def main():
     MeshStepY = 1.0 / MeshResY
     PixelX = 1.0 / ScreenWidth
     PixelY = 1.0 / ScreenHeight
-    EdgeX = BoxEdgeSize * 1.0 / ScreenWidth
-    EdgeY = BoxEdgeSize * 1.0 / ScreenHeight
+    EdgeX = BoxEdgeSize * PixelX
+    EdgeY = BoxEdgeSize * PixelY
 
     # prepare logo image
     LogoImage = Image.open(StringIO.StringIO(LOGO))

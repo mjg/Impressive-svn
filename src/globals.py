@@ -27,7 +27,7 @@ ZoomY0 = 0.0
 ZoomArea = 1.0
 ZoomMode = False
 IsZoomed = False
-ZoomWarningIssued = False
+HighResZoomFailed = False
 TransitionRunning = False
 TransitionPhase = 0.0
 CurrentCaption = 0
@@ -60,7 +60,8 @@ GLVendor = None
 GLRenderer = None
 GLVersion = None
 RequiredShaders = []
-ScreenTransform = (-1.0, 1.0, 2.0, -2.0)
+DefaultScreenTransform = (-1.0, 1.0, 2.0, -2.0)
+ScreenTransform = DefaultScreenTransform
 
 # tool constants (used in info scripts)
 FirstTimeOnly = 2

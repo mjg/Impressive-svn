@@ -260,7 +260,7 @@ def TransitionTo(page, allow_transition=True):
             if t >= 1.0: break
             TransitionPhase = t
             if backward: t = 1.0 - t
-            XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
+            gl.Clear(gl.COLOR_BUFFER_BIT)
             trans.render(t)
             DrawOverlays(t)
             pygame.display.flip()
@@ -311,24 +311,21 @@ def ZoomAnimation(targetx, targety, func, duration_override=None):
 
 # enter zoom mode
 def EnterZoomMode(targetx, targety):
-    global ZoomMode, IsZoomed, ZoomWarningIssued
+    global ZoomMode, IsZoomed, HighResZoomFailed
     ZoomAnimation(targetx, targety, lambda t: t)
     ZoomMode = True
-    if IsZoomed:
+    if IsZoomed or HighResZoomFailed:
         return
-    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
-    try:
-        XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, 3, ZoomFactor * TexWidth, ZoomFactor * TexHeight, 0, \
-                     GL_RGB, GL_UNSIGNED_BYTE, PageImage(Pcurrent, True))
-    except GLerror:
-        if not ZoomWarningIssued:
-            print >>sys.stderr, "Sorry, but I can't increase the detail level in zoom mode any further, because"
-            print >>sys.stderr, "your OpenGL implementation does not support that. Either the texture memory is"
-            print >>sys.stderr, "exhausted, or there is no support for large textures (%dx%d). If you really" \
-                  % (ZoomFactor * TexWidth, ZoomFactor * TexHeight)
-            print >>sys.stderr, "need high-res zooming, please try to run Impressive in a smaller resolution"
-            print >>sys.stderr, "or use a lower zoom factor."
-            ZoomWarningIssued = True
+    gl.BindTexture(gl.TEXTURE_2D, Tcurrent)
+    while gl.GetError():
+        pass  # clear all OpenGL errors
+    gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, ZoomFactor * TexWidth, ZoomFactor * TexHeight, 0, gl.RGB, gl.UNSIGNED_BYTE, PageImage(Pcurrent, True))
+    if gl.GetError():
+        print >>sys.stderr, "I'm sorry, but your graphics card is not capable of rendering presentations"
+        print >>sys.stderr, "in this resolution. Either the texture memory is exhausted, or there is no"
+        print >>sys.stderr, "support for large textures (%dx%d). Please try to run Impressive in a" % (TexWidth, TexHeight)
+        print >>sys.stderr, "smaller resolution using the -g command-line option."
+        HighResZoomFailed = True
         return
     DrawCurrentPage()
     IsZoomed = True

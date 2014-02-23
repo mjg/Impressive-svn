@@ -245,6 +245,10 @@ class GLBase(object):
             self.DisableVertexAttribArray(a)
         self.enabled_attribs = want
 
+    def set_texture(self, target=TEXTURE_2D, tex=0, tmu=0):
+        self.ActiveTexture(self.TEXTURE0 + tmu)
+        self.BindTexture(target, tex)
+
     def make_texture(self, target=TEXTURE_2D, wrap=CLAMP_TO_EDGE, filter=LINEAR_MIPMAP_NEAREST, img=None):
         tex = self.GenTextures()
         min_filter = filter
@@ -309,6 +313,7 @@ class InvalidShader(object):
         return -1
     def use(self):
         gl.UseProgram(0)
+        return self
 
 class GLShaderCompileError(SyntaxError):
     pass
@@ -420,4 +425,5 @@ class GLShader(object):
 # - texture bindings are undefined
 # - ActiveTexure is TEXTURE0
 # - array and element array buffer bindings are undefined
-# - BLEND is disabled, BlendFunc is undefined
+# - BLEND is disabled, BlendFunc is (SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
+

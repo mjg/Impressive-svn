@@ -2,11 +2,9 @@
 
 def UpdateOverviewTexture():
     global OverviewNeedUpdate
-    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
     Loverview.acquire()
     try:
-        XXXNOGLXXX.glTexImage2D(GL_TEXTURE_2D, 0, 3, TexWidth, TexHeight, 0, \
-                     GL_RGB, GL_UNSIGNED_BYTE, OverviewImage.tostring())
+        gl.load_texture(gl.TEXTURE_2D, Tnext, OverviewImage)
     finally:
         Loverview.release()
     OverviewNeedUpdate = False
@@ -14,25 +12,24 @@ def UpdateOverviewTexture():
 # draw the overview page
 def DrawOverview():
     if VideoPlaying: return
-    XXXNOGLXXX.glClear(GL_COLOR_BUFFER_BIT)
-    XXXNOGLXXX.glDisable(GL_BLEND)
-    XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
-    XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
-    XXXNOGLXXX.glColor3ub(192, 192, 192)
-    DrawFullQuad()
+    gl.Clear(gl.COLOR_BUFFER_BIT)
+    TexturedRectShader.get_instance().draw(
+        0.0, 0.0, 1.0, 1.0,
+        s1=TexMaxS, t1=TexMaxT,
+        tex=Tnext, color=0.75
+    )
 
     pos = OverviewPos(OverviewSelection)
     X0 = PixelX *  pos[0]
     Y0 = PixelY *  pos[1]
     X1 = PixelX * (pos[0] + OverviewCellX)
     Y1 = PixelY * (pos[1] + OverviewCellY)
-    XXXNOGLXXX.glColor3d(1.0, 1.0, 1.0)
-    XXXNOGLXXX.glBegin(GL_QUADS)
-    DrawPoint(X0, Y0)
-    DrawPoint(X1, Y0)
-    DrawPoint(X1, Y1)
-    DrawPoint(X0, Y1)
-    XXXNOGLXXX.glEnd()
+    TexturedRectShader.get_instance().draw(
+        X0, Y0, X1, Y1,
+        X0 * TexMaxS, Y0 * TexMaxT,
+        X1 * TexMaxS, Y1 * TexMaxT,
+        color=1.0
+    )
 
     DrawOSDEx(OSDTitlePos,  CurrentOSDCaption)
     DrawOSDEx(OSDPagePos,   CurrentOSDPage)
@@ -51,6 +48,7 @@ def OverviewZoom(func):
     X1 = PixelX * (pos[0] - OverviewBorder + OverviewCellX)
     Y1 = PixelY * (pos[1] - OverviewBorder + OverviewCellY)
 
+    shader = TexturedRectShader.get_instance()
     TransitionRunning = True
     t0 = pygame.time.get_ticks()
     while not(VideoPlaying):
@@ -66,31 +64,27 @@ def OverviewZoom(func):
         OX = t * X0 - zoom * X0
         OY = t * Y0 - zoom * Y0
 
-        XXXNOGLXXX.glDisable(GL_BLEND)
-        XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
-        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tnext)
-        XXXNOGLXXX.glBegin(GL_QUADS)
-        XXXNOGLXXX.glColor3ub(192, 192, 192)
-        XXXNOGLXXX.glTexCoord2d(    0.0,     0.0);  glVertex2d(OX,        OY)
-        XXXNOGLXXX.glTexCoord2d(TexMaxS,     0.0);  glVertex2d(OX + zoom, OY)
-        XXXNOGLXXX.glTexCoord2d(TexMaxS, TexMaxT);  glVertex2d(OX + zoom, OY + zoom)
-        XXXNOGLXXX.glTexCoord2d(    0.0, TexMaxT);  glVertex2d(OX,        OY + zoom)
-        XXXNOGLXXX.glColor3ub(255, 255, 255)
-        XXXNOGLXXX.glTexCoord2d(X0 * TexMaxS, Y0 * TexMaxT);  glVertex2d(OX + X0*zoom, OY + Y0 * zoom)
-        XXXNOGLXXX.glTexCoord2d(X1 * TexMaxS, Y0 * TexMaxT);  glVertex2d(OX + X1*zoom, OY + Y0 * zoom)
-        XXXNOGLXXX.glTexCoord2d(X1 * TexMaxS, Y1 * TexMaxT);  glVertex2d(OX + X1*zoom, OY + Y1 * zoom)
-        XXXNOGLXXX.glTexCoord2d(X0 * TexMaxS, Y1 * TexMaxT);  glVertex2d(OX + X0*zoom, OY + Y1 * zoom)
-        XXXNOGLXXX.glEnd()
-
-        EnableAlphaBlend()
-        XXXNOGLXXX.glBindTexture(GL_TEXTURE_2D, Tcurrent)
-        XXXNOGLXXX.glColor4d(1.0, 1.0, 1.0, 1.0 - t * t * t)
-        XXXNOGLXXX.glBegin(GL_QUADS)
-        XXXNOGLXXX.glTexCoord2d(    0.0,     0.0);  glVertex2d(t * X0,      t * Y0)
-        XXXNOGLXXX.glTexCoord2d(TexMaxS,     0.0);  glVertex2d(t * X1 + t1, t * Y0)
-        XXXNOGLXXX.glTexCoord2d(TexMaxS, TexMaxT);  glVertex2d(t * X1 + t1, t * Y1 + t1)
-        XXXNOGLXXX.glTexCoord2d(    0.0, TexMaxT);  glVertex2d(t * X0,      t * Y1 + t1)
-        XXXNOGLXXX.glEnd()
+        gl.Clear(gl.COLOR_BUFFER_BIT)
+        shader.draw(
+            OX, OY, OX + zoom, OY + zoom,
+            s1=TexMaxS, t1=TexMaxT,
+            tex=Tnext, color=0.75
+        )
+        shader.draw(
+            OX + X0 * zoom, OY + Y0 * zoom,
+            OX + X1 * zoom, OY + Y1 * zoom,
+            X0 * TexMaxS, Y0 * TexMaxT,
+            X1 * TexMaxS, Y1 * TexMaxT,
+            color=1.0
+        )
+        gl.Enable(gl.BLEND)
+        shader.draw(
+            t * X0,      t * Y0,
+            t * X1 + t1, t * Y1 + t1,
+            s1=TexMaxS, t1=TexMaxT,
+            tex=Tcurrent, color=(1.0, 1.0, 1.0, 1.0 - t * t * t)
+        )
+        gl.Disable(gl.BLEND)
 
         DrawOSDEx(OSDTitlePos,  CurrentOSDCaption, alpha_factor=t)
         DrawOSDEx(OSDPagePos,   CurrentOSDPage,    alpha_factor=t)
