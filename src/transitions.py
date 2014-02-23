@@ -35,7 +35,7 @@ class Crossfade(Transition):
             }
         """
         attributes = { 0: 'aPos' }
-        uniforms = ['uTcurrent', ('uTnext', 1), 'uTime']
+        uniforms = [('uTnext', 1), 'uTime']
     def render(self,t):
         shader = self.CrossfadeShader.get_instance(False).use()
         gl.set_texture(gl.TEXTURE_2D, Tnext, 1)

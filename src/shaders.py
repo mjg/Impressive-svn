@@ -40,13 +40,11 @@ class TexturedRectShader(GLShader):
     attributes = { 0: 'aPos' }
     uniforms = ['uPosTransform', 'uScreenTransform', 'uTexTransform', 'uColor']
 
-    def draw(self, x0, y0, x1, y1, s0=0.0, t0=0.0, s1=1.0, t1=1.0, tex=None, color=None):
+    def draw(self, x0, y0, x1, y1, s0=0.0, t0=0.0, s1=1.0, t1=1.0, tex=None, color=1.0):
         self.use()
         if tex:
             gl.BindTexture(gl.TEXTURE_2D, tex)
-        if not color:
-            gl.Uniform4f(self.uColor, 1.0, 1.0, 1.0, 1.0)
-        elif isinstance(color, float):
+        if isinstance(color, float):
             gl.Uniform4f(self.uColor, color, color, color, 1.0)
         else:
             gl.Uniform(self.uColor, color)
@@ -55,6 +53,48 @@ class TexturedRectShader(GLShader):
         gl.Uniform(self.uTexTransform, s0, t0, s1 - s0, t1 - t0)
         SimpleQuad.draw()
 RequiredShaders.append(TexturedRectShader)
+
+
+class BlurShader(GLShader):
+    vs = """
+        attribute highp vec2 aPos;
+        uniform highp vec4 uScreenTransform;
+        varying mediump vec2 vTexCoord;
+        void main() {
+            gl_Position = vec4(uScreenTransform.xy + aPos * uScreenTransform.zw, 0.0, 1.0);
+            vTexCoord = aPos;
+        }
+    """
+    fs = """
+        uniform lowp float uIntensity;
+        uniform mediump sampler2D uTex;
+        uniform mediump vec2 uDeltaTexCoord;
+        varying mediump vec2 vTexCoord;
+        void main() {
+            gl_FragColor = vec4(uIntensity, uIntensity, uIntensity, 0.125) * (
+                texture2D(uTex, vTexCoord)
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.71, +0.71))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.99, -0.11))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.53, -0.85))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.33, -0.94))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.94, -0.33))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.85, +0.53))
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.11, +0.99))
+            );
+        }
+    """
+    attributes = { 0: 'aPos' }
+    uniforms = ['uScreenTransform', 'uDeltaTexCoord', 'uIntensity']
+
+    def draw(self, dtx, dty, intensity=1.0, tex=None):
+        self.use()
+        if tex:
+            gl.BindTexture(gl.TEXTURE_2D, tex)
+        gl.Uniform(self.uScreenTransform, ScreenTransform)
+        gl.Uniform2f(self.uDeltaTexCoord, dtx, dty)
+        gl.Uniform1f(self.uIntensity, intensity * 0.125)
+        SimpleQuad.draw()
+RequiredShaders.append(BlurShader)
 
 
 class ProgressBarShader(GLShader):
@@ -80,11 +120,11 @@ class ProgressBarShader(GLShader):
 
     def draw(self, x0, y0, x1, y1, color0, color1):
         self.use()
-        gl.Uniform(self.uPosTransform,
-            -1.0 + 2.0 * x0,
-            +1.0 - 2.0 * y0,
-            2.0 * (x1 - x0),
-            2.0 * (y0 - y1))
+        tx0 = ScreenTransform[0] + ScreenTransform[2] * x0
+        ty0 = ScreenTransform[1] + ScreenTransform[3] * y0
+        tx1 = ScreenTransform[0] + ScreenTransform[2] * x1
+        ty1 = ScreenTransform[1] + ScreenTransform[3] * y1
+        gl.Uniform4f(self.uPosTransform, tx0, ty0, tx1 - tx0, ty1 - ty0)
         gl.Uniform(self.uColor0, color0)
         gl.Uniform(self.uColor1, color1)
         SimpleQuad.draw()

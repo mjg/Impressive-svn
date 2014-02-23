@@ -68,6 +68,7 @@ def DrawOverlays(trans_time=0.0):
         )
     gl.Disable(gl.BLEND)
 
+
 # draw the complete image of the current page
 def DrawCurrentPage(dark=1.0, do_flip=True):
     global ScreenTransform
@@ -85,27 +86,25 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
         )
 
     # background layer -- the page's image, darkened if it has boxes
-    if boxes or Tracing:
-        light = 1.0 - BoxFadeDarkness * dark
+    is_dark = (dark > 0.001)
+    if (boxes or Tracing) and is_dark:
+        blur_scale = BoxFadeBlur * ZoomArea * dark
+        BlurShader.get_instance().draw(
+            PixelX * blur_scale,
+            PixelY * blur_scale,
+            1.0 - BoxFadeDarkness * dark,
+            tex=Tcurrent
+        )
     else:
-        light = 1.0
-    TexturedRectShader.get_instance().draw(
-        0.0, 0.0, 1.0, 1.0,
-        s1=TexMaxS, t1=TexMaxT,
-        tex=Tcurrent, color=light
-    )
+        TexturedRectShader.get_instance().draw(
+            0.0, 0.0, 1.0, 1.0,
+            s1=TexMaxS, t1=TexMaxT,
+            tex=Tcurrent
+        )
 
-    if boxes or Tracing:
-        # alpha-blend the same image some times to blur it
-        EnableAlphaBlend()
-        DrawTranslatedFullQuad(+PixelX * ZoomArea, 0.0, light, dark / 2)
-        DrawTranslatedFullQuad(-PixelX * ZoomArea, 0.0, light, dark / 3)
-        DrawTranslatedFullQuad(0.0, +PixelY * ZoomArea, light, dark / 4)
-        DrawTranslatedFullQuad(0.0, -PixelY * ZoomArea, light, dark / 5)
-
-    if boxes:
+    if boxes and is_dark:
         # draw outer box fade
-        EnableAlphaBlend()
+        #XXXNOGLXXX:EnableAlphaBlend()
         for X0, Y0, X1, Y1 in boxes:
             XXXNOGLXXX.glBegin(GL_QUAD_STRIP)
             DrawPointEx(X0, Y0, 1);  DrawPointEx(X0 - EdgeX, Y0 - EdgeY, 0)
@@ -125,10 +124,10 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
             DrawPoint(X0, Y1)
         XXXNOGLXXX.glEnd()
 
-    if Tracing:
+    if Tracing and is_dark:
         x, y = MouseToScreen(pygame.mouse.get_pos())
         # outer spot fade
-        EnableAlphaBlend()
+        #XXXNOGLXXX:EnableAlphaBlend()
         XXXNOGLXXX.glBegin(GL_TRIANGLE_STRIP)
         for x0, y0, x1, y1 in SpotMesh:
             DrawPointEx(x + x0, y + y0, 1)
@@ -143,26 +142,23 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
         XXXNOGLXXX.glEnd()
 
     if Marking:
-        # soft alpha-blended rectangle
-        XXXNOGLXXX.glDisable(GL_TEXTURE_2D)
-        XXXNOGLXXX.glColor4d(*MarkColor)
-        EnableAlphaBlend()
-        XXXNOGLXXX.glBegin(GL_QUADS)
-        XXXNOGLXXX.glVertex2d(MarkUL[0], MarkUL[1])
-        XXXNOGLXXX.glVertex2d(MarkLR[0], MarkUL[1])
-        XXXNOGLXXX.glVertex2d(MarkLR[0], MarkLR[1])
-        XXXNOGLXXX.glVertex2d(MarkUL[0], MarkLR[1])
-        XXXNOGLXXX.glEnd()
-        # bright red frame
-        XXXNOGLXXX.glDisable(GL_BLEND)
-        XXXNOGLXXX.glBegin(GL_LINE_STRIP)
-        XXXNOGLXXX.glVertex2d(MarkUL[0], MarkUL[1])
-        XXXNOGLXXX.glVertex2d(MarkLR[0], MarkUL[1])
-        XXXNOGLXXX.glVertex2d(MarkLR[0], MarkLR[1])
-        XXXNOGLXXX.glVertex2d(MarkUL[0], MarkLR[1])
-        XXXNOGLXXX.glVertex2d(MarkUL[0], MarkUL[1])
-        XXXNOGLXXX.glEnd()
-        XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
+        # red frame (misusing the progress bar shader as a single-color shader)
+        color = (MarkColor[0], MarkColor[1], MarkColor[2], 1.0)
+        ProgressBarShader.get_instance().draw(
+            MarkUL[0] - PixelX * ZoomArea, MarkUL[1] - PixelY * ZoomArea,
+            MarkLR[0] + PixelX * ZoomArea, MarkLR[1] + PixelY * ZoomArea,
+            color0=color, color1=color
+        )
+        # semi-transparent inner area
+        gl.Enable(gl.BLEND)
+        TexturedRectShader.get_instance().draw(
+            MarkUL[0], MarkUL[1],
+            MarkLR[0], MarkLR[1],
+            MarkUL[0] * TexMaxS, MarkUL[1] * TexMaxT,
+            MarkLR[0] * TexMaxS, MarkLR[1] * TexMaxT,
+            tex=Tcurrent, color=(1.0, 1.0, 1.0, 1.0 - MarkColor[3])
+        )
+        gl.Disable(gl.BLEND)
 
     # unapply the zoom transform
     ScreenTransform = DefaultScreenTransform
@@ -217,7 +213,7 @@ def DrawFadeMode(intensity, alpha):
     if VideoPlaying: return
     DrawCurrentPage(do_flip=False)
     XXXNOGLXXX.glDisable(GL_TEXTURE_2D)
-    EnableAlphaBlend()
+    #XXXNOGLXXX:EnableAlphaBlend()
     XXXNOGLXXX.glColor4d(intensity, intensity, intensity, alpha)
     DrawFullQuad()
     XXXNOGLXXX.glEnable(GL_TEXTURE_2D)
