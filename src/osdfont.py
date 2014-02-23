@@ -120,7 +120,6 @@ class GLFont:
                 raise
         if not update_count: return
         self.img.putalpha(self.alpha)
-        self.img.save("abfall.png")
         gl.load_texture(gl.TEXTURE_2D, self.tex, self.img)
 
     def AllocateGlyphBox(self, w, h):
