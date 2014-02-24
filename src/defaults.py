@@ -83,3 +83,4 @@ ShowClock = False
 HalfScreen = False
 InvertPages = False
 MinBoxSize = 20
+UseBlurShader = True

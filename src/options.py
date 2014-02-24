@@ -56,6 +56,7 @@ Display options:
        --invert           display slides in inverted colors
        --min-box-size <x> set minimum size of a highlight box, in pixels
        --darkness <p>     set highlight box mode darkness to <p> percent
+       --noblur           use legacy blur implementation
 
 Timing options:
   -M,  --minutes          display time in minutes, not seconds
@@ -223,7 +224,7 @@ def ParseOptions(argv):
     global AutoOverview, ZoomFactor, FadeInOut, ShowLogo, Shuffle, PageProgress
     global QuitAtEnd, PageClicks, ShowClock, HalfScreen, SpotRadius, InvertPages
     global MinBoxSize, AutoAutoAdvance, AutoAdvanceProgress, BoxFadeDarkness
-    global PageWheel, WindowPos, FakeFullscreen
+    global PageWheel, WindowPos, FakeFullscreen, UseBlurShader
 
     try:  # unused short options: ejnEJKNUY
         opts, args = getopt.getopt(argv, \
@@ -238,7 +239,7 @@ def ParseOptions(argv):
             "shuffle", "page-progress", "overscan", "autoquit", "noclicks",
             "clock", "half-screen", "spot-radius=", "invert", "min-box-size=",
             "auto-auto", "auto-progress", "darkness=", "no-clicks", "nowheel",
-            "no-wheel", "fake-fullscreen", "windowed", "verbose"])
+            "no-wheel", "fake-fullscreen", "windowed", "verbose", "noblur"])
     except getopt.GetoptError, message:
         opterr(message)
 
@@ -469,6 +470,8 @@ def ParseOptions(argv):
                 BoxFadeDarkness = float(arg) * 0.01
             except:
                 opterr("invalid parameter for --darkness")
+        if opt == "--noblur":
+            UseBlurShader = not(UseBlurShader)
 
     for arg in args:
         AddFile(arg)

@@ -15,7 +15,7 @@ def main():
     global HalfScreen, AutoAdvance, WindowPos
     global BoxFadeDarknessBase, SpotRadiusBase
     global GLVendor, GLRenderer, GLVersion
-    global BoxIndexBuffer
+    global BoxIndexBuffer, UseBlurShader
 
     # allocate temporary file
     TempFileName = tempfile.mktemp(prefix="impressive-", suffix="_tmp")
@@ -163,12 +163,16 @@ def main():
         print >>sys.stderr, "OpenGL renderer:", GLRenderer
 
         # check if graphics are unaccelerated
-        renderer = GLRenderer.lower()
-        if (renderer in ("mesa glx indirect", "gdi generic")) \
+        renderer = GLRenderer.lower().replace(' ', '')
+        if (renderer in ("mesaglxindirect", "gdigeneric")) \
         or renderer.startswith("software") \
         or ("llvmpipe" in renderer):
             print >>sys.stderr, "WARNING: Using an OpenGL software renderer. Impressive will work, but it will"
             print >>sys.stderr, "         very likely be too slow to be usable."
+
+        # check for old Intel hardware that can't deal with the blur shader
+        if ("i915" in renderer) or ("gma900" in renderer):
+            UseBlurShader = False
 
         # check the OpenGL version (2.0 needed to ensure NPOT texture support)
         glver = gl.GetString(gl.VERSION)
@@ -182,10 +186,19 @@ def main():
     # some further OpenGL configuration
     if Verbose:
         GLShader.LOG_DEFAULT = GLShader.LOG_IF_NOT_EMPTY
-    gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
-    BoxIndexBuffer = HighlightIndexBuffer(4)
     for shader in RequiredShaders:
         shader.get_instance()
+    try:
+        BlurShader.get_instance()
+    except GLShaderCompileError:
+        UseBlurShader = False
+    if Verbose:
+        if UseBlurShader:
+            print >>sys.stderr, "Using blur shader for highlight box and spotlight mode."
+        else:
+            print >>sys.stderr, "Using legacy multi-pass blur for highlight box and spotlight mode."
+    gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
+    BoxIndexBuffer = HighlightIndexBuffer(4)
 
     # setup the OpenGL texture size
     TexWidth  = (ScreenWidth + 3) & (-4)

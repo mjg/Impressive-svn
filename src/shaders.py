@@ -128,7 +128,7 @@ class BlurShader(GLShader):
         gl.Uniform2f(self.uDeltaTexCoord, dtx, dty)
         gl.Uniform1f(self.uIntensity, intensity * 0.125)
         SimpleQuad.draw()
-RequiredShaders.append(BlurShader)
+# (not added to RequiredShaders because this shader is allowed to fail)
 
 
 class ProgressBarShader(GLShader):

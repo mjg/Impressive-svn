@@ -201,11 +201,15 @@ The progress bar shown by this option takes precedence over the <code>--duration
 <dt><code>-M</code> or <code>--minutes</code></dt>
 <dd>If this option is set, Impressive will show the on-screen timer (activated with the [T] key) only with 1 minute resolution. By default, it will show a timer with 1 second resolution.</dd>
 
-<dt><code>--nologo</code></dt>
-<dd>This option disables the Impressive logo and version number display. Instead, the loading screen will be just black or, if background rendering is disabled, only the progress bar will be visible.</dd>
+<dt><code>--noblur</code></dt>
+<dd>By default, Impressive uses a fragment shader to blur the image when in highlight box or spotlight mode. This is usually the faster method; however, some very old hardware implementations can't deal with that shader and fall back to an unusably slow software implementation. Impressive tries to detect scenarios where this would happen and automatically falls back to a different implementation.<br />
+There might be situations where this machanism fails and Impressive tries to use the non-functional shader anyway. In these cases, the <code>--noblur</code> option can be used to enforce the fallback implementation.</dd>
 
 <dt><code>--noclicks</code></dt>
 <dd>If this option is enabled, switching to the previous or next page with the left and right mouse buttons is deactivated. The keyboard shortcuts are unaffected from this.</dd>
+
+<dt><code>--nologo</code></dt>
+<dd>This option disables the Impressive logo and version number display. Instead, the loading screen will be just black or, if background rendering is disabled, only the progress bar will be visible.</dd>
 
 <dt><code>-o <em>&lt;directory&gt;</em></code> or <code>--output <em>&lt;directory&gt;</em></code></dt>
 <dd>Do not display the presentation, but render it into a series of PNG image files inside the specified directory. The images will be generated in the current resolution as specified by the <code>-g</code> option. This option is useful if the presentation is to be given on on a foreign PC with an old, broken or otherwise problematic Xpdf installation: By generating images of the PDF pages, is is made sure that no rendering bugs will happen on the target system.</dd>

@@ -92,8 +92,16 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
         )
 
     # background layer -- the page's image, darkened if it has boxes
-    is_dark = (dark > 0.001)
-    if (boxes or Tracing) and is_dark:
+    is_dark = (boxes or Tracing) and (dark > 0.001)
+    if not is_dark:
+        # standard mode
+        TexturedRectShader.get_instance().draw(
+            0.0, 0.0, 1.0, 1.0,
+            s1=TexMaxS, t1=TexMaxT,
+            tex=Tcurrent
+        )
+    elif UseBlurShader:
+        # blurred background (using shader)
         blur_scale = BoxFadeBlur * ZoomArea * dark
         BlurShader.get_instance().draw(
             PixelX * blur_scale,
@@ -101,17 +109,30 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
             1.0 - BoxFadeDarkness * dark,
             tex=Tcurrent
         )
-    else:
-        TexturedRectShader.get_instance().draw(
-            0.0, 0.0, 1.0, 1.0,
-            s1=TexMaxS, t1=TexMaxT,
-            tex=Tcurrent
-        )
-
-    if is_dark:
         gl.Enable(gl.BLEND)
         # note: BLEND stays enabled during the rest of this function;
         # it will be disabled at the end of DrawOverlays()
+    else:
+        # blurred background (using oldschool multi-pass blend fallback)
+        intensity = 1.0 - BoxFadeDarkness * dark
+        for dx, dy, alpha in (
+            (0.0,  0.0, 1.0),
+            (-ZoomArea, 0.0, dark / 2),
+            (+ZoomArea, 0.0, dark / 3),
+            (0.0, -ZoomArea, dark / 4),
+            (0.0, +ZoomArea, dark / 5),
+        ):
+            TexturedRectShader.get_instance().draw(
+                0.0, 0.0, 1.0, 1.0,
+                TexMaxS *  PixelX * dx,
+                TexMaxT *  PixelY * dy,
+                TexMaxS * (PixelX * dx + 1.0),
+                TexMaxT * (PixelY * dy + 1.0),
+                tex=Tcurrent,
+                color=(intensity, intensity, intensity, alpha)
+            )
+            gl.Enable(gl.BLEND)
+        
 
     if boxes and is_dark:
         TexturedMeshShader.get_instance().setup(
