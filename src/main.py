@@ -170,9 +170,10 @@ def main():
             print >>sys.stderr, "WARNING: Using an OpenGL software renderer. Impressive will work, but it will"
             print >>sys.stderr, "         very likely be too slow to be usable."
 
-        # check for old Intel hardware that can't deal with the blur shader
-        if ("i915" in renderer) or ("gma900" in renderer):
-            UseBlurShader = False
+        # check for old hardware that can't deal with the blur shader
+        for substr in ("i915", "gma900", "gma950", "gma3000", "gma3100", "gma3150"):
+            if substr in renderer:
+                UseBlurShader = False
 
         # check the OpenGL version (2.0 needed to ensure NPOT texture support)
         glver = gl.GetString(gl.VERSION)
@@ -188,10 +189,11 @@ def main():
         GLShader.LOG_DEFAULT = GLShader.LOG_IF_NOT_EMPTY
     for shader in RequiredShaders:
         shader.get_instance()
-    try:
-        BlurShader.get_instance()
-    except GLShaderCompileError:
-        UseBlurShader = False
+    if UseBlurShader:
+        try:
+            BlurShader.get_instance()
+        except GLShaderCompileError:
+            UseBlurShader = False
     if Verbose:
         if UseBlurShader:
             print >>sys.stderr, "Using blur shader for highlight box and spotlight mode."
