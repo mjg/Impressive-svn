@@ -164,7 +164,7 @@ def main():
         print >>sys.stderr, "OpenGL renderer:", GLRenderer
 
         # check if graphics are unaccelerated
-        renderer = GLRenderer.lower().replace(' ', '')
+        renderer = GLRenderer.lower().replace(' ', '').replace('(r)', '')
         if (renderer in ("mesaglxindirect", "gdigeneric")) \
         or renderer.startswith("software") \
         or ("llvmpipe" in renderer):
@@ -172,14 +172,15 @@ def main():
             print >>sys.stderr, "         very likely be too slow to be usable."
 
         # check for old hardware that can't deal with the blur shader
-        for substr in ("i915", "gma900", "gma950", "gma3000", "gma3100", "gma3150"):
+        for substr in ("i915", "intel915", "intel945", "intelq3", "intelg3", "inteligd", "gma900", "gma950", "gma3000", "gma3100", "gma3150"):
             if substr in renderer:
                 UseBlurShader = False
 
         # check the OpenGL version (2.0 needed to ensure NPOT texture support)
         glver = gl.GetString(gl.VERSION)
-        if glver < "2":
-            raise ImportError("OpenGL (ES) version %r is below 2.0" % glver)
+        extensions = set(gl.GetString(gl.EXTENSIONS).split())
+        if (glver < "2") and (not("GL_ARB_shader_objects" in extensions) or not("GL_ARB_texture_non_power_of_two" in extensions)):
+            raise ImportError("OpenGL version %r is below 2.0 and the necessary extensions are unavailable" % glver)
     except ImportError, e:
         print >>sys.stderr, "FATAL:", e
         print >>sys.stderr, "This likely means that your graphics driver or hardware is too old."

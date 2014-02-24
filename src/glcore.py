@@ -140,7 +140,7 @@ class GLBase(object):
     def _loadall(self):
         for func in self._funcs:
             funcptr = None
-            for suffix in ("", "ARB", "EXT", "OES"):
+            for suffix in ("", "ARB", "ObjectARB", "EXT", "OES"):
                 funcptr = self._loadsym("gl" + func.name + suffix, func.prototype)
                 if funcptr:
                     break
