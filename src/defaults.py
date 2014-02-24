@@ -3,6 +3,7 @@ NoCache, MemCache, FileCache, PersistentCache = range(4)  # for CacheMode
 Off, First, Last = range(3)  # for AutoOverview
 
 # You may change the following lines to modify the default settings
+Verbose = False
 Fullscreen = True
 FakeFullscreen = False
 Scaling = False

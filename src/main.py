@@ -180,6 +180,8 @@ def main():
         sys.exit(1)
 
     # some further OpenGL configuration
+    if Verbose:
+        GLShader.LOG_DEFAULT = GLShader.LOG_IF_NOT_EMPTY
     gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
     BoxIndexBuffer = HighlightIndexBuffer(4)
     for shader in RequiredShaders:

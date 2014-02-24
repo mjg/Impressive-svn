@@ -88,6 +88,7 @@ Advanced options:
        --noclicks         disable page navigation via left/right mouse click
   -W,  --nowheel          disable page navigation via mouse wheel
   -H,  --half-screen      show OSD on right half of the screen only
+  -v,  --verbose          (slightly) more verbose operation
 
 For detailed information, visit""", __website__
     sys.exit(code)
@@ -214,7 +215,7 @@ def ParseOptions(argv):
     global FileName, FileList, Fullscreen, Scaling, Supersample, CacheMode
     global TransitionDuration, MouseHideDelay, BoxFadeDuration, ZoomDuration
     global ScreenWidth, ScreenHeight, MeshResX, MeshResY, InitialPage, Wrap
-    global AutoAdvance, RenderToDirectory, Rotation, DAR
+    global AutoAdvance, RenderToDirectory, Rotation, DAR, Verbose
     global BackgroundRendering, UseAutoScreenSize, PollInterval, CacheFileName
     global PageRangeStart, PageRangeEnd, FontList, FontSize, Gamma, BlackLevel
     global EstimatedDuration, CursorImage, CursorHotspot, MinutesOnly, Overscan
@@ -224,9 +225,9 @@ def ParseOptions(argv):
     global MinBoxSize, AutoAutoAdvance, AutoAdvanceProgress, BoxFadeDarkness
     global PageWheel, WindowPos, FakeFullscreen
 
-    try:  # unused short options: ejnvEJKNUY
+    try:  # unused short options: ejnEJKNUY
         opts, args = getopt.getopt(argv, \
-            "hfg:sc:i:wa:t:lo:r:T:D:B:Z:P:R:A:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykW", \
+            "vhfg:sc:i:wa:t:lo:r:T:D:B:Z:P:R:A:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykW", \
            ["help", "fullscreen", "geometry=", "scale", "supersample", \
             "nocache", "initialpage=", "wrap", "auto", "listtrans", "output=", \
             "rotate=", "transition=", "transtime=", "mousedelay=", "boxfade=", \
@@ -237,7 +238,7 @@ def ParseOptions(argv):
             "shuffle", "page-progress", "overscan", "autoquit", "noclicks",
             "clock", "half-screen", "spot-radius=", "invert", "min-box-size=",
             "auto-auto", "auto-progress", "darkness=", "no-clicks", "nowheel",
-            "no-wheel", "fake-fullscreen", "windowed"])
+            "no-wheel", "fake-fullscreen", "windowed", "verbose"])
     except getopt.GetoptError, message:
         opterr(message)
 
@@ -246,6 +247,8 @@ def ParseOptions(argv):
             HelpExit()
         if opt in ("-l", "--listtrans"):
             ListTransitions()
+        if opt in ("-v", "--verbose"):
+            Verbose = not(Verbose)
         if opt == "--fullscreen":      Fullscreen, FakeFullscreen = True,  False
         if opt == "--fake-fullscreen": Fullscreen, FakeFullscreen = True,  True
         if opt == "--windowed":        Fullscreen, FakeFullscreen = False, False

@@ -325,13 +325,9 @@ class GLShader(object):
     LOG_ON_ERROR = 1
     LOG_IF_NOT_EMPTY = 2
     LOG_ALWAYS = 3
-    LOG_DEFAULT = LOG_IF_NOT_EMPTY
-    @staticmethod
-    def LOG_STDERR(shader_obj, shader_action, log):
-        print >>sys.stderr, "----- log for %s %s:" % (shader_obj.__class__.__name__, shader_action)
-        print >>sys.stderr, log.rstrip()
+    LOG_DEFAULT = LOG_ON_ERROR
 
-    def __init__(self, vs=None, fs=None, attributes=[], uniforms=[], loglevel=None, logfunc=None):
+    def __init__(self, vs=None, fs=None, attributes=[], uniforms=[], loglevel=None):
         if not(vs): vs = self.vs
         if not(fs): fs = self.fs
         if not(attributes) and hasattr(self, 'attributes'):
@@ -347,10 +343,6 @@ class GLShader(object):
             loglevel = self.loglevel
         if loglevel is None:
             loglevel = self.LOG_DEFAULT
-        if (logfunc is None) and hasattr(self, 'logfunc'):
-            logfunc = self.logfunc
-        if logfunc is None:
-            logfunc = self.LOG_STDERR
 
         self.program = gl.CreateProgram()
         def handle_shader_log(status, log_getter, action):
@@ -360,7 +352,11 @@ class GLShader(object):
             else:
                 log = "" 
             if force_log or ((loglevel >= self.LOG_IF_NOT_EMPTY) and log):
-                logfunc(self, action, log)
+                if status:
+                    print >>sys.stderr, "----- log for %s:" % action
+                else:
+                    print >>sys.stderr, "----- %s failed - log information:" % action
+                print >>sys.stderr, log
             if not status:
                 raise GLShaderCompileError("failure during %s %s" % (self.__class__.__name__, action))
         def handle_shader(type_enum, type_name, src):
