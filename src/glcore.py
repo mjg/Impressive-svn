@@ -417,4 +417,3 @@ class GLShader(object):
 # - ActiveTexure is TEXTURE0
 # - array and element array buffer bindings are undefined
 # - BLEND is disabled, BlendFunc is (SRC_ALPHA, ONE_MINUS_SRC_ALPHA)
-

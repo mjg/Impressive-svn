@@ -83,7 +83,6 @@ Advanced options:
        --cachefile <path> set the persistent cache file path (implies -cp)
   -b,  --noback           don't pre-render images in the background
   -P,  --gspath <path>    set path to GhostScript or pdftoppm executable
-  -R,  --meshres <XxY>    set mesh resolution for effects (default: 48x36)
   -V,  --overscan <px>    render PDF files <px> pixels larger than the screen
        --nologo           disable startup logo and version number display
        --noclicks         disable page navigation via left/right mouse click
@@ -215,7 +214,7 @@ def ParseAutoOverview(arg):
 def ParseOptions(argv):
     global FileName, FileList, Fullscreen, Scaling, Supersample, CacheMode
     global TransitionDuration, MouseHideDelay, BoxFadeDuration, ZoomDuration
-    global ScreenWidth, ScreenHeight, MeshResX, MeshResY, InitialPage, Wrap
+    global ScreenWidth, ScreenHeight, InitialPage, Wrap
     global AutoAdvance, RenderToDirectory, Rotation, DAR, Verbose
     global BackgroundRendering, UseAutoScreenSize, PollInterval, CacheFileName
     global PageRangeStart, PageRangeEnd, FontList, FontSize, Gamma, BlackLevel
@@ -226,13 +225,13 @@ def ParseOptions(argv):
     global MinBoxSize, AutoAutoAdvance, AutoAdvanceProgress, BoxFadeDarkness
     global PageWheel, WindowPos, FakeFullscreen, UseBlurShader
 
-    try:  # unused short options: ejnEJKNUY
+    try:  # unused short options: ejnEJKNRUY
         opts, args = getopt.getopt(argv, \
-            "vhfg:sc:i:wa:t:lo:r:T:D:B:Z:P:R:A:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykW", \
+            "vhfg:sc:i:wa:t:lo:r:T:D:B:Z:P:A:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykW", \
            ["help", "fullscreen", "geometry=", "scale", "supersample", \
             "nocache", "initialpage=", "wrap", "auto", "listtrans", "output=", \
             "rotate=", "transition=", "transtime=", "mousedelay=", "boxfade=", \
-            "zoom=", "gspath=", "meshres=", "aspect=", "memcache", \
+            "zoom=", "gspath=", "aspect=", "memcache", \
             "noback", "pages=", "poll=", "font=", "fontsize=", "gamma=",
             "duration=", "cursor=", "minutes", "layout=", "script=", "cache=",
             "cachefile=", "autooverview=", "zoomtime=", "fade", "nologo",
@@ -407,13 +406,6 @@ def ParseOptions(argv):
                 UseAutoScreenSize = False
             except:
                 opterr("invalid parameter for --geometry")
-        if opt in ("-R", "--meshres"):
-            try:
-                MeshResX, MeshResY = map(int, arg.split("x"))
-                assert (MeshResX > 0) and (MeshResX <= ScreenWidth)
-                assert (MeshResY > 0) and (MeshResY <= ScreenHeight)
-            except:
-                opterr("invalid parameter for --meshres")
         if opt in ("-p", "--pages"):
             try:
                 PageRangeStart, PageRangeEnd = map(int, arg.split("-"))

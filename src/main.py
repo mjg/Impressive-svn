@@ -2,7 +2,7 @@
 
 def main():
     global ScreenWidth, ScreenHeight, TexWidth, TexHeight, TexSize, LogoImage
-    global TexMaxS, TexMaxT, MeshStepX, MeshStepY, EdgeX, EdgeY, PixelX, PixelY
+    global TexMaxS, TexMaxT, EdgeX, EdgeY, PixelX, PixelY
     global OverviewGridSize, OverviewCellX, OverviewCellY
     global OverviewOfsX, OverviewOfsY, OverviewBorder, OverviewImage, OverviewPageCount
     global OverviewPageMap, OverviewPageMapInv, FileName, FileList, PageCount
@@ -39,7 +39,8 @@ def main():
             ScreenWidth, ScreenHeight = size
             print >>sys.stderr, "Detected screen size: %dx%d pixels" % (ScreenWidth, ScreenHeight)
     if DAR is None:
-        PAR = 1
+        PAR = 1.0
+        DAR = float(ScreenWidth) / float(ScreenHeight)
     else:
         PAR = DAR / float(ScreenWidth) * float(ScreenHeight)
 
@@ -210,10 +211,9 @@ def main():
     TexSize = TexWidth * TexHeight * 3
 
     # set up some variables
-    MeshStepX = 1.0 / MeshResX
-    MeshStepY = 1.0 / MeshResY
     PixelX = 1.0 / ScreenWidth
     PixelY = 1.0 / ScreenHeight
+    ScreenAspect = float(ScreenWidth) / float(ScreenHeight)
     EdgeX = BoxEdgeSize * PixelX
     EdgeY = BoxEdgeSize * PixelY
 

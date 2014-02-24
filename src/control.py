@@ -261,6 +261,7 @@ def TransitionTo(page, allow_transition=True):
     if not(skip) and transtime:
         transtime = 1.0 / transtime
         TransitionRunning = True
+        trans.start()
         t0 = pygame.time.get_ticks()
         while not(VideoPlaying):
             if pygame.event.get([KEYDOWN,MOUSEBUTTONUP]):
