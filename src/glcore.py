@@ -306,18 +306,9 @@ def LoadOpenGL():
     global gl
     gl = SDL_OpenGL()
 
-class InvalidShader(object):
-    def __init__(self):
-        pass
-    def __nonzero__(self):
-        return False
-    def __getattr__(self, attr):
-        return -1
-    def use(self):
-        gl.UseProgram(0)
-        return self
-
 class GLShaderCompileError(SyntaxError):
+    pass
+class GLInvalidShaderError(GLShaderCompileError):
     pass
 
 class GLShader(object):
@@ -353,10 +344,11 @@ class GLShader(object):
                 log = "" 
             if force_log or ((loglevel >= self.LOG_IF_NOT_EMPTY) and log):
                 if status:
-                    print >>sys.stderr, "----- log for %s:" % action
+                    print >>sys.stderr, "Info: log for %s %s:" % (self.__class__.__name__, action)
                 else:
-                    print >>sys.stderr, "----- %s failed - log information:" % action
-                print >>sys.stderr, log
+                    print >>sys.stderr, "Error: %s %s failed - log information follows:" % (self.__class__.__name__, action)
+                for line in log.split('\n'):
+                    print >>sys.stderr, '>', line.rstrip()
             if not status:
                 raise GLShaderCompileError("failure during %s %s" % (self.__class__.__name__, action))
         def handle_shader(type_enum, type_name, src):
@@ -402,19 +394,20 @@ class GLShader(object):
         return self
 
     @classmethod
-    def get_instance(self, must_work=True):
+    def get_instance(self):
         try:
-            return self._instance
+            instance = self._instance
+            if instance:
+                return instance
+            else:
+                raise GLInvalidShaderError("shader failed to compile in the past")
         except AttributeError:
-            pass
-        try:
-            self._instance = self()
-        except GLShaderCompileError, e:
-            if must_work:
+            try:
+                self._instance = self()
+            except GLShaderCompileError, e:
+                self._instance = None
                 raise
-            print >>sys.stderr, "-!!!-", e
-            self._instance = InvalidShader()
-        return self._instance
+            return self._instance
 
 # NOTE: OpenGL drawing code in Impressive uses the following conventions:
 # - program binding is undefined

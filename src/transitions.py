@@ -1,8 +1,9 @@
 ##### TRANSITIONS ##############################################################
 
 # Each transition is represented by a class derived from impressive.Transition
-# The interface consists of only two methods: the __init__ method may perform
-# some transition-specific initialization, and render() finally renders a frame
+# The interface consists of only two methods: the __init__ method must
+# instantiate all required shaders and may perform some additional
+# transition-specific initialization, and render() finally renders a frame
 # of the transition, using the global texture identifiers Tcurrent and Tnext.
 
 class Transition(object):
@@ -13,7 +14,7 @@ class Transition(object):
 AllTransitions = []
 
 
-# Crossfade: one of the simplests transition you can think of :)
+# Crossfade: one of the simplest transitions you can think of :)
 class Crossfade(Transition):
     """simple crossfade"""
     class CrossfadeShader(GLShader):
@@ -36,8 +37,10 @@ class Crossfade(Transition):
         """
         attributes = { 0: 'aPos' }
         uniforms = [('uTnext', 1), 'uTime']
-    def render(self,t):
-        shader = self.CrossfadeShader.get_instance(False).use()
+    def __init__(self):
+        self.CrossfadeShader.get_instance()
+    def render(self, t):
+        shader = self.CrossfadeShader.get_instance().use()
         gl.set_texture(gl.TEXTURE_2D, Tnext, 1)
         gl.set_texture(gl.TEXTURE_2D, Tcurrent, 0)
         gl.Uniform1f(shader.uTime, t)

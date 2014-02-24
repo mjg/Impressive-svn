@@ -183,6 +183,16 @@ def PageLeft(overview=False):
                                   FormatTime(PageEnterTime / 1000), \
                                   FormatTime(t1 / 1000))
 
+# create an instance of a transition class
+def InstantiateTransition(trans_class):
+    try:
+        return trans_class()
+    except GLInvalidShaderError:
+        return None
+    except GLShaderCompileError:
+        print >>sys.stderr, "Note: all %s transitions will be disabled" % trans_class.__name__
+        return None
+
 # perform a transition to a specified page
 def TransitionTo(page, allow_transition=True):
     global Pcurrent, Pnext, Tcurrent, Tnext
@@ -228,16 +238,16 @@ def TransitionTo(page, allow_transition=True):
         trans = GetPageProp(tpage, 'transition', GetPageProp(tpage, '_transition'))
     else:
         trans = None
-    if trans is None:
-        transtime = 0
-    else:
+    if trans is not None:
         transtime = GetPageProp(tpage, 'transtime', TransitionDuration)
         try:
             dummy = trans.__class__
         except AttributeError:
             # ah, gotcha! the transition is not yet instantiated!
-            trans = trans()
+            trans = InstantiateTransition(trans)
             PageProps[tpage][tkey] = trans
+    if trans is None:
+        transtime = 0
 
     # backward motion? then swap page buffers now
     backward = (Pnext < Pcurrent)
@@ -365,7 +375,7 @@ def PrepareTransitions():
                 continue
             trans = PageProps[page][key]
             if trans is not None:
-                PageProps[page][key] = trans()
+                PageProps[page][key] = InstantiateTransition(trans)
 
 # update timer values and screen timer
 def TimerTick():
