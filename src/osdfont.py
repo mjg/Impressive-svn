@@ -87,6 +87,12 @@ class GLFont:
 
     def AddCharacter(self, c):
         w, h = self.font.getsize(c)
+        try:
+            ox, oy = self.font.getoffset(c)
+            w += ox
+            h += oy
+        except AttributeError:
+            pass
         self.line_height = max(self.line_height, h)
         size = (w + 2 * self.feather, h + 2 * self.feather)
         glyph = Image.new('L', size)
