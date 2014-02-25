@@ -1,6 +1,6 @@
 # import basic modules
 import random, getopt, os, types, re, codecs, tempfile, glob, StringIO, re
-import traceback, subprocess, time, itertools
+import traceback, subprocess, time, itertools, ctypes.util
 from math import *
 from ctypes import *
 
@@ -29,15 +29,13 @@ if os.name == "nt":
     GhostScriptPlatformOptions = ["-I" + os.path.join(root, "gs")]
     try:
         import win32api
+        HaveWin32API = True
         MPlayerPath = FindBinary("mplayer.exe")
-        def GetScreenSize():
-            dm = win32api.EnumDisplaySettings(None, -1) #ENUM_CURRENT_SETTINGS
-            return (int(dm.PelsWidth), int(dm.PelsHeight))
         def RunURL(url):
             win32api.ShellExecute(0, "open", url, "", "", 0)
     except ImportError:
+        HaveWin32API = False
         MPlayerPath = ""
-        def GetScreenSize(): return pygame.display.list_modes()[0]
         def RunURL(url): print "Error: cannot run URL `%s'" % url
     MPlayerPlatformOptions = [ "-colorkey", "0x000000" ]
     MPlayerColorKey = True
@@ -60,22 +58,6 @@ else:
             subprocess.Popen(["xdg-open", url])
         except OSError:
             print >>sys.stderr, "Error: cannot open URL `%s'" % url
-    def GetScreenSize():
-        res_re = re.compile(r'\s*(\d+)x(\d+)\s+\d+\.\d+\*')
-        for path in os.getenv("PATH").split(':'):
-            fullpath = os.path.join(path, "xrandr")
-            if os.path.exists(fullpath):
-                res = None
-                try:
-                    for line in os.popen(fullpath, "r"):
-                        m = res_re.match(line)
-                        if m:
-                            res = tuple(map(int, m.groups()))
-                except OSError:
-                    pass
-                if res:
-                    return res
-        return pygame.display.list_modes()[0]
 
 # import special modules
 try:

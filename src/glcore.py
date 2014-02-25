@@ -11,7 +11,7 @@ class GLFunction(object):
         self.required = required
         self.prototype = GLFUNCTYPE(ret, *args)
 
-class GLBase(object):
+class OpenGL(object):
     FALSE = 0
     TRUE = 1
     NO_ERROR = 0
@@ -137,11 +137,13 @@ class GLBase(object):
           UNSIGNED_INT: c_uint32,
                  FLOAT:  c_float
     }
-    def _loadall(self):
+
+    def __init__(self, loader, desktop=False):
+        self._is_desktop_gl = desktop
         for func in self._funcs:
             funcptr = None
             for suffix in ("", "ARB", "ObjectARB", "EXT", "OES"):
-                funcptr = self._loadsym("gl" + func.name + suffix, func.prototype)
+                funcptr = loader("gl" + func.name + suffix, func.prototype)
                 if funcptr:
                     break
             if not funcptr:
@@ -155,6 +157,7 @@ class GLBase(object):
                 setattr(self, '_' + func.name, funcptr)
             else:
                 setattr(self, func.name, funcptr)
+        self._init()
 
     def GenTextures(self, n=1):
         bufs = (c_int * n)()
@@ -236,7 +239,7 @@ class GLBase(object):
 
     ##### Convenience Functions #####
 
-    def __init__(self):
+    def _init(self):
         self.enabled_attribs = set()
 
     def set_enabled_attribs(self, *attrs):
@@ -278,33 +281,6 @@ class GLBase(object):
         elif img.mode == 'L':    format = self.LUMINANCE
         else: raise TypeError("image has unsupported color format '%s'" % img.mode)
         gl.TexImage2D(target, 0, format, img.size[0], img.size[1], 0, format, self.UNSIGNED_BYTE, img.tostring())
-
-class SDL_OpenGL(GLBase):
-    _is_desktop_gl = True
-
-    def __init__(self):
-        GLBase.__init__(self)
-        try:
-            if os.name == 'nt':
-                sdl = CDLL("SDL", RTLD_GLOBAL)
-            else:
-                sdl = CDLL("libSDL.so", RTLD_GLOBAL)
-            self._get_proc_address = CFUNCTYPE(c_void_p, c_char_p)(('SDL_GL_GetProcAddress', sdl))
-        except OSError:
-            raise ImportError("failed to load the SDL library")
-        except AttributeError:
-            raise ImportError("failed to load SDL_GL_GetProcAddress from the SDL library")
-        self._loadall()
-
-    def _loadsym(self, name, prototype):
-        addr = self._get_proc_address(name)
-        if not addr:
-            return None
-        return prototype(addr)
-
-def LoadOpenGL():
-    global gl
-    gl = SDL_OpenGL()
 
 class GLShaderCompileError(SyntaxError):
     pass

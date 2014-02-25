@@ -107,7 +107,7 @@ def PlayVideo(video):
         MPlayerProcess = subprocess.Popen([MPlayerPath] + opts + video, stdin=subprocess.PIPE)
         if MPlayerColorKey:
             gl.Clear(gl.COLOR_BUFFER_BIT)
-            pygame.display.flip()
+            Platform.SwapBuffers()
         VideoPlaying = True
     except OSError:
         MPlayerProcess = None
@@ -274,7 +274,7 @@ def TransitionTo(page, allow_transition=True):
             gl.Clear(gl.COLOR_BUFFER_BIT)
             trans.render(t)
             DrawOverlays(t)
-            pygame.display.flip()
+            Platform.SwapBuffers()
         TransitionRunning = False
 
     # forward motion => swap page buffers now

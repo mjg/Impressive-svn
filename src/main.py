@@ -1,8 +1,8 @@
 ##### INITIALIZATION ###########################################################
 
 def main():
-    global ScreenWidth, ScreenHeight, TexWidth, TexHeight, TexSize, LogoImage
-    global TexMaxS, TexMaxT, EdgeX, EdgeY, PixelX, PixelY
+    global gl, ScreenWidth, ScreenHeight, TexWidth, TexHeight, TexSize
+    global TexMaxS, TexMaxT, EdgeX, EdgeY, PixelX, PixelY, LogoImage
     global OverviewGridSize, OverviewCellX, OverviewCellY
     global OverviewOfsX, OverviewOfsY, OverviewBorder, OverviewImage, OverviewPageCount
     global OverviewPageMap, OverviewPageMapInv, FileName, FileList, PageCount
@@ -29,12 +29,12 @@ def main():
     if FileName:
         DocumentTitle = os.path.splitext(os.path.split(FileName)[1])[0]
 
-    # initialize PyGame
-    pygame.display.init()
+    # early graphics initialization
+    Platform.Init()
 
     # detect screen size and compute aspect ratio
     if Fullscreen and UseAutoScreenSize:
-        size = GetScreenSize()
+        size = Platform.GetScreenSize()
         if size:
             ScreenWidth, ScreenHeight = size
             print >>sys.stderr, "Detected screen size: %dx%d pixels" % (ScreenWidth, ScreenHeight)
@@ -131,20 +131,8 @@ def main():
         sys.exit(1)
 
     # initialize graphics
-    pygame.display.set_caption(__title__)
-    flags = OPENGL | DOUBLEBUF
-    if Fullscreen:
-        if FakeFullscreen:
-            print >>sys.stderr, "Using \"fake-fullscreen\" mode."
-            flags |= NOFRAME
-            if not WindowPos:
-                WindowPos = (0,0)
-        else:
-            flags |= FULLSCREEN
-    if WindowPos:
-        os.environ["SDL_VIDEO_WINDOW_POS"] = ','.join(map(str, WindowPos))
     try:
-        pygame.display.set_mode((ScreenWidth, ScreenHeight), flags)
+        Platform.StartDisplay()
     except:
         print >>sys.stderr, "FATAL: failed to create rendering surface in the desired resolution (%dx%d)" % (ScreenWidth, ScreenHeight)
         sys.exit(1)
@@ -157,7 +145,7 @@ def main():
 
     # initialize OpenGL
     try:
-        LoadOpenGL()
+        gl = Platform.LoadOpenGL()
         GLVendor = gl.GetString(gl.VENDOR)
         GLRenderer = gl.GetString(gl.RENDERER)
         GLVersion = gl.GetString(gl.VERSION)
@@ -222,7 +210,7 @@ def main():
     LogoImage = Image.open(StringIO.StringIO(LOGO))
     LogoTexture = gl.make_texture(gl.TEXTURE_2D, filter=gl.NEAREST, img=LogoImage)
     DrawLogo()
-    pygame.display.flip()
+    Platform.SwapBuffers()
 
     # initialize OSD font
     try:
@@ -333,7 +321,7 @@ def main():
     if CacheMode and not(BackgroundRendering):
         DrawLogo()
         DrawProgress(0.0)
-        pygame.display.flip()
+        Platform.SwapBuffers()
         for pdf in FileProps:
             if pdf.lower().endswith(".pdf"):
                 ParsePDF(pdf)
@@ -355,11 +343,11 @@ def main():
             DrawLogo()
             progress += 1.0 / PageCount;
             DrawProgress(progress)
-            pygame.display.flip()
+            Platform.SwapBuffers()
 
     # create buffer textures
     DrawLogo()
-    pygame.display.flip()
+    Platform.SwapBuffers()
     Tcurrent, Tnext = [gl.make_texture(gl.TEXTURE_2D, gl.CLAMP_TO_EDGE, gl.LINEAR) for dummy in (1,2)]
 
     # prebuffer current and next page

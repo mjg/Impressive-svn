@@ -38,7 +38,7 @@ def DrawOverview():
     DrawOSDEx(OSDStatusPos, CurrentOSDStatus)
     OSDFont.EndDraw()
     DrawOverlays()
-    pygame.display.flip()
+    Platform.SwapBuffers()
 
 # overview zoom effect, time mapped through func
 def OverviewZoom(func):
@@ -94,7 +94,7 @@ def OverviewZoom(func):
         DrawOSDEx(OSDStatusPos, CurrentOSDStatus,  alpha_factor=t)
         OSDFont.EndDraw()
         DrawOverlays()
-        pygame.display.flip()
+        Platform.SwapBuffers()
     TransitionRunning = False
 
 # overview keyboard navigation

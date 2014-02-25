@@ -192,7 +192,7 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
     # Done.
     DrawOverlays()
     if do_flip:
-        pygame.display.flip()
+        Platform.SwapBuffers()
 
 # draw a black screen with the Impressive logo at the center
 def DrawLogo():
@@ -247,7 +247,7 @@ def DrawFadeMode(intensity, alpha):
         color0=color, color1=color
     )
     gl.Disable(gl.BLEND)
-    pygame.display.flip()
+    Platform.SwapBuffers()
 
 def EnterFadeMode(intensity=0.0):
     t0 = pygame.time.get_ticks()

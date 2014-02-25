@@ -37,6 +37,7 @@ if __name__ == "__main__":
 execfile("src/defaults.py", globals())
 execfile("src/init.py", globals())
 execfile("src/globals.py", globals())
+execfile("src/platform.py", globals())
 execfile("src/tools.py", globals())
 execfile("src/glcore.py", globals())
 execfile("src/shaders.py", globals())
