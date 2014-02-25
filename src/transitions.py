@@ -193,9 +193,11 @@ class Wipe(Transition):
             1.0 - 1.0 / self.ry)
         gl.BindTexture(gl.TEXTURE_2D, shader.mask_tex)
         gl.TexImage2D(gl.TEXTURE_2D, 0, gl.LUMINANCE, self.rx, self.ry, 0, gl.LUMINANCE, gl.UNSIGNED_BYTE, self.mask)
+    def bind_mask_tex(self, shader):
+        gl.set_texture(gl.TEXTURE_2D, shader.mask_tex, 2)
     def render(self, t):
         shader = self.WipeShader.get_instance().use()
-        gl.set_texture(gl.TEXTURE_2D, shader.mask_tex, 2)
+        self.bind_mask_tex(shader)  # own method b/c WipeBrightness overrides it
         gl.set_texture(gl.TEXTURE_2D, Tnext, 1)
         gl.set_texture(gl.TEXTURE_2D, Tcurrent, 0)
         gl.Uniform2f(shader.uAlphaTransform,
@@ -260,17 +262,70 @@ class WipeCenterIn(Wipe):
         Wipe.__init__(self)
     def f(self, x, y):
         return 1.0 - hypot((x - 0.5) * DAR, y - 0.5) * self.scale
-AllTransitions.extend([WipeLeft, WipeRight, WipeUp, WipeDown, WipeUpLeft, WipeUpRight, WipeDownLeft, WipeDownRight, WipeCenterOut, WipeCenterIn])
+class WipeBlobs(Wipe):
+    """wipe using nice "blob"-like patterns"""
+    rx, ry = 64, 32
+    class_mask = False
+    def __init__(self):
+        self.x0 = random.random() * 6.2
+        self.y0 = random.random() * 6.2
+        self.sx = (random.random() * 15.0 + 5.0) * DAR
+        self.sy =  random.random() * 15.0 + 5.0
+        Wipe.__init__(self)
+    def f(self, x, y):
+        return 0.5 + 0.25 * (cos(self.x0 + self.sx * x) + cos(self.y0 + self.sy * y))
+class WipeClouds(Wipe):
+    """wipe using cloud-like patterns"""
+    rx, ry = 128, 128
+    class_mask = False
+    decay = 0.25
+    blur = 5
+    def prepare_mask(self):
+        assert self.rx == self.ry
+        noise = Image.fromstring('L', (self.rx * 4, self.ry * 2), ''.join(map(chr, (random.randrange(256) for i in xrange(self.rx * self.ry * 8)))))
+        img = Image.new('L', (1, 1), random.randrange(256))
+        alpha = 1.0
+        npos = 0
+        border = 0
+        while img.size[0] <= self.rx:
+            border += 2
+            next = img.size[0] * 2
+            alpha *= self.decay
+            img = Image.blend(
+                img.resize((next, next), Image.BILINEAR),
+                noise.crop((npos, 0, npos + next, next)),
+                alpha)
+            npos += next
+        img = ImageOps.equalize(ImageOps.autocontrast(img))
+        for i in xrange(self.blur):
+            img = img.filter(ImageFilter.BLUR)
+        img = img.crop((border, border, img.size[0] - 2 * border, img.size[1] - 2 * border)).resize((self.rx, self.ry), Image.ANTIALIAS)
+        return img.tostring()
+class WipeBrightness1(Wipe):
+    """wipe based on the current slide's brigtness"""
+    band_size = 1.0
+    def prepare_mask(self):
+        return True  # dummy
+    def start(self):
+        shader = self.WipeShader.get_instance().use()
+        gl.Uniform4f(shader.uMaskTransform, 0.0, 0.0, TexMaxS, TexMaxT)
+    def bind_mask_tex(self, dummy):
+        gl.set_texture(gl.TEXTURE_2D, Tcurrent, 2)
+class WipeBrightness2(WipeBrightness1):
+    """wipe based on the next slide's brigtness"""
+    def bind_mask_tex(self, dummy):
+        gl.set_texture(gl.TEXTURE_2D, Tnext, 2)
+AllTransitions.extend([WipeLeft, WipeRight, WipeUp, WipeDown, WipeUpLeft, WipeUpRight, WipeDownLeft, WipeDownRight, WipeCenterOut, WipeCenterIn, WipeBlobs, WipeClouds, WipeBrightness1, WipeBrightness2])
 
 
 # the AvailableTransitions array contains a list of all transition classes that
 # can be randomly assigned to pages;
 # this selection normally only includes "unintrusive" transtitions, i.e. mostly
-# crossfade variations
+# crossfade/wipe variations
 AvailableTransitions = [ # from coolest to lamest
+    WipeBlobs,
     WipeCenterOut,
-    WipeDownRight, WipeRight, WipeDown,
-    Crossfade
+    WipeDownRight, WipeRight, WipeDown
 ]
 
 
@@ -280,7 +335,6 @@ missing transitions in gl2 branch so far:
   PageTurn      - another page peel effect, slower but more realistic than PagePeel
   SpinOutIn     - spins the current page out, and the next one in.
   SpiralOutIn   - flushes the current page away to have the next one overflow
-* WipeBlobs     - wipe using nice "blob"-like patterns
   ZoomOutIn     - zooms the current page out, and the next one in.
 """
 #AvailableTransitions = [AllTransitions[-1]]
