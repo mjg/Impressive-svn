@@ -33,7 +33,7 @@ def main():
     Platform.Init()
 
     # detect screen size and compute aspect ratio
-    if Fullscreen and UseAutoScreenSize:
+    if Fullscreen and (UseAutoScreenSize or not(Platform.allow_custom_fullscreen_res)):
         size = Platform.GetScreenSize()
         if size:
             ScreenWidth, ScreenHeight = size
