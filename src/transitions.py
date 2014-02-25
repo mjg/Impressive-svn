@@ -302,7 +302,7 @@ class WipeClouds(Wipe):
         img = img.crop((border, border, img.size[0] - 2 * border, img.size[1] - 2 * border)).resize((self.rx, self.ry), Image.ANTIALIAS)
         return img.tostring()
 class WipeBrightness1(Wipe):
-    """wipe based on the current slide's brigtness"""
+    """wipe based on the current slide's brightness"""
     band_size = 1.0
     def prepare_mask(self):
         return True  # dummy
@@ -312,10 +312,92 @@ class WipeBrightness1(Wipe):
     def bind_mask_tex(self, dummy):
         gl.set_texture(gl.TEXTURE_2D, Tcurrent, 2)
 class WipeBrightness2(WipeBrightness1):
-    """wipe based on the next slide's brigtness"""
+    """wipe based on the next slide's brightness"""
     def bind_mask_tex(self, dummy):
         gl.set_texture(gl.TEXTURE_2D, Tnext, 2)
 AllTransitions.extend([WipeLeft, WipeRight, WipeUp, WipeDown, WipeUpLeft, WipeUpRight, WipeDownLeft, WipeDownRight, WipeCenterOut, WipeCenterIn, WipeBlobs, WipeClouds, WipeBrightness1, WipeBrightness2])
+
+
+class PagePeel(Transition):
+    "an unrealistic, but nice page peel effect"
+    class PagePeel_PeeledPageShader(GLShader):
+        vs = """
+            attribute highp vec2 aPos;
+            uniform highp vec4 uPosTransform;
+            varying mediump vec2 vTexCoord;
+            void main() {
+                highp vec2 pos = uPosTransform.xy + aPos * uPosTransform.zw;
+                gl_Position = vec4(vec2(-1.0, 1.0) + pos * vec2(2.0, -2.0), 0.0, 1.0);
+                vTexCoord = aPos + vec2(0.0, -0.5);
+            }
+        """
+        fs = """
+            uniform lowp sampler2D uTex;
+            uniform highp vec4 uTexTransform;
+            uniform highp float uHeight;
+            uniform mediump float uShadowStrength;
+            varying mediump vec2 vTexCoord;
+            void main() {
+                mediump vec2 tc = vTexCoord;
+                tc.y *= 1.0 - tc.x * uHeight;
+                tc.x = mix(tc.x, tc.x * tc.x, uHeight);
+                tc = uTexTransform.xy + (tc + vec2(0.0, 0.5)) * uTexTransform.zw;
+                mediump float shadow_pos = 1.0 - vTexCoord.x;
+                mediump float light = 1.0 - (shadow_pos * shadow_pos) * uShadowStrength;
+                gl_FragColor = vec4(light, light, light, 1.0) * texture2D(uTex, tc);
+            }
+        """
+        attributes = { 0: 'aPos' }
+        uniforms = ['uPosTransform', 'uTexTransform', 'uHeight', 'uShadowStrength']
+    class PagePeel_RevealedPageShader(GLShader):
+        vs = """
+            attribute highp vec2 aPos;
+            uniform highp vec4 uPosTransform;
+            uniform highp vec4 uTexTransform;
+            varying mediump vec2 vTexCoord;
+            varying mediump float vShadowPos;
+            void main() {
+                highp vec2 pos = uPosTransform.xy + aPos * uPosTransform.zw;
+                gl_Position = vec4(vec2(-1.0, 1.0) + pos * vec2(2.0, -2.0), 0.0, 1.0);
+                vShadowPos = 1.0 - aPos.x;
+                vTexCoord = uTexTransform.xy + aPos * uTexTransform.zw;
+            }
+        """
+        fs = """
+            uniform lowp sampler2D uTex;
+            uniform mediump float uShadowStrength;
+            varying mediump vec2 vTexCoord;
+            varying mediump float vShadowPos;
+            void main() {
+                mediump float light = 1.0 - (vShadowPos * vShadowPos) * uShadowStrength;
+                gl_FragColor = vec4(light, light, light, 1.0) * texture2D(uTex, vTexCoord);
+            }
+        """
+        attributes = { 0: 'aPos' }
+        uniforms = ['uPosTransform', 'uTexTransform', 'uShadowStrength']
+    def __init__(self):
+        shader = self.PagePeel_PeeledPageShader.get_instance().use()
+        gl.Uniform4f(shader.uTexTransform, 0.0, 0.0, TexMaxS, TexMaxT)
+        self.PagePeel_RevealedPageShader.get_instance()
+    def render(self, t):
+        angle = t * 0.5 * pi
+        split = cos(angle)
+        height = sin(angle)
+        # draw the old page that is peeled away
+        gl.BindTexture(gl.TEXTURE_2D, Tcurrent)
+        shader = self.PagePeel_PeeledPageShader.get_instance().use()
+        gl.Uniform4f(shader.uPosTransform, 0.0, 0.0, split, 1.0)
+        gl.Uniform1f(shader.uHeight, height * 0.25)
+        gl.Uniform1f(shader.uShadowStrength, 0.2 * (1.0 - split));
+        SimpleQuad.draw()
+        # draw the new page that is revealed
+        gl.BindTexture(gl.TEXTURE_2D, Tnext)
+        shader = self.PagePeel_RevealedPageShader.get_instance().use()
+        gl.Uniform4f(shader.uPosTransform, split, 0.0, 1.0 - split, 1.0)
+        gl.Uniform4f(shader.uTexTransform, split * TexMaxS, 0.0, (1.0 - split) * TexMaxS, TexMaxT)
+        gl.Uniform1f(shader.uShadowStrength, split);
+        SimpleQuad.draw()
+AllTransitions.append(PagePeel)
 
 
 # the AvailableTransitions array contains a list of all transition classes that
@@ -331,7 +413,6 @@ AvailableTransitions = [ # from coolest to lamest
 
 """
 missing transitions in gl2 branch so far:
-  PagePeel      - an unrealistic, but nice page peel effect
   PageTurn      - another page peel effect, slower but more realistic than PagePeel
   SpinOutIn     - spins the current page out, and the next one in.
   SpiralOutIn   - flushes the current page away to have the next one overflow
