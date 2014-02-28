@@ -169,20 +169,23 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
         SpotIndices.draw()
 
     if Marking:
+        x0 = min(MarkUL[0], MarkLR[0])
+        y0 = min(MarkUL[1], MarkLR[1])
+        x1 = max(MarkUL[0], MarkLR[0])
+        y1 = max(MarkUL[1], MarkLR[1])
         # red frame (misusing the progress bar shader as a single-color shader)
         color = (MarkColor[0], MarkColor[1], MarkColor[2], 1.0)
         ProgressBarShader.get_instance().draw(
-            MarkUL[0] - PixelX * ZoomArea, MarkUL[1] - PixelY * ZoomArea,
-            MarkLR[0] + PixelX * ZoomArea, MarkLR[1] + PixelY * ZoomArea,
+            x0 - PixelX * ZoomArea, y0 - PixelY * ZoomArea,
+            x1 + PixelX * ZoomArea, y1 + PixelY * ZoomArea,
             color0=color, color1=color
         )
         # semi-transparent inner area
         gl.Enable(gl.BLEND)
         TexturedRectShader.get_instance().draw(
-            MarkUL[0], MarkUL[1],
-            MarkLR[0], MarkLR[1],
-            MarkUL[0] * TexMaxS, MarkUL[1] * TexMaxT,
-            MarkLR[0] * TexMaxS, MarkLR[1] * TexMaxT,
+            x0, y0, x1, y1,
+            x0 * TexMaxS, y0 * TexMaxT,
+            x1 * TexMaxS, y1 * TexMaxT,
             tex=Tcurrent, color=(1.0, 1.0, 1.0, 1.0 - MarkColor[3])
         )
 
