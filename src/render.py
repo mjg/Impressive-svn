@@ -25,14 +25,13 @@ class PDFRendererBase(object):
         # search for a working binary and run it to get a list of its options
         self.binary = None
         for test_binary in ([binary] if binary else self.binaries):
+            test_binary = FindBinary(test_binary)
             try:
                 p = subprocess.Popen([test_binary] + self.test_run_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 data = p.stdout.read()
-                res = p.wait()
+                p.wait()
             except OSError:
                 continue
-            if res:
-                raise RendererUnavailable("%s returned failure" % test_binary)
             self.binary = test_binary
             break
         if not self.binary:
@@ -75,11 +74,33 @@ class PDFRendererBase(object):
         except OSError:
             pass
 
+class MuPDFRenderer(PDFRendererBase):
+    name = "MuPDF"
+    binaries = ["mudraw", "pdfdraw"]
+    test_run_args = []
+    required_options = ["o", "r", "b"]
+
+    def render(self, filename, page, res, antialias=True):
+        imgfile = TempFileName + ".ppm"
+        if not antialias:
+            aa_opts = ["-b", "0"]
+        else:
+            aa_opts = []
+        self.execute([
+            "-o", imgfile,
+            "-r", str(res[0]),
+            ] + aa_opts + [
+            filename,
+            str(page)
+        ])
+        return self.load(imgfile)
+AvailableRenderers.append(MuPDFRenderer)
+
 class XpdfRenderer(PDFRendererBase):
     name = "Xpdf/Poppler"
     binaries = ["pdftoppm"]
     test_run_args = ["-h"]
-    required_options = ["q", "f", "l"]
+    required_options = ["q", "f", "l", "r"]
 
     def __init__(self, binary=None):
         PDFRendererBase.__init__(self, binary)
@@ -190,10 +211,7 @@ def RenderPDF(page, MayAdjustResolution, ZoomMode):
     zscale = 1
 
     # handle supersample and zoom mode
-    if Supersample and not(ZoomMode):
-        AlphaBits = 1
-    else:
-        AlphaBits = 4
+    use_aa = True
     if ZoomMode:
         res = (ZoomFactor * res[0], ZoomFactor * res[1])
         out = (ZoomFactor * out[0], ZoomFactor * out[1])
@@ -201,6 +219,7 @@ def RenderPDF(page, MayAdjustResolution, ZoomMode):
     elif Supersample:
         res = (Supersample * res[0], Supersample * res[1])
         out = (Supersample * out[0], Supersample * out[1])
+        use_aa = False
 
     # prepare the renderer options
     if PDFRenderer.supports_anamorphic:
@@ -215,7 +234,7 @@ def RenderPDF(page, MayAdjustResolution, ZoomMode):
 
     # call the renderer
     try:
-        img = PDFRenderer.render(SourceFile, RealPage, useres)
+        img = PDFRenderer.render(SourceFile, RealPage, useres, use_aa)
     except RenderError, e:
         print >>sys.stderr, "ERROR: failed to render page %d:" % page, e
         return DummyPage()

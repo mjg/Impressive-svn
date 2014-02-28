@@ -346,7 +346,7 @@ def main():
             if (page >= PageRangeStart) and (page <= PageRangeEnd):
                 PageImage(page)
             DrawLogo()
-            progress += 1.0 / PageCount;
+            progress += 1.0 / PageCount
             DrawProgress(progress)
             Platform.SwapBuffers()
 

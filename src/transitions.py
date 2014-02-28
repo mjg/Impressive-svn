@@ -209,7 +209,11 @@ class Wipe(Transition):
         xx = [i * scale for i in xrange((self.rx + 3) & (~3))]
         scale = 1.0 / (self.ry - 1)
         yy = [i * scale for i in xrange(self.ry)]
-        return ''.join(chr(max(0, min(255, int(self.f(x, y) * 255.0 + 0.5)))) for y, x in itertools.product(yy, xx))
+        def iter2d():
+            for y in yy:
+                for x in xx:
+                    yield (x, y)
+        return ''.join(chr(max(0, min(255, int(self.f(x, y) * 255.0 + 0.5)))) for x, y in iter2d())
     def f(self, x, y):
         return 0.5
 class WipeLeft(Wipe):
