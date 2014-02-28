@@ -132,7 +132,7 @@ class MuPDFRenderer(PDFRendererBase):
                 ] + aa_opts + [
                 filename,
                 str(page)
-            ])       
+            ])
             if fifo:
                 if comm.error:
                     raise RenderError(comm.error)
@@ -416,7 +416,7 @@ def LoadImage(page, ZoomMode):
 
 # render a page to an OpenGL texture
 def PageImage(page, ZoomMode=False, RenderMode=False):
-    global OverviewNeedUpdate
+    global OverviewNeedUpdate, HighQualityOverview
     EnableCacheRead = not(ZoomMode or RenderMode)
     EnableCacheWrite = EnableCacheRead and \
                        (page >= PageRangeStart) and (page <= PageRangeEnd)
@@ -474,12 +474,21 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
                 # then, scale down the original image and paste it
                 if HalfScreen:
                     img = img.crop((0, 0, img.size[0] / 2, img.size[1]))
-                img.thumbnail((OverviewCellX - 2 * OverviewBorder, \
-                               OverviewCellY - 2 * OverviewBorder), \
-                               Image.ANTIALIAS)
+                sx = OverviewCellX - 2 * OverviewBorder
+                sy = OverviewCellY - 2 * OverviewBorder
+                if HighQualityOverview:
+                    t0 = time.time()
+                    img.thumbnail((sx, sy), Image.ANTIALIAS)
+                    if (time.time() - t0) > 0.5:
+                        print >>sys.stderr, "Note: Your system seems to be quite slow; falling back to a faster,"
+                        print >>sys.stderr, "      but slightly lower-quality overview page rendering mode"
+                        HighQualityOverview = False
+                else:
+                    img.thumbnail((sx * 2, sy * 2), Image.NEAREST)
+                    img.thumbnail((sx, sy), Image.BILINEAR)
                 OverviewImage.paste(img, \
-                   (pos[0] + (OverviewCellX - img.size[0]) / 2, \
-                    pos[1] + (OverviewCellY - img.size[1]) / 2))
+                   (pos[0] + (OverviewCellX - sx) / 2, \
+                    pos[1] + (OverviewCellY - sy) / 2))
             finally:
                 Loverview.release()
             SetPageProp(page, '_overview_rendered', True)
@@ -489,7 +498,7 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
         # return texture data
         if RenderMode:
             return TextureImage
-        data=TextureImage.tostring()
+        data = TextureImage.tostring()
         del TextureImage
     finally:
       Lrender.release()
@@ -533,6 +542,9 @@ def RenderThread(p1, p2):
     if CacheMode >= FileCache:
         print >>sys.stderr, "Background rendering finished, used %.1f MiB of disk space." %\
               (CacheFilePos / 1048576.0)
+    elif CacheMode >= MemCache:
+        print >>sys.stderr, "Background rendering finished, using %.1f MiB of memory." %\
+              (sum(map(len, PageCache.itervalues())) / 1048576.0)
 
 
 ##### RENDER MODE ##############################################################

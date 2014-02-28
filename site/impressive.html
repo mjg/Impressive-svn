@@ -112,7 +112,7 @@ Regarding external dependencies, the section above applies as well; in addition,
 <dd>Specifies the display aspect ratio. Normally, Impressive assumes that the pixel aspect ratio is 1:1 (square pixels), regardless of the display resolution that has been set up. If a resolution has been selected that doesn't match the display's aspect ratio, the screen will be distorted. To overcome this, this option may be used to manually specify the display aspect ratio, e.g. &raquo;-A 16:9&laquo;. Note that this option has no effect if Xpdf is used for rendering.</dd>
 
 <dt><code>-b</code> or <code>--noback</code></dt>
-<dd>Disabled background rendering. By default, Impressive will pre-render all pages in a separate background thread while the presentation runs. If this option is specified, it will instead render all pages immediately on startup. This option has no effect if caching is disabled (<code>--cache none</code>, see below).</dd>
+<dd>Disables background rendering. By default, Impressive will pre-render all pages in a separate background thread while the presentation runs. If this option is specified, it will instead render all pages immediately on startup. This option has no effect if caching is disabled (<code>--cache none</code>, see below).</dd>
 
 <dt><code>-B <em>&lt;ms&gt;</em></code> or <code>--boxfade <em>&lt;ms&gt;</em></code></dt>
 <dd>Sets the duration (in milliseconds) of the highlight box fade-in/fade-out animation. Default value: 100 ms.</dd>
@@ -121,7 +121,8 @@ Regarding external dependencies, the section above applies as well; in addition,
 <dd>Specifies the page cache mode to use. Valid options are:<dl>
 <dt><code>none</code></dt><dd>Disables page caching altogether, only the current and the following page will be kept in RAM. Jumping between pages will be very slow, because Impressive will need to render the requested pages on the fly. In addition, the overview page won't be complete until every page has been shown at least once.</dd>
 <dt><code>memory</code></dt><dd>Caches all page images in memory. This is the fastest method, but it requires very large amounts of memory (about 3 MiB per page at 1024x768 resolution).</dd>
-<dt><code>disk</code></dt><dd>Like above, but uses a temporary file rather than memory for storage. This is the default.</dd>
+<dt><code>compressed</code> or <code>z</code></dt><dd>Caches all page images in memory as well, but in compressed form. This will be a little slower than <code>memory</code> mode, but on pages with uniform backgrounds, this will easily reduce the required amount of RAM by a factor of 20.</dd>
+<dt><code>disk</code></dt><dd>Like <code>memory</code>, but uses a temporary file rather than memory for storage. This is the default.</dd>
 <dt><code>persistent</code></dt><dd>Uses a permanent cache file for caching. This file will not be deleted when Impressive quits and will be reused on subsequent invocations. The default name for the cache file is derived like the names for Info Scripts (see below for an explanation), but with a <code>.cache</code> file name extension instead of <code>.info</code>. This method is a little bit slower than <code>disk</code> mode, but the time span until the overview page is fully populated will be significantly decreased if Impressive is ran again with the same input files and options.</dd>
 </dl>The mode name may be abbreviated at will, down to one character. Thus, <code>--cache persistent</code>, <code>-c persist</code> and even <code>-cp</code> are all synonyms.</dd>
 

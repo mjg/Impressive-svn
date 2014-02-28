@@ -1,5 +1,5 @@
 TopLeft, BottomLeft, TopRight, BottomRight, TopCenter, BottomCenter = range(6)
-NoCache, MemCache, FileCache, PersistentCache = range(4)  # for CacheMode
+NoCache, MemCache, CompressedCache, FileCache, PersistentCache = range(5)  # for CacheMode
 Off, First, Last = range(3)  # for AutoOverview
 
 # You may change the following lines to modify the default settings
@@ -28,6 +28,7 @@ SpotRadius = 64
 MinSpotDetail = 13
 SpotDetail = 12
 CacheMode = FileCache
+HighQualityOverview = True
 OverviewBorder = 3
 OverviewLogoBorder = 24
 AutoOverview = Off

@@ -77,7 +77,8 @@ Timing options:
 Advanced options:
   -c,  --cache <mode>     set page cache mode:
                             -c none       = disable caching completely
-                            -c memory     = store cache in RAM
+                            -c memory     = store cache in RAM, uncompressed
+                            -c compressed = store cache in RAM, compressed
                             -c disk       = store cache on disk temporarily
                             -c persistent = store cache on disk persistently
        --cachefile <path> set the persistent cache file path (implies -cp)
@@ -198,6 +199,8 @@ def ParseCacheMode(arg):
     if "none".startswith(arg): return NoCache
     if "off".startswith(arg): return NoCache
     if "memory".startswith(arg): return MemCache
+    if arg == 'z': return CompressedCache
+    if "compressed".startswith(arg): return CompressedCache
     if "disk".startswith(arg): return FileCache
     if "file".startswith(arg): return FileCache
     if "persistent".startswith(arg): return PersistentCache
