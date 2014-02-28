@@ -142,16 +142,18 @@ class MuPDFRenderer(PDFRendererBase):
             else:
                 return self.load(imgfile)
         finally:
-            comm.error = True
-            if fifo and not(comm.getbuffer()):
-                # if rendering failed and the client process didn't write to
-                # the FIFO at all, the reader thread would block in read()
-                # forever; so let's open+close the FIFO to generate an EOF
-                try:
-                    f = open(imgfile, "w")
-                    f.close()
-                except IOError:
-                    pass
+            if fifo:
+                comm.error = True
+                if not comm.getbuffer():
+                    # if rendering failed and the client process didn't write
+                    # to the FIFO at all, the reader thread would block in
+                    # read() forever; so let's open+close the FIFO to
+                    # generate an EOF and thus wake the thead up
+                    try:
+                        f = open(imgfile, "w")
+                        f.close()
+                    except IOError:
+                        pass
             self.remove(imgfile)
 AvailableRenderers.append(MuPDFRenderer)
 
