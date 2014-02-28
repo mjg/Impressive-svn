@@ -51,7 +51,12 @@ def main():
     for name in FileList:
         ispdf = name.lower().endswith(".pdf")
         if ispdf:
-            # PDF input -> try to pre-parse the PDF file
+            # PDF input -> initialize renderers and if none available, reject
+            if not InitPDFRenderer():
+                print >>sys.stderr, "Ignoring unrenderable input file '%s'." % name
+                continue
+
+            # try to pre-parse the PDF file
             pages = 0
             out = [(ScreenWidth + Overscan, ScreenHeight + Overscan),
                    (ScreenWidth + Overscan, ScreenHeight + Overscan)]
@@ -86,7 +91,7 @@ def main():
 
         # validity check
         if not pages:
-            print >>sys.stderr, "Warning: The input file `%s' could not be analyzed." % name
+            print >>sys.stderr, "WARNING: The input file `%s' could not be analyzed." % name
             continue
 
         # add pages and files into PageProps and FileProps
@@ -409,6 +414,10 @@ def run_main():
             print >>sys.stderr, "Python version:", sys.version
             print >>sys.stderr, "PyGame version:", pygame.__version__
             print >>sys.stderr, "PIL version:", Image.VERSION
+            if PDFRenderer:
+                print >>sys.stderr, "PDF renderer:", PDFRenderer.name
+            else:
+                print >>sys.stderr, "PDF renderer: None"
             if GLVendor: print >>sys.stderr, "OpenGL vendor:", GLVendor
             if GLRenderer: print >>sys.stderr, "OpenGL renderer:", GLRenderer
             if GLVersion: print >>sys.stderr, "OpenGL version:", GLVersion

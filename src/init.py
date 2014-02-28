@@ -18,14 +18,14 @@ if os.name == "nt":
     root = os.path.split(sys.argv[0])[0] or "."
     _find_paths = [root, os.path.join(root, "win32"), os.path.join(root, "gs")] + filter(None, os.getenv("PATH").split(';'))
     def FindBinary(binary):
+        if not binary.lower().endswith(".exe"):
+            binary += ".exe"
         for p in _find_paths:
             path = os.path.join(p, binary)
             if os.path.isfile(path):
                 return path
-        return os.path.join(root, binary)  # fall-back if not found
+        return binary  # fall-back if not found
     pdftkPath = FindBinary("pdftk.exe")
-    pdftoppmPath = FindBinary("pdftoppm.exe")
-    GhostScriptPath = FindBinary("gswin32c.exe")
     GhostScriptPlatformOptions = ["-I" + os.path.join(root, "gs")]
     try:
         import win32api
@@ -44,8 +44,7 @@ if os.name == "nt":
     FontPath = []
     FontList = ["Verdana.ttf", "Arial.ttf"]
 else:
-    pdftoppmPath = "pdftoppm"
-    GhostScriptPath = "gs"
+    def FindBinary(x): return x
     GhostScriptPlatformOptions = []
     MPlayerPath = "mplayer"
     MPlayerPlatformOptions = [ "-vo", "gl" ]

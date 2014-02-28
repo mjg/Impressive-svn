@@ -82,7 +82,8 @@ Advanced options:
                             -c persistent = store cache on disk persistently
        --cachefile <path> set the persistent cache file path (implies -cp)
   -b,  --noback           don't pre-render images in the background
-  -P,  --gspath <path>    set path to GhostScript or pdftoppm executable
+  -P,  --renderer <path>  set path to PDF renderer executable (GhostScript,
+                          Xpdf/Poppler pdftoppm, or MuPDF mudraw/pdfdraw)
   -V,  --overscan <px>    render PDF files <px> pixels larger than the screen
        --nologo           disable startup logo and version number display
        --noclicks         disable page navigation via left/right mouse click
@@ -120,8 +121,10 @@ def ParseTime(s):
         or TryTime(s, r'([0-9]+)[h:]([0-9]+)[hm]?$', lambda m: m[0] * 3600 + m[1] * 60) \
         or TryTime(s, r'([0-9]+)[h:]([0-9]+)[m:]([0-9]+)s?$', lambda m: m[0] * 3600 + m[1] * 60 + m[2])
 
-def opterr(msg):
+def opterr(msg, extra_lines=[]):
     print >>sys.stderr, "command line parse error:", msg
+    for line in extra_lines:
+        print >>sys.stderr, line
     print >>sys.stderr, "use `%s -h' to get help" % sys.argv[0]
     print >>sys.stderr, "or visit", __website__, "for full documentation"
     sys.exit(2)
@@ -219,7 +222,7 @@ def ParseOptions(argv):
     global BackgroundRendering, UseAutoScreenSize, PollInterval, CacheFileName
     global PageRangeStart, PageRangeEnd, FontList, FontSize, Gamma, BlackLevel
     global EstimatedDuration, CursorImage, CursorHotspot, MinutesOnly, Overscan
-    global GhostScriptPath, pdftoppmPath, UseGhostScript, InfoScriptPath
+    global PDFRendererPath, InfoScriptPath
     global AutoOverview, ZoomFactor, FadeInOut, ShowLogo, Shuffle, PageProgress
     global QuitAtEnd, PageClicks, ShowClock, HalfScreen, SpotRadius, InvertPages
     global MinBoxSize, AutoAutoAdvance, AutoAdvanceProgress, BoxFadeDarkness
@@ -231,7 +234,7 @@ def ParseOptions(argv):
            ["help", "fullscreen", "geometry=", "scale", "supersample", \
             "nocache", "initialpage=", "wrap", "auto", "listtrans", "output=", \
             "rotate=", "transition=", "transtime=", "mousedelay=", "boxfade=", \
-            "zoom=", "gspath=", "aspect=", "memcache", \
+            "zoom=", "gspath=", "renderer=", "aspect=", "memcache", \
             "noback", "pages=", "poll=", "font=", "fontsize=", "gamma=",
             "duration=", "cursor=", "minutes", "layout=", "script=", "cache=",
             "cachefile=", "autooverview=", "zoomtime=", "fade", "nologo",
@@ -315,12 +318,13 @@ def ParseOptions(argv):
                 ZoomDuration = 0
         if opt == "--invert":
             InvertPages = not(InvertPages)
-        if opt in ("-P", "--gspath"):
-            UseGhostScript = (arg.replace("\\", "/").split("/")[-1].lower().find("pdftoppm") < 0)
-            if UseGhostScript:
-                GhostScriptPath = arg
+        if opt in ("-P", "--gspath", "--renderer"):
+            if any(r.supports(arg) for r in AvailableRenderers):
+                PDFRendererPath = arg
             else:
-                pdftoppmPath = arg
+                opterr("unrecognized --renderer",
+                    ["supported renderer binaries are:"] +
+                    ["- %s (%s)" % (", ".join(r.binaries), r.name) for r in AvailableRenderers])
         if opt in ("-S", "--fontsize"):
             try:
                 FontSize = int(arg)
