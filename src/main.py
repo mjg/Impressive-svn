@@ -212,7 +212,7 @@ def main():
     EdgeY = BoxEdgeSize * PixelY
 
     # prepare logo image
-    LogoImage = Image.open(StringIO.StringIO(LOGO))
+    LogoImage = Image.open(cStringIO.StringIO(LOGO))
     LogoTexture = gl.make_texture(gl.TEXTURE_2D, filter=gl.NEAREST, img=LogoImage)
     DrawLogo()
     Platform.SwapBuffers()

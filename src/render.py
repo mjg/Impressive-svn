@@ -56,7 +56,7 @@ class PDFRendererBase(object):
         except OSError, e:
             raise RenderError("could not start renderer - %s" % e)
 
-    def load(self, imgfile, autoremove=True):
+    def load(self, imgfile, autoremove=False):
         try:
             img = Image.open(imgfile)
             img.load()
@@ -80,20 +80,79 @@ class MuPDFRenderer(PDFRendererBase):
     test_run_args = []
     required_options = ["o", "r", "b"]
 
+    # helper object for communication with the reader thread
+    class ThreadComm(object):
+        def __init__(self, imgfile):
+            self.imgfile = imgfile
+            self.buffer = None
+            self.error = None
+            self.cancel = False
+
+        def getbuffer(self):
+            if self.buffer:
+                return self.buffer
+            # the reader thread might still be busy reading the last
+            # chunks of the data and converting them into a StringIO;
+            # let's give it some time
+            maxwait = time.time() + (0.1 if self.error else 0.5)
+            while not(self.buffer) and (time.time() < maxwait):
+                print ".",
+                time.sleep(0.01)
+            return self.buffer
+
+    @staticmethod
+    def ReaderThread(comm):
+        try:
+            f = open(comm.imgfile, 'rb')
+            comm.buffer = cStringIO.StringIO(f.read())
+            f.close()
+        except IOError, e:
+            comm.error = "could not open FIFO for reading - %s" % e
+
     def render(self, filename, page, res, antialias=True):
         imgfile = TempFileName + ".ppm"
+        fifo = False
+        if HaveThreads:
+            self.remove(imgfile)
+            try:
+                os.mkfifo(imgfile)
+                fifo = True
+                comm = self.ThreadComm(imgfile)
+                thread.start_new_thread(self.ReaderThread, (comm, ))
+            except (OSError, IOError, AttributeError):
+                pass
         if not antialias:
             aa_opts = ["-b", "0"]
         else:
             aa_opts = []
-        self.execute([
-            "-o", imgfile,
-            "-r", str(res[0]),
-            ] + aa_opts + [
-            filename,
-            str(page)
-        ])
-        return self.load(imgfile)
+        try:
+            self.execute([
+                "-o", imgfile,
+                "-r", str(res[0]),
+                ] + aa_opts + [
+                filename,
+                str(page)
+            ])       
+            if fifo:
+                if comm.error:
+                    raise RenderError(comm.error)
+                if not comm.getbuffer():
+                    raise RenderError("could not read from FIFO")
+                return self.load(comm.buffer, autoremove=False)
+            else:
+                return self.load(imgfile)
+        finally:
+            comm.error = True
+            if fifo and not(comm.getbuffer()):
+                # if rendering failed and the client process didn't write to
+                # the FIFO at all, the reader thread would block in read()
+                # forever; so let's open+close the FIFO to generate an EOF
+                try:
+                    f = open(imgfile, "w")
+                    f.close()
+                except IOError:
+                    pass
+            self.remove(imgfile)
 AvailableRenderers.append(MuPDFRenderer)
 
 class XpdfRenderer(PDFRendererBase):
@@ -131,7 +190,7 @@ class XpdfRenderer(PDFRendererBase):
             if not os.path.exists(imgfile):
                 continue
             SetFileProp(filename, 'digits', digits)
-            return self.load(imgfile)
+            return self.load(imgfile, autoremove=True)
         raise RenderError("could not find generated image file")
 AvailableRenderers.append(XpdfRenderer)
 
@@ -140,23 +199,26 @@ class GhostScriptRenderer(PDFRendererBase):
     binaries = ["gs", "gswin32c"]
     test_run_args = ["--version"]
     supports_anamorphic = True
-    
+
     def render(self, filename, page, res, antialias=True):
         imgfile = TempFileName + ".tif"
         aa_bits = (4 if antialias else 1)
-        self.execute(["-q"] + GhostScriptPlatformOptions + [
-            "-dBATCH", "-dNOPAUSE",
-            "-sDEVICE=tiff24nc",
-            "-dUseCropBox",
-            "-sOutputFile=" + imgfile,
-            "-dFirstPage=%d" % page,
-            "-dLastPage=%d" % page,
-            "-r%dx%d" % res,
-            "-dTextAlphaBits=%d" % aa_bits,
-            "-dGraphicsAlphaBits=%s" % aa_bits,
-            filename
-        ])
-        return self.load(imgfile)
+        try:
+            self.execute(["-q"] + GhostScriptPlatformOptions + [
+                "-dBATCH", "-dNOPAUSE",
+                "-sDEVICE=tiff24nc",
+                "-dUseCropBox",
+                "-sOutputFile=" + imgfile,
+                "-dFirstPage=%d" % page,
+                "-dLastPage=%d" % page,
+                "-r%dx%d" % res,
+                "-dTextAlphaBits=%d" % aa_bits,
+                "-dGraphicsAlphaBits=%s" % aa_bits,
+                filename
+            ])
+            return self.load(imgfile)
+        finally:
+            self.remove(imgfile)
 AvailableRenderers.append(GhostScriptRenderer)
 
 def InitPDFRenderer():

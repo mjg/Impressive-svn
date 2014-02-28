@@ -1,5 +1,5 @@
 # import basic modules
-import random, getopt, os, types, re, codecs, tempfile, glob, StringIO, re
+import random, getopt, os, types, re, codecs, tempfile, glob, cStringIO, re
 import traceback, subprocess, time, itertools, ctypes.util
 from math import *
 from ctypes import *
@@ -77,9 +77,11 @@ intend to use PDF input."""
 
 try:
     import thread
+    HaveThreads = True
     EnableBackgroundRendering = True
     def create_lock(): return thread.allocate_lock()
 except ImportError:
+    HaveThreads = False
     EnableBackgroundRendering = False
     class pseudolock:
         def __init__(self): self.state = False
