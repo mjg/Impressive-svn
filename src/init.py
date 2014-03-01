@@ -43,6 +43,7 @@ if os.name == "nt":
         sys.path.append(root)
     FontPath = []
     FontList = ["Verdana.ttf", "Arial.ttf"]
+    Nice = []
 else:
     def FindBinary(x): return x
     GhostScriptPlatformOptions = []
@@ -52,6 +53,7 @@ else:
     pdftkPath = "pdftk"
     FontPath = ["/usr/share/fonts", "/usr/local/share/fonts", "/usr/X11R6/lib/X11/fonts/TTF"]
     FontList = ["DejaVuSans.ttf", "Vera.ttf", "Verdana.ttf"]
+    Nice = ["nice", "-n", "7"]
     def RunURL(url):
         try:
             subprocess.Popen(["xdg-open", url])
@@ -78,16 +80,16 @@ intend to use PDF input."""
 try:
     import thread
     HaveThreads = True
-    EnableBackgroundRendering = True
     def create_lock(): return thread.allocate_lock()
+    def get_thread_id(): return thread.get_ident()
 except ImportError:
     HaveThreads = False
-    EnableBackgroundRendering = False
     class pseudolock:
         def __init__(self): self.state = False
         def acquire(self, dummy=0): self.state = True
         def release(self): self.state = False
         def locked(self): return self.state
     def create_lock(): return pseudolock()
+    def get_thread_id(): return 0xDEADC0DE
 
 CleanExit = False

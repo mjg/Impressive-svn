@@ -318,8 +318,8 @@ def main():
             print >>sys.stderr, "Warning: Could not determine auto-advance timeout automatically."
 
     # set up background rendering
-    if not EnableBackgroundRendering:
-        print >>sys.stderr, "Background rendering isn't available on this platform."
+    if not HaveThreads:
+        print >>sys.stderr, "Note: Background rendering isn't available on this platform."
         BackgroundRendering = False
 
     # if caching is enabled, pre-render all pages

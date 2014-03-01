@@ -47,8 +47,11 @@ class PDFRendererBase(object):
         raise RenderError()
 
     def execute(self, args, wait=True):
+        args = [self.binary] + args
+        if get_thread_id() == RTrunning:
+            args = Nice + args
         try:
-            process = subprocess.Popen([self.binary] + args)
+            process = subprocess.Popen(args)
             if not wait:
                 return process
             if process.wait() != 0:
@@ -524,7 +527,7 @@ def RenderPage(page, target):
 # background rendering thread
 def RenderThread(p1, p2):
     global RTrunning, RTrestart
-    RTrunning = True
+    RTrunning = get_thread_id() or True
     RTrestart = True
     while RTrestart:
         RTrestart = False
