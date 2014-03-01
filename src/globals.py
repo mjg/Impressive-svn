@@ -51,7 +51,6 @@ PageEnterTime = 0
 PageLeaveTime = 0
 PageTimeout = 0
 TimeDisplay = False
-TimeTracking = False
 FirstPage = True
 ProgressBarPos = 0
 CursorVisible = True

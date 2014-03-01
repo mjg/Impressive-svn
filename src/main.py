@@ -380,6 +380,8 @@ def main():
 
     # start output and enter main loop
     StartTime = pygame.time.get_ticks()
+    if TimeTracking:
+        EnableTimeTracking(True)
     pygame.time.set_timer(USEREVENT_TIMER_UPDATE, 100)
     if not(Fullscreen) and CursorImage:
         pygame.mouse.set_visible(False)

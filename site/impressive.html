@@ -257,6 +257,9 @@ This option does not have any effect if <code>--wrap</code> is used.</dd>
 <dt><code>-T <em>&lt;ms&gt;</em></code> or <code>--transtime <em>&lt;ms&gt;</em></code></dt>
 <dd>Sets the duration (in milliseconds) of page transitions. 0 (zero) disables transitions altogether. Default value: 1000 ms.</dd>
 
+<dt><code>--tracking</code></dt>
+<dd>This option enables time tracking mode. In this mode, a report of all pages visited with their display duration, enter and leave times will be written to standard output. This can be very useful when preparing presentations.</dd>
+
 <dt><code>-u <em>&lt;seconds&gt;</em></code> or <code>--poll <em>&lt;seconds&gt;</em></code></dt>
 <dd>If this option is specified, the source file or directory will be checked for changes regularly. If a change in the input PDF file or any of the image files in the input image directory is detected, the page cache will be flushed and the current page as well as the info script will be reloaded. The current page's transition will be shown between the old and the new version of the page.<br />
 The new PDF file must have at least as much pages as the old one; also, it should have the same aspect ratio. If the input is a directory, image files must not have disappeared.</dd>
@@ -389,7 +392,7 @@ If a page with highlight boxes is left, the boxes will be saved and restored the
 <dd>Save the info script associated with the current presentation. The main purpose for this is to permanently save highlight boxes or keyboard shortcuts, so they will be restored the next time this presentation is started.</dd>
 
 <dt><strong>T</strong> key</dt>
-<dd>Activate or deactivate the time display at the upper-right corner of the screen. If the timer is activated while the very first page of the presentation is shown, it activates &raquo;time tracking&raquo; mode. In this mode, a report of all pages visited with their display duration, enter and leave times will be written to standard output. This can be very useful when preparing presentations.</dd>
+<dd>Activate or deactivate the time display at the upper-right corner of the screen. If the timer is activated while the very first page of the presentation is shown, it activates time tracking mode, just as if the command-line option <code>--tracking</code> had been specified.</dd>
 
 <dt><strong>R</strong> key</dt>
 <dd>Reset the presentation timer.</dd>

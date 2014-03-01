@@ -396,6 +396,15 @@ def TimerTick():
     CurrentTime = newtime
     return redraw
 
+# enables time tracking mode (if not already done so)
+def EnableTimeTracking(force=False):
+    global TimeTracking
+    if force or (TimeDisplay and not(TimeTracking) and not(ShowClock) and FirstPage):
+        print >>sys.stderr, "Time tracking mode enabled."
+        TimeTracking = True
+        print "page duration    enter    leave"
+        print "---- -------- -------- --------"
+
 # set cursor visibility
 def SetCursor(visible):
     global CursorVisible

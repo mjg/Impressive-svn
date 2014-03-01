@@ -61,6 +61,7 @@ Display options:
 Timing options:
   -M,  --minutes          display time in minutes, not seconds
        --clock            show current time instead of time elapsed
+       --tracking         enable time tracking mode
   -a,  --auto <seconds>   automatically advance to next page after some seconds
   -d,  --duration <time>  set the desired duration of the presentation and show
                           a progress bar at the bottom of the screen
@@ -220,7 +221,7 @@ def ParseAutoOverview(arg):
 def ParseOptions(argv):
     global FileName, FileList, Fullscreen, Scaling, Supersample, CacheMode
     global TransitionDuration, MouseHideDelay, BoxFadeDuration, ZoomDuration
-    global ScreenWidth, ScreenHeight, InitialPage, Wrap
+    global ScreenWidth, ScreenHeight, InitialPage, Wrap, TimeTracking
     global AutoAdvance, RenderToDirectory, Rotation, DAR, Verbose
     global BackgroundRendering, UseAutoScreenSize, PollInterval, CacheFileName
     global PageRangeStart, PageRangeEnd, FontList, FontSize, Gamma, BlackLevel
@@ -244,7 +245,8 @@ def ParseOptions(argv):
             "shuffle", "page-progress", "overscan", "autoquit", "noclicks",
             "clock", "half-screen", "spot-radius=", "invert", "min-box-size=",
             "auto-auto", "auto-progress", "darkness=", "no-clicks", "nowheel",
-            "no-wheel", "fake-fullscreen", "windowed", "verbose", "noblur"])
+            "no-wheel", "fake-fullscreen", "windowed", "verbose", "noblur",
+            "tracking"])
     except getopt.GetoptError, message:
         opterr(message)
 
@@ -305,6 +307,8 @@ def ParseOptions(argv):
             PageWheel = not(PageWheel)
         if opt == "--clock":
             ShowClock = not(ShowClock)
+        if opt == "--tracking":
+            TimeTracking = not(TimeTracking)
         if opt in ("-X", "--shuffle"):
             Shuffle = not(Shuffle)
         if opt in ("-Q", "--autoquit"):
