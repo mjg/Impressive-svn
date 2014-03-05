@@ -116,105 +116,111 @@ def OverviewTogglePageProp(prop, default):
     UpdateCaption(page, force=True)
     DrawOverview()
 
-# overview event handler
-def HandleOverviewEvent(event):
-    global OverviewSelection, TimeDisplay
+class ExitOverview(Exception):
+    pass
 
-    if event.type == QUIT:
-        PageLeft(overview=True)
-        Quit()
-    elif event.type == VIDEOEXPOSE:
-        DrawOverview()
-
-    elif event.type == KEYDOWN:
-        if event.key == K_ESCAPE:
-            OverviewSelection = -1
-            return 0
-        if event.unicode == u'q':
-            pygame.event.post(pygame.event.Event(QUIT))
-        elif event.unicode == u'f':
-            SetFullscreen(not Fullscreen)
-        elif (event.key == K_TAB) and (event.mod & KMOD_ALT) and Fullscreen:
-            SetFullscreen(False)
-            pygame.display.iconify()
-        elif event.unicode == u't':
-            TimeDisplay = not(TimeDisplay)
-            DrawOverview()
-        elif event.unicode == u'r':
-            ResetTimer()
-            if TimeDisplay: DrawOverview()
-        elif event.unicode == u's':
-            SaveInfoScript(InfoScriptPath)
-        elif event.unicode == u'o':
-            OverviewTogglePageProp('overview', GetPageProp(Pcurrent, '_overview', True))
-        elif event.unicode == u'i':
-            OverviewTogglePageProp('skip', False)
-        elif event.key == K_UP:    OverviewKeyboardNav(-OverviewGridSize)
-        elif event.key == K_LEFT:  OverviewKeyboardNav(-1)
-        elif event.key == K_RIGHT: OverviewKeyboardNav(+1)
-        elif event.key == K_DOWN:  OverviewKeyboardNav(+OverviewGridSize)
-        elif event.key == K_TAB:
-            OverviewSelection = -1
-            return 0
-        elif event.key in (K_RETURN, K_KP_ENTER):
-            return 0
-        elif IsValidShortcutKey(event.key):
-            if event.mod & KMOD_SHIFT:
-                try:
-                    AssignShortcut(OverviewPageMap[OverviewSelection], event.key)
-                except IndexError:
-                    pass   # no valid page selected
-            else:
-                # load shortcut
-                page = FindShortcut(event.key)
-                if page:
-                    OverviewSelection = OverviewPageMapInv[page]
-                    x, y = OverviewPos(OverviewSelection)
-                    pygame.mouse.set_pos((x + (OverviewCellX / 2), \
-                                          y + (OverviewCellY / 2)))
-                    DrawOverview()
-
-    elif event.type == MOUSEBUTTONUP:
-        if event.button == 1:
-            return 0
-        elif event.button in (2, 3):
-            OverviewSelection = -1
-            return 0
-        elif (event.button == 4) and PageWheel:
-            OverviewKeyboardNav(-1)
-        elif (event.button == 5) and PageWheel:
-            OverviewKeyboardNav(+1)
-
-    elif event.type == MOUSEMOTION:
-        pygame.event.clear(MOUSEMOTION)
-        # mouse move in fullscreen mode -> show mouse cursor and reset mouse timer
-        if Fullscreen:
-            pygame.time.set_timer(USEREVENT_HIDE_MOUSE, MouseHideDelay)
-            SetCursor(True)
+# action implementation for overview mode
+class OverviewActions(BaseActions):
+    def _X_move(self):
+        global OverviewSelection
+        BaseActions._X_move(self)
         # determine highlighted page
+        x, y = Platform.GetMousePos()
         OverviewSelection = \
-             int((event.pos[0] - OverviewOfsX) / OverviewCellX) + \
-             int((event.pos[1] - OverviewOfsY) / OverviewCellY) * OverviewGridSize
+             int((x - OverviewOfsX) / OverviewCellX) + \
+             int((y - OverviewOfsY) / OverviewCellY) * OverviewGridSize
         if (OverviewSelection < 0) or (OverviewSelection >= len(OverviewPageMap)):
             UpdateCaption(0)
         else:
             UpdateCaption(OverviewPageMap[OverviewSelection])
         DrawOverview()
 
-    elif event.type == USEREVENT_HIDE_MOUSE:
-        # mouse timer event -> hide fullscreen cursor
-        pygame.time.set_timer(USEREVENT_HIDE_MOUSE, 0)
-        SetCursor(False)
+    def _X_quit(self):
+        PageLeft(overview=True)
+        Quit()
+
+    def _X_expose(self):
         DrawOverview()
 
-    return 1
+    def _overview_exit(self):
+        "exit overview mode and return to the last viewed page"
+        global OverviewSelection
+        OverviewSelection = -1
+        raise ExitOverview
+    def _overview_confirm(self):
+        "exit overview mode and go to the selected page"
+        raise ExitOverview
+
+    def _fullscreen(self):
+        "toggle fullscreen mode"
+        SetFullscreen(not(Fullscreen))
+
+    def _save(self):
+        "save the info script"
+        SaveInfoScript(InfoScriptPath)
+
+    def _fade_to_black(self):
+        "fade to a black screen"
+        FadeMode(0.0)
+    def _fade_to_white(self):
+        "fade to a white screen"
+        FadeMode(1.0)
+
+    def _time_toggle(self):
+        "toggle time display and/or time tracking mode"
+        global TimeDisplay
+        TimeDisplay = not(TimeDisplay)
+        DrawOverview()
+    def _time_reset(self):
+        "reset the on-screen timer"
+        ResetTimer()
+        if TimeDisplay:
+            DrawOverview()
+
+    def _toggle_skip(self):
+        "toggle the 'skip' flag for the current page"
+        TogglePageProp('skip', False)
+    def _toggle_overview(self):
+        "toggle the 'visible on overview' flag for the current page"
+        TogglePageProp('overview', GetPageProp(Pcurrent, '_overview', True))
+
+    def _overview_up(self):
+        "move the overview selection upwards"
+        OverviewKeyboardNav(-OverviewGridSize)
+    def _overview_prev(self):
+        "select the previous page in overview mode"
+        OverviewKeyboardNav(-1)
+    def _overview_next(self):
+        "select the next page in overview mode"
+        OverviewKeyboardNav(+1)
+    def _overview_down(self):
+        "move the overview selection downwards"
+        OverviewKeyboardNav(+OverviewGridSize)
+
+OverviewActions = OverviewActions()
+
+# overview event handler
+def HandleOverviewEvent(ev):
+    global OverviewSelection
+    try:
+        if not ProcessEvent(ev, OverviewActions):
+            page = HandleShortcutKey(ev, OverviewPageMap[OverviewSelection])
+            if page:
+                OverviewSelection = OverviewPageMapInv[page]
+                x, y = OverviewPos(OverviewSelection)
+                Platform.SetMousePos((x + (OverviewCellX / 2), \
+                                      y + (OverviewCellY / 2)))
+                DrawOverview()
+        return 1
+    except ExitOverview:
+        return 0
 
 # overview mode entry/loop/exit function
 def DoOverview():
     global Pcurrent, Pnext, Tcurrent, Tnext, Tracing, OverviewSelection
     global PageEnterTime, OverviewMode
 
-    pygame.time.set_timer(USEREVENT_PAGE_TIMEOUT, 0)
+    Platform.ScheduleEvent("$page-timeout", 0)
     PageLeft()
     UpdateOverviewTexture()
 
@@ -228,8 +234,8 @@ def DoOverview():
     DrawOverview()
     PageEnterTime = pygame.time.get_ticks() - StartTime
     while True:
-        event = pygame.event.poll()
-        if event.type == NOEVENT:
+        event = Platform.GetEvent(poll=True)
+        if not event:
             force_update = OverviewNeedUpdate
             if OverviewNeedUpdate:
                 UpdateOverviewTexture()

@@ -20,8 +20,8 @@ CacheFilePos = 0
 CacheMagic = ""
 MPlayerProcess = None
 VideoPlaying = False
-MouseDownX = 0
-MouseDownY = 0
+MarkValid, MarkBaseX, MarkBaseY = False, 0, 0
+PanValid, PanBaseX, PanBaseY = False, 0, 0
 MarkUL = (0, 0)
 MarkLR = (0, 0)
 ZoomX0 = 0.0
@@ -68,9 +68,3 @@ SpotIndices = None
 
 # tool constants (used in info scripts)
 FirstTimeOnly = 2
-
-# event constants
-USEREVENT_HIDE_MOUSE = USEREVENT
-USEREVENT_PAGE_TIMEOUT = USEREVENT + 1
-USEREVENT_POLL_FILE = USEREVENT + 2
-USEREVENT_TIMER_UPDATE = USEREVENT + 3

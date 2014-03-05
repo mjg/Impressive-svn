@@ -1,5 +1,7 @@
 ##### INITIALIZATION ###########################################################
 
+LoadDefaultBindings()
+
 def main():
     global gl, ScreenWidth, ScreenHeight, TexWidth, TexHeight, TexSize
     global TexMaxS, TexMaxT, EdgeX, EdgeY, PixelX, PixelY, LogoImage
@@ -365,7 +367,7 @@ def main():
     PrepareTransitions()
     GenerateSpotMesh()
     if PollInterval:
-        pygame.time.set_timer(USEREVENT_POLL_FILE, PollInterval * 1000)
+        Platform.ScheduleEvent("$poll-file", PollInterval * 1000, periodic=True)
 
     # start the background rendering thread
     if CacheMode and BackgroundRendering:
@@ -382,7 +384,7 @@ def main():
     StartTime = pygame.time.get_ticks()
     if TimeTracking:
         EnableTimeTracking(True)
-    pygame.time.set_timer(USEREVENT_TIMER_UPDATE, 100)
+    Platform.ScheduleEvent("$timer-update", 100, periodic=True)
     if not(Fullscreen) and CursorImage:
         pygame.mouse.set_visible(False)
     if FadeInOut:
@@ -390,8 +392,7 @@ def main():
     else:
         DrawCurrentPage()
     UpdateCaption(Pcurrent)
-    while True:
-        HandleEvent(pygame.event.wait())
+    EventHandlerLoop()  # never returns
 
 
 # wrapper around main() that ensures proper uninitialization

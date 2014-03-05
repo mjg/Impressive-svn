@@ -156,7 +156,7 @@ def PageEntered(update_time=True):
         SafeCall(GetPageProp(Pcurrent, 'OnEnterOnce'))
     SafeCall(GetPageProp(Pcurrent, 'OnEnter'))
     if PageTimeout:
-        pygame.time.set_timer(USEREVENT_PAGE_TIMEOUT, PageTimeout)
+        Platform.ScheduleEvent("$page-timeout", PageTimeout)
     SetPageProp(Pcurrent, '_shown', shown + 1)
 
 # called each time a page is left
@@ -202,7 +202,7 @@ def TransitionTo(page, allow_transition=True):
     # first, stop video and kill the auto-timer
     if VideoPlaying:
         StopMPlayer()
-    pygame.time.set_timer(USEREVENT_PAGE_TIMEOUT, 0)
+    Platform.ScheduleEvent("$page-timeout", 0)
 
     # invalid page? go away
     if not PreloadNextPage(page):
@@ -412,34 +412,27 @@ def SetCursor(visible):
     if not CursorImage:
         pygame.mouse.set_visible(visible)
 
-# shortcut handling
-def IsValidShortcutKey(key):
-    return ((key >= K_a)  and (key <= K_z)) \
-        or ((key >= K_0)  and (key <= K_9)) \
-        or ((key >= K_F1) and (key <= K_F12))
-def FindShortcut(shortcut):
-    for page, props in PageProps.iteritems():
-        try:
-            check = props['shortcut']
-            if type(check) != types.StringType:
-                check = int(check)
-            elif (len(check) > 1) and (check[0] in "Ff"):
-                check = K_F1 - 1 + int(check[1:])
-            else:
-                check = ord(check.lower())
-        except (KeyError, TypeError, ValueError):
-            continue
-        if check == shortcut:
+# handle a shortcut key event: store it (if shifted) or return the
+# page number to navigate to (if not)
+def HandleShortcutKey(key, current=0):
+    if not(key) or (key[0] != '*'):
+        return None
+    shift = key.startswith('*shift+')
+    if shift:
+        key = key[7:]
+    else:
+        key = key[1:]
+    if (len(key) == 1) or ((key >= "f1") and (key <= "f9")):
+        # Note: F10..F12 are implicitly included due to lexicographic sorting
+        page = None
+        for check_page, props in PageProps.iteritems():
+            if props.get('shortcut') == key:
+                page = check_page
+                break
+        if shift:
+            if page:
+                DelPageProp(page, 'shortcut')
+            SetPageProp(current, 'shortcut', key)
+        elif page and (page != current):
             return page
     return None
-def AssignShortcut(page, key):
-    old_page = FindShortcut(key)
-    if old_page:
-        del PageProps[old_page]['shortcut']
-    if key < 127:
-        shortcut = chr(key)
-    elif (key >= K_F1) and (key <= K_F15):
-        shortcut = "F%d" % (key - K_F1 + 1)
-    else:
-        shortcut = int(key)
-    SetPageProp(page, 'shortcut', shortcut)

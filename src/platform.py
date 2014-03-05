@@ -4,8 +4,15 @@ class Platform_PyGame(object):
     name = 'pygame'
     allow_custom_fullscreen_res = True
 
+    _buttons = { 1: "lmb", 2: "mmb", 3: "rmb", 4: "wheelup", 5: "wheeldown" }
+    _keys = dict((getattr(pygame.locals, k), k[2:].lower()) for k in [k for k in dir(pygame.locals) if k.startswith('K_')])
+
     def __init__(self):
-        pass
+        self.next_event = None
+        self.schedule_map_ev2flag = {}
+        self.schedule_map_ev2name = {}
+        self.schedule_map_name2ev = {}
+        self.schedule_max = USEREVENT
 
     def Init(self):
         pygame.display.init()
@@ -49,6 +56,92 @@ class Platform_PyGame(object):
 
     def Done(self):
         pygame.display.quit()
+
+    def GetMousePos(self):
+        return pygame.mouse.get_pos()
+    def SetMousePos(self, coords):
+        pygame.mouse.set_pos(coords)
+
+    def _translate_mods(self, key, mods):
+        if mods & KMOD_SHIFT:
+            key = "shift+" + key
+        if mods & KMOD_ALT:
+            key = "alt+" + key
+        if mods & KMOD_CTRL:
+            key = "ctrl+" + key
+        return key
+    def _translate_button(self, ev):
+        try:
+            return self._translate_mods(self._buttons[ev.button], pygame.key.get_mods())
+        except KeyError:
+            return None
+    def _translate_key(self, ev):
+        try:
+            return self._translate_mods(self._keys[ev.key], ev.mod)
+        except KeyError:
+            return None
+
+    def GetEvent(self, poll=False):
+        if self.next_event:
+            ev = self.next_event
+            self.next_event = None
+            return ev
+        if poll:
+            ev = pygame.event.poll()
+        else:
+            ev = pygame.event.wait()
+        if ev.type == NOEVENT:
+            return None
+        elif ev.type == QUIT:
+            return "$quit"
+        elif ev.type == VIDEOEXPOSE:
+            return "$expose"
+        elif ev.type == MOUSEBUTTONDOWN:
+            return '+' + self._translate_button(ev)
+        elif ev.type == MOUSEBUTTONUP:
+            ev = self._translate_button(ev)
+            self.next_event = '-' + ev
+            return '*' + ev
+        elif ev.type == MOUSEMOTION:
+            pygame.event.clear(MOUSEMOTION)
+            return "$move"
+        elif ev.type == KEYDOWN:
+            if ev.mod & KMOD_ALT:
+                if ev.key == K_F4:
+                    return self.PostQuitEvent()
+                elif ev.key == K_TAB:
+                    return "$alt-tab"
+            ev = self._translate_key(ev)
+            self.next_event = '*' + ev
+            return '+' + ev
+        elif ev.type == KEYUP:
+            return '-' + self._translate_key(ev)
+        elif (ev.type >= USEREVENT) and (ev.type < self.schedule_max):
+            if not(self.schedule_map_ev2flag.get(ev.type)):
+                pygame.time.set_timer(ev.type, 0)
+            return self.schedule_map_ev2name.get(ev.type)
+        else:
+            return None
+
+    def ScheduleEvent(self, name, msec=0, periodic=False):
+        try:
+            ev_code = self.schedule_map_name2ev[name]
+        except KeyError:
+            ev_code = self.schedule_max
+            self.schedule_map_name2ev[name] = ev_code
+            self.schedule_map_ev2name[ev_code] = name
+            self.schedule_max += 1
+        self.schedule_map_ev2flag[ev_code] = periodic
+        pygame.time.set_timer(ev_code, msec)
+
+    def PostQuitEvent(self):
+        pygame.event.post(pygame.event.Event(QUIT))
+
+    def ToggleFullscreen(self):
+        return pygame.display.toggle_fullscreen()
+
+    def Minimize(self):
+        pygame.display.iconify()
 
 
 class Platform_Win32(Platform_PyGame):
@@ -167,6 +260,7 @@ class Platform_BCM2835(Platform_EGL):
     DISPLAY_ID = 0
 
     def __init__(self, libbcm_host):
+        Platform_EGL.__init__(self)
         self.libbcm_host_path = libbcm_host
 
     def Init(self):
