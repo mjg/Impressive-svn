@@ -274,7 +274,7 @@ def Quit(code=0):
     if not code:
         CleanExit = True
     StopMPlayer()
-    pygame.display.quit()
+    Platform.Done()
     print >>sys.stderr, "Total presentation time: %s." % \
-                        FormatTime((pygame.time.get_ticks() - StartTime) / 1000)
+                        FormatTime((Platform.GetTicks() - StartTime) / 1000)
     sys.exit(code)

@@ -15,7 +15,7 @@ def UpdateCaption(page=0, force=False):
         CurrentOSDPage = ""
         CurrentOSDStatus = ""
         CurrentOSDComment = ""
-        pygame.display.set_caption(caption, __title__)
+        Platform.SetWindowTitle(caption)
         return
     CurrentOSDPage = "%d/%d" % (page, PageCount)
     caption = "%s (%s)" % (caption, CurrentOSDPage)
@@ -32,7 +32,7 @@ def UpdateCaption(page=0, force=False):
         status.append("on overview page: no")
     CurrentOSDStatus = ", ".join(status)
     CurrentOSDComment = GetPageProp(page, 'comment')
-    pygame.display.set_caption(caption, __title__)
+    Platform.SetWindowTitle(caption)
 
 # get next/previous page
 def GetNextPage(page, direction):
@@ -64,10 +64,10 @@ def PreloadNextPage(page):
 
 # perform box fading; the fade animation time is mapped through func()
 def BoxFade(func):
-    t0 = pygame.time.get_ticks()
+    t0 = Platform.GetTicks()
     while BoxFadeDuration > 0:
-        if pygame.event.get([KEYDOWN,MOUSEBUTTONUP]): break
-        t = (pygame.time.get_ticks() - t0) * 1.0 / BoxFadeDuration
+        if Platform.CheckAnimationCancelEvent(): break
+        t = (Platform.GetTicks() - t0) * 1.0 / BoxFadeDuration
         if t >= 1.0: break
         DrawCurrentPage(func(t))
     DrawCurrentPage(func(1.0))
@@ -78,7 +78,7 @@ def ResetTimer():
     global StartTime, PageEnterTime
     if TimeTracking and not(FirstPage):
         print "--- timer was reset here ---"
-    StartTime = pygame.time.get_ticks()
+    StartTime = Platform.GetTicks()
     PageEnterTime = 0
 
 # start video playback
@@ -94,7 +94,7 @@ def PlayVideo(video):
         opts += ["-fs"]
     else:
         try:
-            opts += ["-wid", str(pygame.display.get_wm_info()['window'])]
+            opts += ["-wid", str(Platform.GetWindowID())]
         except KeyError:
             print >>sys.stderr, "Sorry, but Impressive only supports video on your operating system if fullscreen"
             print >>sys.stderr, "mode is used."
@@ -130,7 +130,7 @@ def PreparePage():
 def PageEntered(update_time=True):
     global PageEnterTime, PageTimeout, MPlayerProcess, IsZoomed, WantStatus
     if update_time:
-        PageEnterTime = pygame.time.get_ticks() - StartTime
+        PageEnterTime = Platform.GetTicks() - StartTime
     IsZoomed = False  # no, we don't have a pre-zoomed image right now
     WantStatus = False  # don't show status unless it's changed interactively
     PageTimeout = AutoAdvance
@@ -162,7 +162,7 @@ def PageEntered(update_time=True):
 # called each time a page is left
 def PageLeft(overview=False):
     global FirstPage, LastPage, WantStatus, PageLeaveTime
-    PageLeaveTime = pygame.time.get_ticks() - StartTime
+    PageLeaveTime = Platform.GetTicks() - StartTime
     WantStatus = False
     if not overview:
         if GetTristatePageProp(Pcurrent, 'reset'):
@@ -173,7 +173,7 @@ def PageLeft(overview=False):
             SafeCall(GetPageProp(Pcurrent, 'OnLeaveOnce'))
         SafeCall(GetPageProp(Pcurrent, 'OnLeave'))
     if TimeTracking:
-        t1 = pygame.time.get_ticks() - StartTime
+        t1 = Platform.GetTicks() - StartTime
         dt = (t1 - PageEnterTime + 500) / 1000
         if overview:
             p = "over"
@@ -262,12 +262,12 @@ def TransitionTo(page, allow_transition=True):
         transtime = 1.0 / transtime
         TransitionRunning = True
         trans.start()
-        t0 = pygame.time.get_ticks()
+        t0 = Platform.GetTicks()
         while not(VideoPlaying):
-            if pygame.event.get([KEYDOWN,MOUSEBUTTONUP]):
+            if Platform.CheckAnimationCancelEvent():
                 skip = 1
                 break
-            t = (pygame.time.get_ticks() - t0) * transtime
+            t = (Platform.GetTicks() - t0) * transtime
             if t >= 1.0: break
             TransitionPhase = t
             if backward: t = 1.0 - t
@@ -298,14 +298,14 @@ def TransitionTo(page, allow_transition=True):
 # zoom mode animation
 def ZoomAnimation(targetx, targety, func, duration_override=None):
     global ZoomX0, ZoomY0, ZoomArea
-    t0 = pygame.time.get_ticks()
+    t0 = Platform.GetTicks()
     if duration_override is None:
         duration = ZoomDuration
     else:
         duration = duration_override
     while duration > 0:
-        if pygame.event.get([KEYDOWN,MOUSEBUTTONUP]): break
-        t = (pygame.time.get_ticks() - t0) * 1.0 / duration
+        if Platform.CheckAnimationCancelEvent(): break
+        t = (Platform.GetTicks() - t0) * 1.0 / duration
         if t >= 1.0: break
         t = func(t)
         t = (2.0 - t) * t
@@ -382,7 +382,7 @@ def PrepareTransitions():
 def TimerTick():
     global CurrentTime, ProgressBarPos
     redraw = False
-    newtime = (pygame.time.get_ticks() - StartTime) * 0.001
+    newtime = (Platform.GetTicks() - StartTime) * 0.001
     if EstimatedDuration:
         newpos = int(ScreenWidth * newtime / EstimatedDuration)
         if newpos != ProgressBarPos:
@@ -410,7 +410,7 @@ def SetCursor(visible):
     global CursorVisible
     CursorVisible = visible
     if not CursorImage:
-        pygame.mouse.set_visible(visible)
+        Platform.SetMouseVisible(visible)
 
 # handle a shortcut key event: store it (if shifted) or return the
 # page number to navigate to (if not)

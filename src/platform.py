@@ -17,6 +17,9 @@ class Platform_PyGame(object):
     def Init(self):
         pygame.display.init()
 
+    def GetTicks(self):
+        return pygame.time.get_ticks()
+
     def GetScreenSize(self):
         return pygame.display.list_modes()[0]
 
@@ -35,6 +38,7 @@ class Platform_PyGame(object):
         if WindowPos:
             os.environ["SDL_VIDEO_WINDOW_POS"] = ','.join(map(str, WindowPos))
         pygame.display.set_mode((ScreenWidth, ScreenHeight), flags)
+        pygame.key.set_repeat(500, 30)
 
     def LoadOpenGL(self):
         try:
@@ -56,11 +60,20 @@ class Platform_PyGame(object):
 
     def Done(self):
         pygame.display.quit()
+    def Quit(self):
+        pygame.quit()
+
+    def SetWindowTitle(self, text):
+        pygame.display.set_caption(text, __title__)
+    def GetWindowID(self):
+        return pygame.display.get_wm_info()['window']
 
     def GetMousePos(self):
         return pygame.mouse.get_pos()
     def SetMousePos(self, coords):
         pygame.mouse.set_pos(coords)
+    def SetMouseVisible(self, visible):
+        pygame.mouse.set_visible(visible)
 
     def _translate_mods(self, key, mods):
         if mods & KMOD_SHIFT:
@@ -121,7 +134,10 @@ class Platform_PyGame(object):
                 pygame.time.set_timer(ev.type, 0)
             return self.schedule_map_ev2name.get(ev.type)
         else:
-            return None
+            return "$?"
+
+    def CheckAnimationCancelEvent(self):
+        return bool(pygame.event.get([KEYDOWN, MOUSEBUTTONUP]))
 
     def ScheduleEvent(self, name, msec=0, periodic=False):
         try:
@@ -142,6 +158,12 @@ class Platform_PyGame(object):
 
     def Minimize(self):
         pygame.display.iconify()
+
+    def SetGammaRamp(self, gamma, black_level):
+        scale = 1.0 / (255 - black_level)
+        power = 1.0 / gamma
+        ramp = [int(65535.0 * ((max(0, x - black_level) * scale) ** power)) for x in range(256)]
+        return pygame.display.set_gamma_ramp(ramp, ramp, ramp)
 
 
 class Platform_Win32(Platform_PyGame):

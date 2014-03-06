@@ -2,7 +2,7 @@
 
 # draw OSD overlays
 def DrawOverlays(trans_time=0.0):
-    reltime = pygame.time.get_ticks() - StartTime
+    reltime = Platform.GetTicks() - StartTime
     gl.Enable(gl.BLEND)
 
     if (EstimatedDuration or PageProgress or (PageTimeout and AutoAdvanceProgress)) \
@@ -59,7 +59,7 @@ def DrawOverlays(trans_time=0.0):
     OSDFont.EndDraw()
 
     if CursorImage and CursorVisible:
-        x, y = pygame.mouse.get_pos()
+        x, y = Platform.GetMousePos()
         x -= CursorHotspot[0]
         y -= CursorHotspot[1]
         X0 = x * PixelX
@@ -157,7 +157,7 @@ def DrawCurrentPage(dark=1.0, do_flip=True):
             BoxIndexBuffer.draw()
 
     if Tracing and is_dark:
-        x, y = MouseToScreen(pygame.mouse.get_pos())
+        x, y = MouseToScreen(Platform.GetMousePos())
         TexturedMeshShader.get_instance().setup(
             x, y, x + 1.0, y + 1.0,
             x * TexMaxS, y * TexMaxT,
@@ -253,39 +253,40 @@ def DrawFadeMode(intensity, alpha):
     Platform.SwapBuffers()
 
 def EnterFadeMode(intensity=0.0):
-    t0 = pygame.time.get_ticks()
+    t0 = Platform.GetTicks()
     while True:
-        if pygame.event.get([KEYDOWN,MOUSEBUTTONUP]): break
-        t = (pygame.time.get_ticks() - t0) * 1.0 / BlankFadeDuration
+        if Platform.CheckAnimationCancelEvent(): break
+        t = (Platform.GetTicks() - t0) * 1.0 / BlankFadeDuration
         if t >= 1.0: break
         DrawFadeMode(intensity, t)
     DrawFadeMode(intensity, 1.0)
 
 def LeaveFadeMode(intensity=0.0):
-    t0 = pygame.time.get_ticks()
+    t0 = Platform.GetTicks()
     while True:
-        if pygame.event.get([KEYDOWN,MOUSEBUTTONUP]): break
-        t = (pygame.time.get_ticks() - t0) * 1.0 / BlankFadeDuration
+        if Platform.CheckAnimationCancelEvent(): break
+        t = (Platform.GetTicks() - t0) * 1.0 / BlankFadeDuration
         if t >= 1.0: break
         DrawFadeMode(intensity, 1.0 - t)
     DrawCurrentPage()
 
 def FadeMode(intensity):
     EnterFadeMode(intensity)
-    while True:
-        event = pygame.event.wait()
-        if event.type == QUIT:
+    def fade_action_handler(action):
+        if action == "$quit":
             PageLeft()
             Quit()
-        elif event.type == VIDEOEXPOSE:
+        elif action == "$expose":
             DrawFadeMode(intensity, 1.0)
-        elif event.type == MOUSEBUTTONUP:
+        elif action == "*quit":
+            Platform.PostQuitEvent()
+        else:
+            return False
+        return True
+    while True:
+        ev = Platform.GetEvent()
+        if ev and not(ProcessEvent(ev, fade_action_handler)) and ev.startswith('*'):
             break
-        elif event.type == KEYDOWN:
-            if event.unicode == u'q':
-                pygame.event.post(pygame.event.Event(QUIT))
-            else:
-                break
     LeaveFadeMode(intensity)
 
 # gamma control
@@ -301,10 +302,7 @@ def SetGamma(new_gamma=None, new_black=None, force=False):
         return
     Gamma = new_gamma
     BlackLevel = new_black
-    scale = 1.0 / (255 - BlackLevel)
-    power = 1.0 / Gamma
-    ramp = [int(65535.0 * ((max(0, x - BlackLevel) * scale) ** power)) for x in range(256)]
-    return pygame.display.set_gamma_ramp(ramp, ramp, ramp)
+    return Platform.SetGammaRamp(new_gamma, new_black)
 
 # cursor image
 def PrepareCustomCursor(cimg):

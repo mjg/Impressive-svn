@@ -3,20 +3,13 @@
 # set fullscreen mode
 def SetFullscreen(fs, do_init=True):
     global Fullscreen
-
-    # this doesn't work in fake-fullscreen mode
-    if FakeFullscreen: return
-
-    # let pygame do the real work
+    if FakeFullscreen:
+        return  # this doesn't work in fake-fullscreen mode
     if do_init:
         if fs == Fullscreen: return
         if not Platform.ToggleFullscreen(): return
     Fullscreen = fs
-
-    # redraw the current page (pygame is too lazy to send an expose event ...)
     DrawCurrentPage()
-
-    # show cursor and set auto-hide timer
     if fs:
         Platform.ScheduleEvent("$hide-mouse", MouseHideDelay)
     else:

@@ -53,9 +53,9 @@ def OverviewZoom(func):
 
     shader = TexturedRectShader.get_instance()
     TransitionRunning = True
-    t0 = pygame.time.get_ticks()
+    t0 = Platform.GetTicks()
     while not(VideoPlaying):
-        t = (pygame.time.get_ticks() - t0) * 1.0 / ZoomDuration
+        t = (Platform.GetTicks() - t0) * 1.0 / ZoomDuration
         if t >= 1.0: break
         t = func(t)
         t1 = t*t
@@ -105,7 +105,7 @@ def OverviewKeyboardNav(delta):
         return
     OverviewSelection = dest
     x, y = OverviewPos(OverviewSelection)
-    pygame.mouse.set_pos((x + (OverviewCellX / 2), y + (OverviewCellY / 2)))
+    Platform.SetMousePos((x + (OverviewCellX / 2), y + (OverviewCellY / 2)))
 
 # overview mode PageProp toggle
 def OverviewTogglePageProp(prop, default):
@@ -222,7 +222,7 @@ def DoOverview():
     OverviewMode = True
     OverviewZoom(lambda t: 1.0 - t)
     DrawOverview()
-    PageEnterTime = pygame.time.get_ticks() - StartTime
+    PageEnterTime = Platform.GetTicks() - StartTime
 
     try:
         while True:

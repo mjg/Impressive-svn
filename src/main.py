@@ -143,9 +143,8 @@ def main():
     except:
         print >>sys.stderr, "FATAL: failed to create rendering surface in the desired resolution (%dx%d)" % (ScreenWidth, ScreenHeight)
         sys.exit(1)
-    pygame.key.set_repeat(500, 30)
     if Fullscreen:
-        pygame.mouse.set_visible(False)
+        Platform.SetMouseVisible(False)
         CursorVisible = False
     if (Gamma <> 1.0) or (BlackLevel <> 0):
         SetGamma(force=True)
@@ -334,16 +333,16 @@ def main():
                 ParsePDF(pdf)
         stop = False
         progress = 0.0
+        def prerender_action_handler(action):
+            if action in ("$quit", "*quit"):
+                Quit()
         for page in range(InitialPage, PageCount + 1) + range(1, InitialPage):
-            event = pygame.event.poll()
-            while event.type != NOEVENT:
-                if event.type == KEYDOWN:
-                    if (event.key == K_ESCAPE) or (event.unicode == u'q'):
-                        Quit()
+            while True:
+                ev = Platform.GetEvent(poll=True)
+                if not ev: break
+                ProcessEvent(ev, prerender_action_handler)
+                if ev.startswith('*'):
                     stop = True
-                elif event.type == MOUSEBUTTONUP:
-                    stop = True
-                event = pygame.event.poll()
             if stop: break
             if (page >= PageRangeStart) and (page <= PageRangeEnd):
                 PageImage(page)
@@ -381,12 +380,12 @@ def main():
                 SafeCall(ParsePDF, [pdf])
 
     # start output and enter main loop
-    StartTime = pygame.time.get_ticks()
+    StartTime = Platform.GetTicks()
     if TimeTracking:
         EnableTimeTracking(True)
     Platform.ScheduleEvent("$timer-update", 100, periodic=True)
     if not(Fullscreen) and CursorImage:
-        pygame.mouse.set_visible(False)
+        Platform.SetMouseVisible(False)
     if FadeInOut:
         LeaveFadeMode()
     else:
@@ -448,7 +447,7 @@ def run_main():
                 os.remove(tmp)
             except OSError:
                 pass
-        pygame.quit()
+        Platform.Quit()
 
     # release all locks
     try:

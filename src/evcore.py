@@ -15,12 +15,22 @@ kp0 kp1 kp2 kp3 kp4 kp5 kp6 kp7 kp8 kp9 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
 lmb mmb rmb wheeldown wheelup
 """.split()))
 
+# event handling model:
+# - Platform.GetEvent() generates platform-neutral event (= string) that
+#   identifies a key or mouse button, with prefix:
+#   - '+' = key pressed, '-' = key released, '*' = main event ('*' is generated
+#      directly before '-' for keys and directly after '+' for mouse buttons)
+#   - "ctrl+", "alt+", "shift+" modifiers, in that order
+# - event gets translated into a list of actions via the EventMap dictionary
+# - actions are processed in order of that list, like priorities:
+#   - list processing terminates at the first action that is successfully handled
+#   - exception: "forced actions" will always be executed, even if a higher-prio
+#     action of that list has already been executed; also, they will not stop
+#     action list execution, even if they have been handled
+
 KnownActions = {}
 EventMap = {}
-ForcedActions = set()  # forced actions will always be executed, even if a higher-
-                       # prioritized action in the chain has already been executed;
-                       # also, they will *not* cause other non-forced actions to be
-                       # not executed
+ForcedActions = set()
 ActivateReleaseActions = set()
 
 class ActionNotHandled(Exception):
