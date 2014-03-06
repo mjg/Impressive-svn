@@ -490,8 +490,8 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
                     img.thumbnail((sx * 2, sy * 2), Image.NEAREST)
                     img.thumbnail((sx, sy), Image.BILINEAR)
                 OverviewImage.paste(img, \
-                   (pos[0] + (OverviewCellX - sx) / 2, \
-                    pos[1] + (OverviewCellY - sy) / 2))
+                   (pos[0] + (OverviewCellX - img.size[0]) / 2, \
+                    pos[1] + (OverviewCellY - img.size[1]) / 2))
             finally:
                 Loverview.release()
             SetPageProp(page, '_overview_rendered', True)
