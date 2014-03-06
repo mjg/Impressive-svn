@@ -127,7 +127,8 @@ Regarding external dependencies, the section above applies as well; in addition,
 </dl>The mode name may be abbreviated at will, down to one character. Thus, <code>--cache persistent</code>, <code>-c persist</code> and even <code>-cp</code> are all synonyms.</dd>
 
 <dt><code>-C <em>&lt;filename&gt;</em>[:<em>&lt;X&gt;</em>,<em>&lt;Y&gt;</em>]</code> or <code>--cursor <em>&lt;filename&gt;</em>[:<em>&lt;X&gt;</em>,<em>&lt;Y&gt;</em>]</code></dt>
-<dd>This option can be used to specify the path to an image file (typically a transparent .png) that shall be used as the mouse cursor instead of the default one. Optionally, the hotspot may be specified (this is the position inside the cursor image where the real mouse position is located). Example: <code>--cursor mycursor.png:2,4</code></dd>
+<dd>This option can be used to specify an image that shall be used as a (software) mouse cursor instead of the normal (hardware) one. It can either be a name of an image file (typically a transparent .png) or one of the special values &raquo;<code>-</code>&laquo; (dash) or &raquo;<code>default</code>&laquo;, both of which select a built-in cursor image. On platforms that do not support a hardware cursor, this default cursor will also be used as a default if this option is not used.<br />
+If the name of an external file is specified, the position of the hotspot (the pixel inside the cursor where the actual mouse position is located) can be specified as well, for example: <code>--cursor mycursor.png:2,4</code>.</dd>
 
 <dt><code>--clock</code></dt>
 <dd>If this option is enabled, the current time will be shown instead of the elapsed time if time display is activated with the <strong>T</strong> key. Compatible with the <code>-M</code> option.</dd>

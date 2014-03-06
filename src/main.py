@@ -213,7 +213,7 @@ def main():
     EdgeY = BoxEdgeSize * PixelY
 
     # prepare logo image
-    LogoImage = Image.open(cStringIO.StringIO(LOGO))
+    LogoImage = Image.open(cStringIO.StringIO(LOGO.decode('base64')))
     LogoTexture = gl.make_texture(gl.TEXTURE_2D, filter=gl.NEAREST, img=LogoImage)
     DrawLogo()
     Platform.SwapBuffers()
@@ -235,12 +235,16 @@ def main():
         print >>sys.stderr, "Your version of PIL is too old or incomplete, disabling OSD."
 
     # initialize mouse cursor
-    if CursorImage:
-        try:
-            CursorImage = PrepareCustomCursor(Image.open(CursorImage))
-        except:
-            print >>sys.stderr, "Could not open the mouse cursor image, using standard cursor."
-            CursorImage = False
+    if CursorImage or not(Platform.has_hardware_cursor):
+        img = None
+        if CursorImage and not(CursorImage.lower() in ("-", "default")):
+            try:
+                img = Image.open(CursorImage).convert('RGBA')
+                img.load()
+            except:
+                print >>sys.stderr, "Could not open the mouse cursor image, using standard cursor."
+                img = None
+        CursorImage = PrepareCustomCursor(img)
 
     # set up page cache
     if CacheMode == PersistentCache:

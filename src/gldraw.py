@@ -306,7 +306,10 @@ def SetGamma(new_gamma=None, new_black=None, force=False):
 
 # cursor image
 def PrepareCustomCursor(cimg):
-    global CursorTexture, CursorSX, CursorSY, CursorTX, CursorTY
+    global CursorTexture, CursorHotspot, CursorSX, CursorSY, CursorTX, CursorTY
+    if not cimg:
+        CursorHotspot = (1,0)
+        cimg = Image.open(cStringIO.StringIO(DEFAULT_CURSOR.decode('base64')))
     w, h = cimg.size
     tw, th = map(npot, cimg.size)
     if (tw > 256) or (th > 256):

@@ -3,6 +3,7 @@
 class Platform_PyGame(object):
     name = 'pygame'
     allow_custom_fullscreen_res = True
+    has_hardware_cursor = True
 
     _buttons = { 1: "lmb", 2: "mmb", 3: "rmb", 4: "wheelup", 5: "wheeldown" }
     _keys = dict((getattr(pygame.locals, k), k[2:].lower()) for k in [k for k in dir(pygame.locals) if k.startswith('K_')])
@@ -279,6 +280,7 @@ class Platform_EGL(Platform_Unix):
 class Platform_BCM2835(Platform_EGL):
     name = 'bcm2835'
     allow_custom_fullscreen_res = False
+    has_hardware_cursor = False
     DISPLAY_ID = 0
 
     def __init__(self, libbcm_host):
@@ -350,7 +352,10 @@ class Platform_BCM2835(Platform_EGL):
         vc_dispmanx_update_submit_sync(update)
         self.window = EGL_DISPMANX_WINDOW_T(layer, width, height)
         Platform_EGL.StartDisplay(self, None, byref(self.window), width, height)
+
+        # finally, tell PyGame what just happened
         pygame.display.set_mode((width, height), 0)
+        pygame.mouse.set_pos((width / 2, height / 2))
 
 
 libbcm_host = ctypes.util.find_library("bcm_host")
