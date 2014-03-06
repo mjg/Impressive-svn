@@ -141,7 +141,7 @@ def BindEvent(events, actions=None, clear=False, remove=False, error_prefix=None
         ':=' -> always clear
         '-=' -> always remove
     - some special events are recognized:
-        'clear' clears *all* actions of *all* raw events;
+        'clearall' clears *all* actions of *all* raw events;
         'defaults' loads all defaults
         'include', followed by whitespace and a filename, will include a file
         (that's what the basedirs option is for)
@@ -172,8 +172,6 @@ def BindEvent(events, actions=None, clear=False, remove=False, error_prefix=None
         actions = actions.split(',')
     actions = [b.replace('_', '-').strip(' \t$+-').lower() for b in actions]
     actions = [a for a in actions if ValidateAction(a, error_prefix)]
-    if not actions:
-        return
     for event in events:
         event_orig = event.replace('\t', ' ').strip(' \r\n+-$')
         if not event_orig:
@@ -186,7 +184,7 @@ def BindEvent(events, actions=None, clear=False, remove=False, error_prefix=None
                 filename = filename[1:-1]
             ParseInputBindingFile(filename, basedir)
             continue
-        elif event == 'clear':
+        elif event == 'clearall':
             EventMap = {}
             continue
         elif event == 'defaults':
@@ -233,7 +231,7 @@ def EventHelp():
     print "  To *overwrite* the current binding for an event, use ':=' instead of '='."
     print "  Join multiple bindings with a semi-colon (';')."
     print "Special commands:"
-    print "  clear          = clear all bindings"
+    print "  clearall       = clear all bindings"
     print "  defaults       = load default bindings"
     print "  include <file> = load bindings from a file"
     print "Binding files use the same syntax with one binding per line;"
@@ -265,10 +263,11 @@ def EventHelp():
     print "Current bindings:"
     maxelen = max(map(len, EventMap))
     for event in sorted(EventMap):
-        print "  %s = %s" % (event.ljust(maxelen), ", ".join(EventMap[event]))
+        if EventMap[event]:
+            print "  %s = %s" % (event.ljust(maxelen), ", ".join(EventMap[event]))
 
 def LoadDefaultBindings():
-    BindEvent("""clear
+    BindEvent("""clearall
     escape, return, kp_enter, lmb, rmb = video-stop
     space = video-pause
     period = video-step

@@ -76,6 +76,9 @@ Timing options:
                           presentation (based on pages, not time)
 
 Control options:
+       --control-help     display help about control configuration and exit
+  -e,  --bind             set controls (modify event/action bindings)
+  -E,  --controls <file>  load control configuration from a file
        --noclicks         disable page navigation via left/right mouse click
   -W,  --nowheel          disable page navigation via mouse wheel
 
@@ -233,10 +236,11 @@ def ParseOptions(argv):
     global QuitAtEnd, ShowClock, HalfScreen, SpotRadius, InvertPages
     global MinBoxSize, AutoAutoAdvance, AutoAdvanceProgress, BoxFadeDarkness
     global WindowPos, FakeFullscreen, UseBlurShader
+    DefaultControls = True
 
-    try:  # unused short options: ejnEJKNRUY
+    try:  # unused short options: jnJKNRUY
         opts, args = getopt.getopt(argv, \
-            "vhfg:sc:i:wa:t:lo:r:T:D:B:Z:P:A:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykW", \
+            "vhfg:sc:i:wa:t:lo:r:T:D:B:Z:P:A:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykWe:E:", \
            ["help", "fullscreen", "geometry=", "scale", "supersample", \
             "nocache", "initialpage=", "wrap", "auto", "listtrans", "output=", \
             "rotate=", "transition=", "transtime=", "mousedelay=", "boxfade=", \
@@ -248,7 +252,7 @@ def ParseOptions(argv):
             "clock", "half-screen", "spot-radius=", "invert", "min-box-size=",
             "auto-auto", "auto-progress", "darkness=", "no-clicks", "nowheel",
             "no-wheel", "fake-fullscreen", "windowed", "verbose", "noblur",
-            "tracking"])
+            "tracking", "bind", "controls", "control-help"])
     except getopt.GetoptError, message:
         opterr(message)
 
@@ -304,9 +308,22 @@ def ParseOptions(argv):
         if opt == "--nologo":
             ShowLogo = not(ShowLogo)
         if opt in ("--noclicks", "--no-clicks"):
+            if not DefaultControls:
+                print >>sys.stderr, "Note: The default control settings have been modified, the `--noclicks' option might not work as expected."
             BindEvent("lmb, rmb, ctrl+lmb, ctrl+rmb -= goto-next, goto-prev, goto-next-notrans, goto-prev-notrans")
         if opt in ("-W", "--nowheel", "--no-wheel"):
+            if not DefaultControls:
+                print >>sys.stderr, "Note: The default control settings have been modified, the `--nowheel' option might not work as expected."
             BindEvent("wheelup, wheeldown, ctrl+wheelup, ctrl+wheeldown -= goto-next, goto-prev, goto-next-notrans, goto-prev-notrans, overview-next, overview-prev")
+        if opt in ("-e", "--bind"):
+            BindEvent(arg, error_prefix="--bind")
+            DefaultControls = False
+        if opt in ("-E", "--controls"):
+            ParseInputBindingFile(arg)
+            DefaultControls = False
+        if opt == "--control-help":
+            EventHelp()
+            sys.exit(0)
         if opt == "--clock":
             ShowClock = not(ShowClock)
         if opt == "--tracking":
