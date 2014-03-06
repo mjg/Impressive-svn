@@ -142,6 +142,13 @@ class OverviewActions(BaseActions):
     def _X_expose(self):
         DrawOverview()
 
+    def _X_timer_update(self):
+        force_update = OverviewNeedUpdate
+        if OverviewNeedUpdate:
+            UpdateOverviewTexture()
+        if TimerTick() or force_update:
+            DrawOverview()
+
     def _overview_exit(self):
         "exit overview mode and return to the last viewed page"
         global OverviewSelection
@@ -196,24 +203,7 @@ class OverviewActions(BaseActions):
     def _overview_down(self):
         "move the overview selection downwards"
         OverviewKeyboardNav(+OverviewGridSize)
-
 OverviewActions = OverviewActions()
-
-# overview event handler
-def HandleOverviewEvent(ev):
-    global OverviewSelection
-    try:
-        if not ProcessEvent(ev, OverviewActions):
-            page = HandleShortcutKey(ev, OverviewPageMap[OverviewSelection])
-            if page:
-                OverviewSelection = OverviewPageMapInv[page]
-                x, y = OverviewPos(OverviewSelection)
-                Platform.SetMousePos((x + (OverviewCellX / 2), \
-                                      y + (OverviewCellY / 2)))
-                DrawOverview()
-        return 1
-    except ExitOverview:
-        return 0
 
 # overview mode entry/loop/exit function
 def DoOverview():
@@ -233,18 +223,26 @@ def DoOverview():
     OverviewZoom(lambda t: 1.0 - t)
     DrawOverview()
     PageEnterTime = pygame.time.get_ticks() - StartTime
-    while True:
-        event = Platform.GetEvent(poll=True)
-        if not event:
-            force_update = OverviewNeedUpdate
-            if OverviewNeedUpdate:
-                UpdateOverviewTexture()
-            if TimerTick() or force_update:
-                DrawOverview()
-            pygame.time.wait(20)
-        elif not HandleOverviewEvent(event):
-            break
-    PageLeft(overview=True)
+
+    try:
+        while True:
+            ev = Platform.GetEvent()
+            if not ev:
+                continue
+            if not ProcessEvent(ev, OverviewActions):
+                try:
+                    page = OverviewPageMap[OverviewSelection]
+                except IndexError:
+                    page = 0
+                page = HandleShortcutKey(ev, page)
+                if page:
+                    OverviewSelection = OverviewPageMapInv[page]
+                    x, y = OverviewPos(OverviewSelection)
+                    Platform.SetMousePos((x + (OverviewCellX / 2), \
+                                          y + (OverviewCellY / 2)))
+                    DrawOverview()
+    except ExitOverview:
+        PageLeft(overview=True)
 
     if (OverviewSelection < 0) or (OverviewSelection >= OverviewPageCount):
         OverviewSelection = OverviewPageMapInv[Pcurrent]
