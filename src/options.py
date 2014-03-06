@@ -75,6 +75,10 @@ Timing options:
   -q,  --page-progress    shows a progress bar based on the position in the
                           presentation (based on pages, not time)
 
+Control options:
+       --noclicks         disable page navigation via left/right mouse click
+  -W,  --nowheel          disable page navigation via mouse wheel
+
 Advanced options:
   -c,  --cache <mode>     set page cache mode:
                             -c none       = disable caching completely
@@ -88,8 +92,6 @@ Advanced options:
                           Xpdf/Poppler pdftoppm, or MuPDF mudraw/pdfdraw)
   -V,  --overscan <px>    render PDF files <px> pixels larger than the screen
        --nologo           disable startup logo and version number display
-       --noclicks         disable page navigation via left/right mouse click
-  -W,  --nowheel          disable page navigation via mouse wheel
   -H,  --half-screen      show OSD on right half of the screen only
   -v,  --verbose          (slightly) more verbose operation
 
@@ -228,9 +230,9 @@ def ParseOptions(argv):
     global EstimatedDuration, CursorImage, CursorHotspot, MinutesOnly, Overscan
     global PDFRendererPath, InfoScriptPath
     global AutoOverview, ZoomFactor, FadeInOut, ShowLogo, Shuffle, PageProgress
-    global QuitAtEnd, PageClicks, ShowClock, HalfScreen, SpotRadius, InvertPages
+    global QuitAtEnd, ShowClock, HalfScreen, SpotRadius, InvertPages
     global MinBoxSize, AutoAutoAdvance, AutoAdvanceProgress, BoxFadeDarkness
-    global PageWheel, WindowPos, FakeFullscreen, UseBlurShader
+    global WindowPos, FakeFullscreen, UseBlurShader
 
     try:  # unused short options: ejnEJKNRUY
         opts, args = getopt.getopt(argv, \
@@ -302,9 +304,9 @@ def ParseOptions(argv):
         if opt == "--nologo":
             ShowLogo = not(ShowLogo)
         if opt in ("--noclicks", "--no-clicks"):
-            PageClicks = not(PageClicks)
+            BindEvent("lmb, rmb, ctrl+lmb, ctrl+rmb -= goto-next, goto-prev, goto-next-notrans, goto-prev-notrans")
         if opt in ("-W", "--nowheel", "--no-wheel"):
-            PageWheel = not(PageWheel)
+            BindEvent("wheelup, wheeldown, ctrl+wheelup, ctrl+wheeldown -= goto-next, goto-prev, goto-next-notrans, goto-prev-notrans, overview-next, overview-prev")
         if opt == "--clock":
             ShowClock = not(ShowClock)
         if opt == "--tracking":

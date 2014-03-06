@@ -127,17 +127,19 @@ def ValidateAction(ev, error_prefix=None):
     print >>sys.stderr, "ERROR: %signoring unknown action '%s'" % (error_prefix, ev)
     return False
 
-def BindEvent(events, actions=None, clear=False, error_prefix=None):
+def BindEvent(events, actions=None, clear=False, remove=False, error_prefix=None):
     """
     bind one or more events to one or more actions
     - events and actions can be lists or single comma-separated strings
     - if clear is False, actions will be *added* to the raw events,
-      if clear is True, the specified actions will *replace* the current set
+      if clear is True, the specified actions will *replace* the current set,
+      if remove is True, the specified actions will be *removed* from the set
     - actions can be omitted; instead, events can be a string consisting
       of raw event and internal event names, separated by one of:
         '=' -> add or replace, based on the clear flag
         '+=' -> always add
         ':=' -> always clear
+        '-=' -> always remove
     - some special events are recognized:
         'clear' clears *all* actions of *all* raw events;
         'defaults' loads all defaults
@@ -149,7 +151,7 @@ def BindEvent(events, actions=None, clear=False, error_prefix=None):
         if not actions:
             if (';' in events) or ('\n' in events):
                 for cmd in events.replace('\n', ';').split(';'):
-                    BindEvent(cmd, clear=clear, error_prefix=error_prefix)
+                    BindEvent(cmd, clear=clear, remove=remove, error_prefix=error_prefix)
                 return
             if '=' in events:
                 events, actions = events.split('=', 1)
@@ -159,6 +161,9 @@ def BindEvent(events, actions=None, clear=False, error_prefix=None):
                     events = events[:-1]
                 elif events.endswith(':'):
                     clear = True
+                    events = events[:-1]
+                elif events.endswith('-'):
+                    remove = True
                     events = events[:-1]
         events = events.split(',')
     if actions is None:
@@ -190,7 +195,14 @@ def BindEvent(events, actions=None, clear=False, error_prefix=None):
         event = event.replace(' ', '')
         if not ValidateEvent(event, error_prefix):
             continue
-        if clear or not(event in EventMap):
+        if remove:
+            if event in EventMap:
+                for a in actions:
+                    try:
+                        EventMap[event].remove(a)
+                    except ValueError:
+                        pass
+        elif clear or not(event in EventMap):
             EventMap[event] = actions[:]
         else:
             EventMap[event].extend(actions)
