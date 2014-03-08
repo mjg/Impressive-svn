@@ -73,8 +73,9 @@ A more comfortable method is installing Impressive in the &raquo;Send To&laquo; 
 <li><strong>PyGame</strong> (the SDL binding for Python) &mdash; <a href="http://www.pygame.org/">www.pygame.org</a> <em>(required)</em></li>
 <li><strong>PIL</strong>, the Python Imaging Library &mdash; <a href="http://www.pythonware.com/products/pil/">www.pythonware.com/products/pil</a> <em>(required)</em></li>
 <li><strong>pdftk</strong> 1.44 or 1.45 for retrieving PDF metadata (page titles, hyperlinks) &mdash; <a href="http://www.accesspdf.com/pdftk/">www.accesspdf.com/pdftk</a> <em>(required)</em></li>
-<li><strong>Xpdf</strong> or the <strong>Poppler utilties</strong> for PDF rendering &mdash; <a href="http://www.foolabs.com/xpdf/">www.foolabs.com/xpdf/</a> or <a href="http://poppler.freedesktop.org/">http://poppler.freedesktop.org/</a> <em>(required)</em></li>
-<li><strong>GhostScript</strong> for alternate PDF rendering &mdash; <a href="http://www.cs.wisc.edu/~ghost/">www.cs.wisc.edu/~ghost</a> <em>(required if neither Xpdf nor the Poppler utilities are available; optional otherwise)</em></li>
+<li>the <strong>MuPDF utilities</strong> for PDF rendering &mdash; <a href="http://www.mupdf.com/">www.mupdf.com</a> <em>(required)</em></li>
+<li><strong>Xpdf</strong> or the <strong>Poppler utilities</strong> for alternate PDF rendering &mdash; <a href="http://www.foolabs.com/xpdf/">www.foolabs.com/xpdf/</a> or <a href="http://poppler.freedesktop.org/">http://poppler.freedesktop.org/</a> <em>(required if MuPDF not available, optional otherwise)</em></li>
+<li><strong>GhostScript</strong> for alternate PDF rendering &mdash; <a href="http://www.cs.wisc.edu/~ghost/">www.cs.wisc.edu/~ghost</a> <em>(required if neither MuPDF nor Xpdf/Poppler utilities are available; optional otherwise)</em></li>
 <li><strong>xdg-utils</strong> for starting web or e-mail hyperlinks from PDF documents &mdash; <a href="http://portland.freedesktop.org/">portland.freedesktop.org</a> <em>(optional, not applicable on Win32)</em></li>
 <li><strong>PyWin32</strong>, the Python for Windows extensions &mdash; <a href="http://sourceforge.net/projects/pywin32/">pywin32.sourceforge.net</a> <em>(optional, applicable on Win32 only)</em></li>
 <li><strong>MPlayer</strong> for sound and video playback &mdash; <a href="http://www.mplayerhq.hu/">www.mplayerhq.hu</a> <em>(optional)</em></li>
@@ -82,10 +83,10 @@ A more comfortable method is installing Impressive in the &raquo;Send To&laquo; 
 
 <p>On Unix-like systems, these dependencies are typically available in the major distributions' package repositories and can be installed easily with the package managers, e.g.:</p>
 <ul>
-<li><strong>Debian</strong>/<strong>Ubuntu</strong>: <code>aptitude install python-pygame python-imaging pdftk poppler-utils xdg-utils mplayer</code></li>
-<li><strong>Fedora</strong>: <code>yum -i pygame python-pillow pdftk poppler-utils xdg-utils mplayer</code></li>
-<li><strong>Arch Linux</strong> with AUR: <code>pacman -S python2-pygame python2-pillow pdftk poppler xdg-utils mplayer</code></li>
-<li>Mac OS X with <strong>MacPorts</strong>: <code>port install py27-game py27-pil pdftk poppler xdg-utils mplayer</code></li>
+<li><strong>Debian</strong>/<strong>Ubuntu</strong>: <code>aptitude install python-pygame python-imaging pdftk mupdf-tools xdg-utils mplayer</code></li>
+<li><strong>Fedora</strong>: <code>yum -i pygame python-pillow pdftk mupdf xdg-utils mplayer</code></li>
+<li><strong>Arch Linux</strong> with AUR: <code>pacman -S python2-pygame python2-pillow pdftk mupdf xdg-utils mplayer</code></li>
+<li>Mac OS X with <strong>MacPorts</strong>: <code>port install py27-game py27-pil pdftk mupdf xdg-utils mplayer</code></li>
 </ul>
 
 <h3>Using the latest version from SVN</h3>
