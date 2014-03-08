@@ -137,7 +137,7 @@ class PageDisplayActions(BaseDisplayActions):
             DrawCurrentPage()
 
     def _zoom_pan_ACTIVATE(self):
-        "pan visible region in zoom mode [mouse-only]"
+        "pan visible region in zoom mode"
         global PanValid, Panning, PanBaseX, PanBaseY, PanAnchorX, PanAnchorY
         ActionValidIf(ZoomMode)
         PanValid = True
@@ -146,12 +146,11 @@ class PageDisplayActions(BaseDisplayActions):
         PanAnchorX = ZoomX0
         PanAnchorY = ZoomY0
     def _zoom_pan(self):
-        global Panning
-        ActionValidIf(ZoomMode and Panning)
-        Panning = False
+        ActionValidIf(ZoomMode)
     def _zoom_pan_RELEASE(self):
-        global PanValid
+        global PanValid, Panning
         PanValid = False
+        Panning = False
 
     def _zoom_enter(self):
         "enter zoom mode"
@@ -216,17 +215,20 @@ class PageDisplayActions(BaseDisplayActions):
         DelPageProp(Pcurrent, 'boxes')
         DrawCurrentPage()
 
-    def _hyperlink(self):
+    def _hyperlink(self, allow_transition=True):
         "navigate to the hyperlink under the mouse cursor"
         x, y = Platform.GetMousePos()
         for valid, target, x0, y0, x1, y1 in GetPageProp(Pcurrent, '_href', []):
             if valid and (x >= x0) and (x < x1) and (y >= y0) and (y < y1):
                 if type(target) == types.IntType:
-                    TransitionTo(target)
+                    TransitionTo(target, allow_transition=allow_transition)
                 elif dest:
                     RunURL(target)
                 return
         raise ActionNotHandled()
+    def _hyperlink_notrans(self):
+        "like 'hyperlink', but no transition on page change"
+        return self._hyperlink(allow_transition=False)
 
     def _goto_prev(self):
         "go to the previous page (with transition)"
@@ -330,10 +332,10 @@ class PageDisplayActions(BaseDisplayActions):
             DrawCurrentPage()
 
     def _toggle_skip(self):
-        "toggle the 'skip' flag for the current page"
+        "toggle 'skip' flag of current page"
         TogglePageProp('skip', False)
     def _toggle_overview(self):
-        "toggle the 'visible on overview' flag for the current page"
+        "toggle 'visible on overview' flag of current page"
         TogglePageProp('overview', GetPageProp(Pcurrent, '_overview', True))
 
     def _fade_less(self):
@@ -347,7 +349,7 @@ class PageDisplayActions(BaseDisplayActions):
         BoxFadeDarkness = min(1.0, BoxFadeDarkness + BoxFadeDarknessStep)
         DrawCurrentPage()
     def _fade_reset(self):
-        "reset the spotlight/box background darkness to default"
+        "reset spotlight/box background darkness to default"
         global BoxFadeDarkness
         BoxFadeDarkness = BoxFadeDarknessBase
         DrawCurrentPage()

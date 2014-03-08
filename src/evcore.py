@@ -182,7 +182,7 @@ def BindEvent(events, actions=None, clear=False, remove=False, error_prefix=None
             if (filename.startswith('"') and filename.endswith('"')) \
             or (filename.startswith("'") and filename.endswith("'")):
                 filename = filename[1:-1]
-            ParseInputBindingFile(filename, basedir)
+            ParseInputBindingFile(filename)
             continue
         elif event == 'clearall':
             EventMap = {}
@@ -229,6 +229,7 @@ def EventHelp():
     print "  <event> [,<event2...>] = <action> [,<action2...>]"
     print "  By default, this will *add* actions to an event."
     print "  To *overwrite* the current binding for an event, use ':=' instead of '='."
+    print "  To remove actions from an event, use '-=' instead of '='."
     print "  Join multiple bindings with a semi-colon (';')."
     print "Special commands:"
     print "  clearall       = clear all bindings"
@@ -302,6 +303,7 @@ def LoadDefaultBindings():
     shift+rightbracket = gamma-bl-increase
     backslash = gamma-reset
     lmb = box-add, hyperlink, overview-confirm
+    ctrl+lmb = hyperlink-notrans
     rmb = zoom-pan, box-remove, overview-exit
     mmb = zoom-exit, overview-enter, overview-exit
     left, wheelup = overview-prev

@@ -150,7 +150,7 @@ class OverviewActions(BaseActions):
             DrawOverview()
 
     def _overview_exit(self):
-        "exit overview mode and return to the last viewed page"
+        "exit overview mode and return to the last page"
         global OverviewSelection
         OverviewSelection = -1
         raise ExitOverview
@@ -159,36 +159,28 @@ class OverviewActions(BaseActions):
         raise ExitOverview
 
     def _fullscreen(self):
-        "toggle fullscreen mode"
         SetFullscreen(not(Fullscreen))
 
     def _save(self):
-        "save the info script"
         SaveInfoScript(InfoScriptPath)
 
     def _fade_to_black(self):
-        "fade to a black screen"
         FadeMode(0.0)
     def _fade_to_white(self):
-        "fade to a white screen"
         FadeMode(1.0)
 
     def _time_toggle(self):
-        "toggle time display and/or time tracking mode"
         global TimeDisplay
         TimeDisplay = not(TimeDisplay)
         DrawOverview()
     def _time_reset(self):
-        "reset the on-screen timer"
         ResetTimer()
         if TimeDisplay:
             DrawOverview()
 
     def _toggle_skip(self):
-        "toggle the 'skip' flag for the current page"
         TogglePageProp('skip', False)
     def _toggle_overview(self):
-        "toggle the 'visible on overview' flag for the current page"
         TogglePageProp('overview', GetPageProp(Pcurrent, '_overview', True))
 
     def _overview_up(self):

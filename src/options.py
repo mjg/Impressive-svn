@@ -252,7 +252,7 @@ def ParseOptions(argv):
             "clock", "half-screen", "spot-radius=", "invert", "min-box-size=",
             "auto-auto", "auto-progress", "darkness=", "no-clicks", "nowheel",
             "no-wheel", "fake-fullscreen", "windowed", "verbose", "noblur",
-            "tracking", "bind", "controls", "control-help"])
+            "tracking", "bind=", "controls=", "control-help"])
     except getopt.GetoptError, message:
         opterr(message)
 
