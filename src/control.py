@@ -232,7 +232,7 @@ def TransitionTo(page, allow_transition=True):
     UpdateCaption(page)
 
     # check if the transition is valid
-    tpage = min(Pcurrent, Pnext)
+    tpage = max(Pcurrent, Pnext)
     trans = None
     if allow_transition:
         trans = GetPageProp(tpage, 'transition', GetPageProp(tpage, '_transition'))

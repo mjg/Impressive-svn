@@ -680,10 +680,10 @@ In any case, the default file name can be overridden by the <code>-I</code> comm
 <dd>Each page can have a title that is displayed in the Impressive window's title bar. If there is no title explicitly specified in the info script, the title of the page will be extracted from PDF metadata if pdftk is installed, or the image file name will be used if the presentation is an image slideshow.</dd>
 
 <dt><code>transition</code></dt>
-<dd>With this property, the transition class to be used for rendering the transition between this page and the following page can be specified. For pages lacking this property, random transitions will be chosen. A list of available transition classes can be obtained with <code>impressive -l</code>.</dd>
+<dd>With this property, the transition class to be used for rendering the transition to this page (i.e. between the previous page and this page) can be specified. For pages lacking this property, random transitions will be chosen. A list of available transition classes can be obtained with <code>impressive -l</code>.</dd>
 
 <dt><code>transtime</code></dt>
-<dd>This property overrides the global transition time parameter (<code>-T</code> at the command line). It contains the integer time (in milliseconds) the transition between this page and the following page shall be shown.</dd>
+<dd>This property overrides the global transition time parameter (<code>-T</code> at the command line). It contains the integer time (in milliseconds) the transition to this page shall take.</dd>
 
 <dt><code>overview</code></dt>
 <dd>This property holds a boolean value (0/<code>False</code> or 1/<code>True</code>) that specifies whether the page shall be included in the overview page. If this property isn't specified, it is assumed to be <code>True</code>.</dd>
@@ -735,6 +735,8 @@ In any case, the default file name can be overridden by the <code>-I</code> comm
 <dd>This property specifies whether the colors of that page shall be inverted in the same way the <code>--invert</code> command-line switch does. It overrides the <code>--invert</code> setting on a per-page basis: If set to <code>True</code>, the page will always be inverted; if set to <code>False</code>, the page will never be inverted even if <code>--invert</code> has been specified on the command line.</dd>
 
 </dl>
+
+<p>Note that in Impressive versions prior to 0.11.0, the <code>transition</code> and <code>transtime</code> properties defined the transition from the current page to the next, not from the previous page to the current one.</p>
 
 <p>The properties are stored together in a Python dictionary called <code>PageProps</code>. The syntax looks like in this example:</p>
 
