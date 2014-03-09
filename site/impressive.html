@@ -146,7 +146,7 @@ If an expected duration is specified, Impressive will show a semi-transparent gr
 <dd>Sets the time (in milliseconds) the mouse cursor is shown in fullscreen mode if it is not moved. Default value: 3000 ms.</dd>
 
 <dt><code>--darkness <em>&lt;percentage&gt;</em></code></dt>
-<dd>Specifies how much the screen shall become darker when using highlight boxes or spotlight mode. The value is specified in percent, with 25 being the default. A value of zero would mean no darkening at all (the screen would just be blurred slightly), and a value of 100 would make everything but the highlighted parts of the screen black.</dd>
+<dd>Specifies how much the screen shall become darker when using highlight boxes or spotlight mode. The value is specified in percent, with 25 being the default. A value of zero would mean no darkening at all (the screen would just be blurred slightly, and desaturated if the graphics hardware supports it), and a value of 100 would make everything but the highlighted parts of the screen black.</dd>
 
 <dt><code>-e <em>&lt;bindings&gt;</em></code> or <code>--bind <em>&lt;bindings&gt;</em></code></dt>
 <dd>Configures keyboard or mouse bindings. For the syntax of the argument, refer to the <a href="#controls">Control Configuration</a> section of the manual.</dd>
@@ -215,7 +215,7 @@ The progress bar shown by this option takes precedence over the <code>--duration
 <dd>If this option is set, Impressive will show the on-screen timer (activated with the [T] key) only with 1 minute resolution. By default, it will show a timer with 1 second resolution.</dd>
 
 <dt><code>--noblur</code></dt>
-<dd>By default, Impressive uses a fragment shader to blur the image when in highlight box or spotlight mode. This is usually the faster method; however, some very old hardware implementations can't deal with that shader and fall back to an unusably slow software implementation. Impressive tries to detect scenarios where this would happen and automatically falls back to a different implementation.<br />
+<dd>By default, Impressive uses a fragment shader to blur and desaturate the image when in highlight box or spotlight mode. This is usually the faster and nicer-looking method; however, some very old hardware implementations can't deal with that shader and fall back to an unusably slow software implementation. Impressive tries to detect scenarios where this would happen and automatically falls back to a different implementation.<br />
 There might be situations where this machanism fails and Impressive tries to use the non-functional shader anyway. In these cases, the <code>--noblur</code> option can be used to enforce the fallback implementation.</dd>
 
 <dt><code>--noclicks</code></dt>
@@ -393,7 +393,7 @@ The new PDF file must have at least as much pages as the old one; also, it shoul
 <dd>Jump to the page referenced by the hyperlink. Two types of hyperlinks are supported: Links that point to some other page of the same document, and URL hyperlinks like Web links and e-mail addresses. This feature is only available if <code>pdftk</code> is installed. Furthermore, <code>xdg-open</code> from the freedesktop.org Portland project is required for URL links <!--man to work.--><!--man:off-->on non-Win32 platforms.<!--man:on--> Please note that the hyperlink feature will not work properly when pages are rotated.</dd>
 
 <dt>click&amp;drag with <strong>LMB</strong> (left mouse button)</dt>
-<dd>Create a new highlight box. While at least one highlight box is defined on the current page, the page itself will be shown in a darker and blurry rendition. Only the highlight boxes will be displayed in their original lightness and sharpness.<br />
+<dd>Create a new highlight box. While at least one highlight box is defined on the current page, the page itself will be shown in a darker, blurry and (if supported by the graphics hardware) desaturated rendition. Only the highlight boxes will be displayed in their original lightness, sharpness and color saturation.<br />
 If a page with highlight boxes is left, the boxes will be saved and restored the next time this page is shown again.</dd>
 
 <dt><strong>RMB</strong> (right mouse button) over a highlight box</dt>

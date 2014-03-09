@@ -107,14 +107,16 @@ class BlurShader(GLShader):
         uniform mediump vec2 uDeltaTexCoord;
         varying mediump vec2 vTexCoord;
         void main() {
-            gl_FragColor = vec4(uIntensity, uIntensity, uIntensity, 0.125) * (
-                texture2D(uTex, vTexCoord) * 3.0
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.89, +0.45))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.71, -0.71))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.45, -0.89))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.99, +0.16))
-              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.16, +0.99))
+            lowp vec3 color = (uIntensity * 0.125) * (
+                texture2D(uTex, vTexCoord).rgb * 3.0
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.89, +0.45)).rgb
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(+0.71, -0.71)).rgb
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.45, -0.89)).rgb
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.99, +0.16)).rgb
+              + texture2D(uTex, vTexCoord + uDeltaTexCoord * vec2(-0.16, +0.99)).rgb
             );
+            lowp float gray = dot(vec3(0.299, 0.587, 0.114), color);
+            gl_FragColor = vec4(mix(color, vec3(gray, gray, gray), uIntensity), 1.0);
         }
     """
     attributes = { 0: 'aPos' }
@@ -126,7 +128,7 @@ class BlurShader(GLShader):
             gl.BindTexture(gl.TEXTURE_2D, tex)
         gl.Uniform(self.uScreenTransform, ScreenTransform)
         gl.Uniform2f(self.uDeltaTexCoord, dtx, dty)
-        gl.Uniform1f(self.uIntensity, intensity * 0.125)
+        gl.Uniform1f(self.uIntensity, intensity)
         SimpleQuad.draw()
 # (not added to RequiredShaders because this shader is allowed to fail)
 

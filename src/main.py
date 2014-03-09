@@ -192,7 +192,7 @@ def main():
             UseBlurShader = False
     if Verbose:
         if UseBlurShader:
-            print >>sys.stderr, "Using blur shader for highlight box and spotlight mode."
+            print >>sys.stderr, "Using blur-and-desaturate shader for highlight box and spotlight mode."
         else:
             print >>sys.stderr, "Using legacy multi-pass blur for highlight box and spotlight mode."
     gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
