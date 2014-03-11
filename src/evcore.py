@@ -342,8 +342,3 @@ class BaseActions(ActionRelayBase):
         if Fullscreen:
             Platform.ScheduleEvent("$hide-mouse", MouseHideDelay)
             SetCursor(True)
-
-    def _X_hide_mouse(self):
-        # mouse timer event -> hide fullscreen cursor
-        SetCursor(False)
-        DrawCurrentPage()

@@ -35,6 +35,11 @@ class BaseDisplayActions(BaseActions):
     def _X_expose(self):
         DrawCurrentPage()
 
+    def _X_hide_mouse(self):
+        # mouse timer event -> hide fullscreen cursor
+        SetCursor(False)
+        DrawCurrentPage()
+
     def _X_page_timeout(self):
         TransitionTo(GetNextPage(Pcurrent, 1))
 

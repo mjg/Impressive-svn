@@ -142,6 +142,11 @@ class OverviewActions(BaseActions):
     def _X_expose(self):
         DrawOverview()
 
+    def _X_hide_mouse(self):
+        # mouse timer event -> hide fullscreen cursor
+        SetCursor(False)
+        DrawOverview()
+
     def _X_timer_update(self):
         force_update = OverviewNeedUpdate
         if OverviewNeedUpdate:
