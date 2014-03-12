@@ -108,7 +108,7 @@ def ValidateEvent(ev, error_prefix=None):
     for prefix in ("ctrl+", "alt+", "shift+"):
         if ev.startswith(prefix):
             ev = ev[len(prefix):]
-    if ev in KnownEvents:
+    if (ev in KnownEvents) or ev.startswith('unknown-'):
         return True
     if error_prefix:
         error_prefix += ": "

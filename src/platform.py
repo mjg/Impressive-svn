@@ -88,12 +88,12 @@ class Platform_PyGame(object):
         try:
             return self._translate_mods(self._buttons[ev.button], pygame.key.get_mods())
         except KeyError:
-            return None
+            return 'unknown-button-' + str(ev.button)
     def _translate_key(self, ev):
         try:
             return self._translate_mods(self._keys[ev.key], ev.mod)
         except KeyError:
-            return None
+            return 'unknown-key-' + str(ev.key)
 
     def GetEvent(self, poll=False):
         if self.next_event:

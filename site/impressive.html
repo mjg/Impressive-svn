@@ -154,6 +154,9 @@ If an expected duration is specified, Impressive will show a semi-transparent gr
 <dt><code>-E <em>&lt;filename&gt;</em></code> or <code>--controls <em>&lt;filename&gt;</em></code></dt>
 <dd>Loads a configuration file for keyboard and mouse bindings. For the syntax of these files, refer to the <a href="#controls">Control Configuration</a> section of the manual.</dd>
 
+<dt><code>--evtest</code></dt>
+<dd>If this option is specified, Impressive will not start a normal presentation, but instead enter the so-called &raquo;Event Test Mode&laquo; after the display has been initialized. In this mode, Impressive will simply capture all keyboard and mouse events and display the name of the last event on the screen. In addition, events will be logged to standard output. This mode helps with determining the event names for each key when creating a custom control configuration (see the <a href="#controls">Control Configuration</a> section).</dd>
+
 <dt><code>-f</code></dt>
 <dd>Sets the window/fullscreen mode Impressive shall start up with. This option can be specified multiple times; each times it is found, the next of the three options is selected, in the follwing order:<ul style="margin-top:0; margin-bottom:0;">
 <li><!--man (1.) -->True <strong>fullscreen mode</strong>, including setting the video mode. This is the default mode.</li>
@@ -494,6 +497,8 @@ If an event or action specified on the command line or in a configuration file i
 </dl>
 
 <p>The event names can be prefixed with the three modifiers <code>ctrl+</code>, <code>alt+</code> and <code>shift+</code> to make the event valid only if the specified set of modifiers is pressed as well. This works for both keyboard and mouse events. Multiple modifiers can be combined, but the order must match the one mentioned in this paragraph. For example, <code>ctrl+shift+x</code> is a valid event name, while <code>shift+ctrl+x</code> is not.</p>
+
+<p>A simple way to determine the name associated with an event is using Impressive's &raquo;Event Test Mode&laqo; by invoking <code>impressive --evtest</code>. In this mode, the name of each incoming event will be displayed on the screen (and logged to standard output), which makes it possible to determine event names by experimentation.</p>
 
 <h3>Supported Actions</h3>
 

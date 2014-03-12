@@ -81,6 +81,7 @@ Control options:
   -E,  --controls <file>  load control configuration from a file
        --noclicks         disable page navigation via left/right mouse click
   -W,  --nowheel          disable page navigation via mouse wheel
+       --evtest           run Impressive in event test mode
 
 Advanced options:
   -c,  --cache <mode>     set page cache mode:
@@ -231,7 +232,7 @@ def ParseOptions(argv):
     global BackgroundRendering, UseAutoScreenSize, PollInterval, CacheFileName
     global PageRangeStart, PageRangeEnd, FontList, FontSize, Gamma, BlackLevel
     global EstimatedDuration, CursorImage, CursorHotspot, MinutesOnly, Overscan
-    global PDFRendererPath, InfoScriptPath
+    global PDFRendererPath, InfoScriptPath, EventTestMode
     global AutoOverview, ZoomFactor, FadeInOut, ShowLogo, Shuffle, PageProgress
     global QuitAtEnd, ShowClock, HalfScreen, SpotRadius, InvertPages
     global MinBoxSize, AutoAutoAdvance, AutoAdvanceProgress, BoxFadeDarkness
@@ -252,7 +253,7 @@ def ParseOptions(argv):
             "clock", "half-screen", "spot-radius=", "invert", "min-box-size=",
             "auto-auto", "auto-progress", "darkness=", "no-clicks", "nowheel",
             "no-wheel", "fake-fullscreen", "windowed", "verbose", "noblur",
-            "tracking", "bind=", "controls=", "control-help"])
+            "tracking", "bind=", "controls=", "control-help", "evtest"])
     except getopt.GetoptError, message:
         opterr(message)
 
@@ -324,6 +325,8 @@ def ParseOptions(argv):
         if opt == "--control-help":
             EventHelp()
             sys.exit(0)
+        if opt == "--evtest":
+            EventTestMode = not(EventTestMode)
         if opt == "--clock":
             ShowClock = not(ShowClock)
         if opt == "--tracking":
@@ -497,5 +500,5 @@ def ParseOptions(argv):
 
     for arg in args:
         AddFile(arg)
-    if not FileList:
+    if not(FileList) and not(EventTestMode):
         opterr("no playable files specified")

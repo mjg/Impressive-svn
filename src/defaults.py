@@ -82,3 +82,4 @@ InvertPages = False
 MinBoxSize = 20
 UseBlurShader = True
 TimeTracking = False
+EventTestMode = False

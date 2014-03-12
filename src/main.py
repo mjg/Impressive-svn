@@ -10,7 +10,7 @@ def main():
     global OverviewPageMap, OverviewPageMapInv, FileName, FileList, PageCount
     global DocumentTitle, PageProps, LogoTexture, OSDFont
     global Pcurrent, Pnext, Tcurrent, Tnext, InitialPage
-    global CacheFile, CacheFileName, BaseWorkingDir
+    global CacheFile, CacheFileName, BaseWorkingDir, RenderToDirectory
     global PAR, DAR, TempFileName
     global BackgroundRendering, FileStats, RTrunning, RTrestart, StartTime
     global CursorImage, CursorVisible, InfoScriptPath
@@ -45,6 +45,14 @@ def main():
         DAR = float(ScreenWidth) / float(ScreenHeight)
     else:
         PAR = DAR / float(ScreenWidth) * float(ScreenHeight)
+
+    # override some irrelevant settings in event test mode
+    if EventTestMode:
+        FileList = ["XXX.EventTestDummy.XXX"]
+        InfoScriptPath = None
+        RenderToDirectory = False
+        InitialPage = None
+        HalfScreen = False
 
     # fill the page list
     if Shuffle:
@@ -234,6 +242,10 @@ def main():
     except (NameError, AttributeError, TypeError):
         print >>sys.stderr, "Your version of PIL is too old or incomplete, disabling OSD."
 
+    # handle event test mode
+    if EventTestMode:
+        DoEventTestMode()
+
     # initialize mouse cursor
     if CursorImage or not(Platform.has_hardware_cursor):
         img = None
@@ -396,6 +408,46 @@ def main():
         DrawCurrentPage()
     UpdateCaption(Pcurrent)
     EventHandlerLoop()  # never returns
+
+
+# event test mode implementation
+def DoEventTestMode():
+    last_event = "(None)"
+    need_redraw = True
+    cx = ScreenWidth / 2
+    y1 = ScreenHeight / 5
+    y2 = (ScreenHeight * 4) / 5
+    if OSDFont:
+        dy = OSDFont.GetLineHeight()
+    Platform.ScheduleEvent('$dummy', 1000)  # required to ensure that time measurement works :(
+    print >>sys.stderr, "Entering Event Test Mode."
+    print " timestamp | delta-time | event"
+    t0 = Platform.GetTicks()
+    while True:
+        if need_redraw:
+            DrawLogo()
+            if OSDFont:
+                gl.Enable(gl.BLEND)
+                OSDFont.BeginDraw()
+                OSDFont.Draw((cx, y1 - dy), "Event Test Mode", align=Center, beveled=False, bold=True)
+                OSDFont.Draw((cx, y1), "press Alt+F4 to quit", align=Center, beveled=False)
+                OSDFont.Draw((cx, y2 - dy), "Last Event:", align=Center, beveled=False, bold=True)
+                OSDFont.Draw((cx, y2), last_event, align=Center, beveled=False)
+                OSDFont.EndDraw()
+                gl.Disable(gl.BLEND)
+            Platform.SwapBuffers()
+            need_redraw = False
+        ev = Platform.GetEvent()
+        if ev == '$expose':
+            need_redraw = True
+        elif ev == '$quit':
+            Quit()
+        elif ev and ev.startswith('*'):
+            now = Platform.GetTicks()
+            print "%7d ms | %7d ms | %s" % (int(now), int(now - t0), ev[1:])
+            t0 = now
+            last_event = ev[1:]
+            need_redraw = True
 
 
 # wrapper around main() that ensures proper uninitialization

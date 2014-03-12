@@ -245,7 +245,7 @@ class GLFont:
         gl.BlendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA)
         self.vertices = None
 
-    def Draw(self, origin, text, charset=None, align=Left, color=(1.0, 1.0, 1.0), alpha=1.0, beveled=True):
+    def Draw(self, origin, text, charset=None, align=Left, color=(1.0, 1.0, 1.0), alpha=1.0, beveled=True, bold=False):
         own_draw = (self.vertices is None)
         if own_draw:
             self.BeginDraw()
@@ -261,6 +261,8 @@ class GLFont:
                 self.boxes[c].add_vertices(self.vertices, x * PixelX, sy)
                 x += self.widths[c]
             y += self.line_height
+        if bold and not(beveled):
+            self.Draw((origin[0] + 1, origin[1]), text, charset=charset, align=align, color=color, alpha=alpha, beveled=False, bold=False)
         if own_draw:
             self.EndDraw(color, alpha, beveled)
 
