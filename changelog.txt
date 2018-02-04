@@ -1,3 +1,11 @@
+0.11.3 [2018-02-04]
+- fixed --auto mode that was broken in 0.11.2
+  (only worked properly for the first page)
+- fixed excessive mouse sensitivity in full-screen mode
+- fixed crashes when clicking hyperlinks in some PDFs
+- fixed non-working hyperlinks when more than one input document is specified
+
+
 0.11.2 [2017-12-19]
 - added new MuPDF renderer, uses no temporary files or named pipes on POSIX
   with MuPDF >= 1.4
