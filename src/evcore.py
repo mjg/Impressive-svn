@@ -220,7 +220,7 @@ def ParseInputBindingFile(filename):
             if line:
                 BindEvent(line, error_prefix="%s:%d" % (filename, n))
         f.close()
-    except IOError, e:
+    except IOError as e:
         print >>sys.stderr, "ERROR: failed to read the input configuration file '%s' -" % filename, e
 
 def EventHelp():

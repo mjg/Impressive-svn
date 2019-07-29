@@ -23,7 +23,7 @@ for line in open(IN_FILE_NAME, "r"):
             rev = max([int(r.strip("SMP \r\n\t\f\v")) for r in rev.split(':')])
             line = line[:m.start(1)] + str(rev) + line[m.end(1):]
             print "SVN revision:", rev
-        except Exception, e:
+        except Exception as e:
             print >>sys.stderr, "WARNING: could not get SVN revision -", e
     m = re_exec.match(line)
     if m:

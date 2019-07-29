@@ -170,7 +170,7 @@ def main():
     # initialize graphics
     try:
         Platform.StartDisplay()
-    except Exception, e:
+    except Exception as e:
         print >>sys.stderr, "FATAL: failed to create rendering surface in the desired resolution (%dx%d)" % (ScreenWidth, ScreenHeight)
         print >>sys.stderr, "       detailed error message:", e
         sys.exit(1)
@@ -203,7 +203,7 @@ def main():
         extensions = set((gl.GetString(gl.EXTENSIONS) or "").split())
         if (GLVersion < "2") and (not("GL_ARB_shader_objects" in extensions) or not("GL_ARB_texture_non_power_of_two" in extensions)):
             raise ImportError("OpenGL version %r is below 2.0 and the necessary extensions are unavailable" % GLVersion)
-    except ImportError, e:
+    except ImportError as e:
         if GLVendor: print >>sys.stderr, "OpenGL vendor:", GLVendor
         if GLRenderer: print >>sys.stderr, "OpenGL renderer:", GLRenderer
         if GLVersion: print >>sys.stderr, "OpenGL version:", GLVersion

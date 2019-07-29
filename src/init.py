@@ -66,7 +66,7 @@ try:
     from pygame.locals import *
     from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops, ImageOps
     from PIL import TiffImagePlugin, BmpImagePlugin, JpegImagePlugin, PngImagePlugin, PpmImagePlugin
-except (ValueError, ImportError), err:
+except (ValueError, ImportError) as err:
     print >>sys.stderr, "Oops! Cannot load necessary modules:", err
     print >>sys.stderr, """To use Impressive, you need to install the following Python modules:
  - PyGame   [python-pygame]   http://www.pygame.org/

@@ -61,7 +61,7 @@ execfile("src/options.py", globals())
 def run():
     try:
         run_main()
-    except SystemExit, e:
+    except SystemExit as e:
         return e.code
 
 # use this function if you use Impressive as a library and want to call any

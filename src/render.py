@@ -63,7 +63,7 @@ class PDFRendererBase(object):
                 return process
             if process.wait() != 0:
                 raise RenderError("rendering failed")
-        except OSError, e:
+        except OSError as e:
             raise RenderError("could not start renderer - %s" % e)
 
     def load(self, imgfile, autoremove=False):
@@ -72,7 +72,7 @@ class PDFRendererBase(object):
             img.load()
         except (KeyboardInterrupt, SystemExit):
             raise
-        except IOError, e:
+        except IOError as e:
             raise RenderError("could not read image file - %s" % e)
         if autoremove:
             self.remove(imgfile)
@@ -108,7 +108,7 @@ class MuPDFRenderer(PDFRendererBase):
         if pipe:
             try:
                 out, err = proc.communicate()
-            except EnvironmentError, e:
+            except EnvironmentError as e:
                 raise RenderError("could not run renderer - %s" % e)
             if not out:
                 raise RenderError("renderer returned empty image")
@@ -149,7 +149,7 @@ class MuPDFLegacyRenderer(PDFRendererBase):
             f = open(comm.imgfile, 'rb')
             comm.buffer = cStringIO.StringIO(f.read())
             f.close()
-        except IOError, e:
+        except IOError as e:
             comm.error = "could not open FIFO for reading - %s" % e
 
     def render(self, filename, page, res, antialias=True):
@@ -279,7 +279,7 @@ def InitPDFRenderer():
             PDFRenderer = r_class(PDFRendererPath)
             print >>sys.stderr, "PDF renderer:", PDFRenderer.name
             return PDFRenderer
-        except RendererUnavailable, e:
+        except RendererUnavailable as e:
             if Verbose:
                 print >>sys.stderr, "Not using %s for PDF rendering:" % r_class.name, e
             else:
@@ -348,7 +348,7 @@ def RenderPDF(page, MayAdjustResolution, ZoomMode):
     # call the renderer
     try:
         img = PDFRenderer.render(SourceFile, RealPage, useres, use_aa)
-    except RenderError, e:
+    except RenderError as e:
         print >>sys.stderr, "ERROR: failed to render page %d:" % page, e
         return DummyPage()
 
@@ -673,7 +673,7 @@ def DoRender():
         return 1
     try:
         os.mkdir(RenderToDirectory)
-    except OSError, e:
+    except OSError as e:
         print >>sys.stderr, "Cannot create destination directory `%s':" % RenderToDirectory
         print >>sys.stderr, e.strerror
         return 1

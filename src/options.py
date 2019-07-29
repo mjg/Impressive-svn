@@ -271,7 +271,7 @@ def ParseOptions(argv):
             "nocursor", "zoomdarkness=", "zoom-darkness=", "box-edge=",
             "maxzoom=", "max-zoom=", "time-display", "zbox-edge=",
             "vht0=", "vht1="])
-    except getopt.GetoptError, message:
+    except getopt.GetoptError as message:
         opterr(message)
 
     for opt, arg in opts:

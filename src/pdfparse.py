@@ -415,7 +415,7 @@ def ParsePDF(filename):
             return count
         except IOError:
             print >>sys.stderr, "Note: intermediate PDF file not readable, hyperlinks disabled."
-        except PDFError, e:
+        except PDFError as e:
             print >>sys.stderr, "Note: error in PDF file, hyperlinks disabled."
             print >>sys.stderr, "      PDF parser error message:", e
     finally:

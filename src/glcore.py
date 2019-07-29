@@ -389,7 +389,7 @@ class GLShader(object):
         except AttributeError:
             try:
                 self._instance = self()
-            except GLShaderCompileError, e:
+            except GLShaderCompileError as e:
                 self._instance = None
                 raise
             return self._instance
