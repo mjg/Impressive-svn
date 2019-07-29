@@ -177,7 +177,7 @@ def main():
     if Fullscreen:
         Platform.SetMouseVisible(False)
         CursorVisible = False
-    if (Gamma <> 1.0) or (BlackLevel <> 0):
+    if (Gamma != 1.0) or (BlackLevel != 0):
         SetGamma(force=True)
 
     # initialize OpenGL
