@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 from __future__ import print_function
+import codecs
 
 def execfile(f, c):
     with open(f) as h:
@@ -18,7 +19,7 @@ if __name__ == "__main__":
     for filename, varname in Assets:
         print("encoding %s into %s ..." % (filename, varname))
         contents[filename] = open(filename, "rb").read()
-        data = contents[filename].encode('base64').replace('\n', '')
+        data = codecs.encode(contents[filename], 'base64').replace('\n', '')
         brk = 247 - len(varname)
         while brk < len(data):
             data = data[:brk] + "\r\n" + data[brk:]
@@ -30,7 +31,7 @@ if __name__ == "__main__":
 
     for filename, varname in Assets:
         print("verifying %s ..." % varname, end=' ')
-        data = globals()[varname].decode('base64')
+        data = codecs.decode(globals()[varname], 'base64')
         if data == contents[filename]:
             print("OK")
         else:
