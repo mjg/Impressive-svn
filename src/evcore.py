@@ -114,7 +114,7 @@ def ValidateEvent(ev, error_prefix=None):
         error_prefix += ": "
     else:
         error_prefix = ""
-    print >>sys.stderr, "ERROR: %signoring unknown event '%s'" % (error_prefix, ev)
+    print("ERROR: %signoring unknown event '%s'" % (error_prefix, ev), file=sys.stderr)
     return False
 
 def ValidateAction(ev, error_prefix=None):
@@ -124,7 +124,7 @@ def ValidateAction(ev, error_prefix=None):
         error_prefix += ": "
     else:
         error_prefix = ""
-    print >>sys.stderr, "ERROR: %signoring unknown action '%s'" % (error_prefix, ev)
+    print("ERROR: %signoring unknown action '%s'" % (error_prefix, ev), file=sys.stderr)
     return False
 
 def BindEvent(events, actions=None, clear=False, remove=False, error_prefix=None):
@@ -221,24 +221,24 @@ def ParseInputBindingFile(filename):
                 BindEvent(line, error_prefix="%s:%d" % (filename, n))
         f.close()
     except IOError as e:
-        print >>sys.stderr, "ERROR: failed to read the input configuration file '%s' -" % filename, e
+        print("ERROR: failed to read the input configuration file '%s' -" % filename, e, file=sys.stderr)
 
 def EventHelp():
     evlist = ["a-z", "0-9", "kp0-kp9", "f1-f12"] + sorted(list(SpecialKeyNames))
-    print "Event-to-action binding syntax:"
-    print "  <event> [,<event2...>] = <action> [,<action2...>]"
-    print "  By default, this will *add* actions to an event."
-    print "  To *overwrite* the current binding for an event, use ':=' instead of '='."
-    print "  To remove actions from an event, use '-=' instead of '='."
-    print "  Join multiple bindings with a semi-colon (';')."
-    print "Special commands:"
-    print "  clearall       = clear all bindings"
-    print "  defaults       = load default bindings"
-    print "  include <file> = load bindings from a file"
-    print "Binding files use the same syntax with one binding per line;"
-    print "comments start with a '#' symbol."
-    print
-    print "Recognized keyboard event names:"
+    print("Event-to-action binding syntax:")
+    print("  <event> [,<event2...>] = <action> [,<action2...>]")
+    print("  By default, this will *add* actions to an event.")
+    print("  To *overwrite* the current binding for an event, use ':=' instead of '='.")
+    print("  To remove actions from an event, use '-=' instead of '='.")
+    print("  Join multiple bindings with a semi-colon (';').")
+    print("Special commands:")
+    print("  clearall       = clear all bindings")
+    print("  defaults       = load default bindings")
+    print("  include <file> = load bindings from a file")
+    print("Binding files use the same syntax with one binding per line;")
+    print("comments start with a '#' symbol.")
+    print()
+    print("Recognized keyboard event names:")
     while evlist:
         line = "  "
         while evlist and ((len(line) + len(evlist[0])) < 78):
@@ -246,27 +246,27 @@ def EventHelp():
         line = line.rstrip()
         if not evlist:
             line = line.rstrip(',')
-        print line
-    print "Recognized mouse event names:"
-    print "  lmb, mmb, rmb (= left, middle and right mouse buttons),"
-    print "  wheelup, wheeldown,"
-    print "  btnX (additional buttons, use --evtest to check their mapping)"
-    print
-    print "Recognized actions:"
+        print(line)
+    print("Recognized mouse event names:")
+    print("  lmb, mmb, rmb (= left, middle and right mouse buttons),")
+    print("  wheelup, wheeldown,")
+    print("  btnX (additional buttons, use --evtest to check their mapping)")
+    print()
+    print("Recognized actions:")
     maxalen = max(map(len, KnownActions))
     for action in sorted(KnownActions):
         doc = KnownActions[action]
         if doc:
-            print "  %s - %s" % (action.ljust(maxalen), doc)
+            print("  %s - %s" % (action.ljust(maxalen), doc))
         else:
-            print "  %s" % action
-    print
+            print("  %s" % action)
+    print()
     if not EventMap: return
-    print "Current bindings:"
+    print("Current bindings:")
     maxelen = max(map(len, EventMap))
     for event in sorted(EventMap):
         if EventMap[event]:
-            print "  %s = %s" % (event.ljust(maxelen), ", ".join(EventMap[event]))
+            print("  %s = %s" % (event.ljust(maxelen), ", ".join(EventMap[event])))
 
 def LoadDefaultBindings():
     BindEvent("""clearall

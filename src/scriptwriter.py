@@ -13,9 +13,9 @@ def LoadInfoScript():
     except IOError:
         pass
     except:
-        print >>sys.stderr, "----- Exception in info script ----"
+        print("----- Exception in info script ----", file=sys.stderr)
         traceback.print_exc(file=sys.stderr)
-        print >>sys.stderr, "----- End of traceback -----"
+        print("----- End of traceback -----", file=sys.stderr)
     NewPageProps = PageProps
     PageProps = OldPageProps
     del OldPageProps
@@ -31,8 +31,8 @@ LambdaWarning = False
 def here_was_a_lambda_expression_that_could_not_be_saved():
     global LambdaWarning
     if not LambdaWarning:
-        print >>sys.stderr, "WARNING: The info script for the current file contained lambda expressions that"
-        print >>sys.stderr, "         were removed during the a save operation."
+        print("WARNING: The info script for the current file contained lambda expressions that", file=sys.stderr)
+        print("         were removed during the a save operation.", file=sys.stderr)
         LambdaWarning = True
 
 # "clean" a PageProps entry so that only 'public' properties are left
@@ -59,9 +59,9 @@ def PropValueRepr(value):
         if value.__name__ != "<lambda>":
             return value.__name__
         if not ScriptTainted:
-            print >>sys.stderr, "WARNING: The info script contains lambda expressions, which cannot be saved"
-            print >>sys.stderr, "         back. The modifed script will be written into a separate file to"
-            print >>sys.stderr, "         minimize data loss."
+            print("WARNING: The info script contains lambda expressions, which cannot be saved", file=sys.stderr)
+            print("         back. The modifed script will be written into a separate file to", file=sys.stderr)
+            print("         minimize data loss.", file=sys.stderr)
             ScriptTainted = True
         return "here_was_a_lambda_expression_that_could_not_be_saved"
     elif type(value) == types.ClassType:
@@ -144,4 +144,4 @@ def SaveInfoScript(filename):
         f.write(script)
         f.close()
     except:
-        print >>sys.stderr, "Oops! Could not write info script!"
+        print("Oops! Could not write info script!", file=sys.stderr)

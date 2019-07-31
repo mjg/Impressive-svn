@@ -32,7 +32,7 @@ class Platform_PyGame(object):
         flags = OPENGL | DOUBLEBUF
         if Fullscreen:
             if FakeFullscreen:
-                print >>sys.stderr, "Using \"fake-fullscreen\" mode."
+                print("Using \"fake-fullscreen\" mode.", file=sys.stderr)
                 flags |= NOFRAME
                 if not WindowPos:
                     WindowPos = (0,0)

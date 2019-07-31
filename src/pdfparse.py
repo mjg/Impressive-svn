@@ -393,10 +393,10 @@ def ParsePDF(filename):
     if ok:
         pass
     elif err:
-        print >>sys.stderr, "Note: error while unpacking the PDF file, hyperlinks disabled."
+        print("Note: error while unpacking the PDF file, hyperlinks disabled.", file=sys.stderr)
         return
     else:
-        print >>sys.stderr, "Note: neither mutool nor pdftk found, hyperlinks disabled."
+        print("Note: neither mutool nor pdftk found, hyperlinks disabled.", file=sys.stderr)
         return
 
     count = 0
@@ -410,14 +410,14 @@ def ParsePDF(filename):
                     FixHyperlinks(page + page_offset)
                 count += len(annots)
             if pdf.errors:
-                print >>sys.stderr, "Note: failed to parse the PDF file, hyperlinks might not work properly"
+                print("Note: failed to parse the PDF file, hyperlinks might not work properly", file=sys.stderr)
             del pdf
             return count
         except IOError:
-            print >>sys.stderr, "Note: intermediate PDF file not readable, hyperlinks disabled."
+            print("Note: intermediate PDF file not readable, hyperlinks disabled.", file=sys.stderr)
         except PDFError as e:
-            print >>sys.stderr, "Note: error in PDF file, hyperlinks disabled."
-            print >>sys.stderr, "      PDF parser error message:", e
+            print("Note: error in PDF file, hyperlinks disabled.", file=sys.stderr)
+            print("      PDF parser error message:", e, file=sys.stderr)
     finally:
         try:
             os.remove(uncompressed)

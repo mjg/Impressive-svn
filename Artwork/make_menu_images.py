@@ -1,3 +1,5 @@
+from __future__ import print_function
+
 from PIL import Image
 
 Height = 32
@@ -30,7 +32,7 @@ DitherMatrix = (
 
 def makeimg(name, color, trans):
     name = FileName % name
-    print name
+    print(name)
     data = []
     for y in xrange(Height):
         b = BaseGradient[y] * DarkenFactor[y]

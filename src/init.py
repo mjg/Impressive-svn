@@ -38,7 +38,7 @@ if os.name == "nt":
     except ImportError:
         HaveWin32API = False
         MPlayerPath = ""
-        def RunURL(url): print "Error: cannot run URL `%s'" % url
+        def RunURL(url): print("Error: cannot run URL `%s'" % url)
     if getattr(sys, "frozen", False):
         sys.path.append(root)
     FontPath = []
@@ -58,7 +58,7 @@ else:
         try:
             subprocess.Popen(["xdg-open", url])
         except OSError:
-            print >>sys.stderr, "Error: cannot open URL `%s'" % url
+            print("Error: cannot open URL `%s'" % url, file=sys.stderr)
 
 # import special modules
 try:
@@ -67,14 +67,14 @@ try:
     from PIL import Image, ImageDraw, ImageFont, ImageFilter, ImageChops, ImageOps
     from PIL import TiffImagePlugin, BmpImagePlugin, JpegImagePlugin, PngImagePlugin, PpmImagePlugin
 except (ValueError, ImportError) as err:
-    print >>sys.stderr, "Oops! Cannot load necessary modules:", err
-    print >>sys.stderr, """To use Impressive, you need to install the following Python modules:
+    print("Oops! Cannot load necessary modules:", err, file=sys.stderr)
+    print("""To use Impressive, you need to install the following Python modules:
  - PyGame   [python-pygame]   http://www.pygame.org/
  - PIL      [python-imaging]  http://www.pythonware.com/products/pil/
    or Pillow                  http://pypi.python.org/pypi/Pillow/
  - PyWin32  (OPTIONAL, Win32) http://sourceforge.net/projects/pywin32/
 Additionally, please be sure to have pdftoppm or GhostScript installed if you
-intend to use PDF input."""
+intend to use PDF input.""", file=sys.stderr)
     sys.exit(1)
 
 try:

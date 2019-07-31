@@ -329,11 +329,11 @@ class GLShader(object):
                 log = "" 
             if force_log or ((loglevel >= self.LOG_IF_NOT_EMPTY) and log):
                 if status:
-                    print >>sys.stderr, "Info: log for %s %s:" % (self.__class__.__name__, action)
+                    print("Info: log for %s %s:" % (self.__class__.__name__, action), file=sys.stderr)
                 else:
-                    print >>sys.stderr, "Error: %s %s failed - log information follows:" % (self.__class__.__name__, action)
+                    print("Error: %s %s failed - log information follows:" % (self.__class__.__name__, action), file=sys.stderr)
                 for line in log.split('\n'):
-                    print >>sys.stderr, '>', line.rstrip()
+                    print('>', line.rstrip(), file=sys.stderr)
             if not status:
                 raise GLShaderCompileError("failure during %s %s" % (self.__class__.__name__, action))
         def handle_shader(type_enum, type_name, src):

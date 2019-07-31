@@ -248,7 +248,7 @@ def StopMPlayer():
 
     # if that didn't work, be rude
     if MPlayerProcess.poll() is None:
-        print >>sys.stderr, "Audio/video player didn't exit properly, killing PID", MPlayerProcess.pid
+        print("Audio/video player didn't exit properly, killing PID", MPlayerProcess.pid, file=sys.stderr)
         try:
             if os.name == 'nt':
                 win32api.TerminateProcess(win32api.OpenProcess(1, False, MPlayerProcess.pid), 0)
@@ -289,9 +289,9 @@ def SafeCall(func, args=[], kwargs={}):
     try:
         return func(*args, **kwargs)
     except:
-        print >>sys.stderr, "----- Unhandled Exception ----"
+        print("----- Unhandled Exception ----", file=sys.stderr)
         traceback.print_exc(file=sys.stderr)
-        print >>sys.stderr, "----- End of traceback -----"
+        print("----- End of traceback -----", file=sys.stderr)
 
 def Quit(code=0):
     global CleanExit
@@ -299,6 +299,6 @@ def Quit(code=0):
         CleanExit = True
     StopMPlayer()
     Platform.Done()
-    print >>sys.stderr, "Total presentation time: %s." % \
-                        FormatTime((Platform.GetTicks() - StartTime) / 1000)
+    print("Total presentation time: %s." % \
+                        FormatTime((Platform.GetTicks() - StartTime) / 1000), file=sys.stderr)
     sys.exit(code)

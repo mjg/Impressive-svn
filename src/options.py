@@ -5,7 +5,7 @@ def if_op(cond, res_then, res_else):
     else:    return res_else
 
 def HelpExit(code=0):
-    print """A nice presentation tool.
+    print("""A nice presentation tool.
 
 Usage: """+os.path.basename(sys.argv[0])+""" [OPTION...] <INPUT(S)...>
 
@@ -109,11 +109,11 @@ Advanced options:
        --nologo           disable startup logo and version number display
   -v,  --verbose          (slightly) more verbose operation
 
-For detailed information, visit""", __website__
+For detailed information, visit""", __website__)
     sys.exit(code)
 
 def ListTransitions():
-    print "Available transitions:"
+    print("Available transitions:")
     standard = dict([(tc.__name__, None) for tc in AvailableTransitions])
     trans = [(tc.__name__, tc.__doc__) for tc in AllTransitions]
     trans.append(('None', "no transition"))
@@ -124,8 +124,8 @@ def ListTransitions():
             star = '*'
         else:
             star = ' '
-        print star, name.ljust(maxlen), '-', desc
-    print "(transitions with * are enabled by default)"
+        print(star, name.ljust(maxlen), '-', desc)
+    print("(transitions with * are enabled by default)")
     sys.exit(0)
 
 def TryTime(s, regexp, func):
@@ -140,11 +140,11 @@ def ParseTime(s):
         or TryTime(s, r'([0-9]+)[h:]([0-9]+)[m:]([0-9]+)s?$', lambda m: m[0] * 3600 + m[1] * 60 + m[2])
 
 def opterr(msg, extra_lines=[]):
-    print >>sys.stderr, "command line parse error:", msg
+    print("command line parse error:", msg, file=sys.stderr)
     for line in extra_lines:
-        print >>sys.stderr, line
-    print >>sys.stderr, "use `%s -h' to get help" % sys.argv[0]
-    print >>sys.stderr, "or visit", __website__, "for full documentation"
+        print(line, file=sys.stderr)
+    print("use `%s -h' to get help" % sys.argv[0], file=sys.stderr)
+    print("or visit", __website__, "for full documentation", file=sys.stderr)
     sys.exit(2)
 
 def SetTransitions(list):
@@ -301,10 +301,10 @@ def ParseOptions(argv):
         if opt in ("-c", "--cache"):
             CacheMode = ParseCacheMode(arg)
         if opt == "--nocache":
-            print >>sys.stderr, "Note: The `--nocache' option is deprecated, use `--cache none' instead."
+            print("Note: The `--nocache' option is deprecated, use `--cache none' instead.", file=sys.stderr)
             CacheMode = NoCache
         if opt in ("-m", "--memcache"):
-            print >>sys.stderr, "Note: The `--memcache' option is deprecated, use `--cache memory' instead."
+            print("Note: The `--memcache' option is deprecated, use `--cache memory' instead.", file=sys.stderr)
             CacheMode = MemCache
         if opt == "--cachefile":
             CacheFileName = arg
@@ -327,16 +327,16 @@ def ParseOptions(argv):
             ShowLogo = not(ShowLogo)
         if opt in ("--noclicks", "--no-clicks"):
             if not DefaultControls:
-                print >>sys.stderr, "Note: The default control settings have been modified, the `--noclicks' option might not work as expected."
+                print("Note: The default control settings have been modified, the `--noclicks' option might not work as expected.", file=sys.stderr)
             BindEvent("lmb, rmb, ctrl+lmb, ctrl+rmb -= goto-next, goto-prev, goto-next-notrans, goto-prev-notrans")
         if opt in ("-W", "--nowheel", "--no-wheel"):
             if not DefaultControls:
-                print >>sys.stderr, "Note: The default control settings have been modified, the `--nowheel' option might not work as expected."
+                print("Note: The default control settings have been modified, the `--nowheel' option might not work as expected.", file=sys.stderr)
             BindEvent("wheelup, wheeldown, ctrl+wheelup, ctrl+wheeldown -= goto-next, goto-prev, goto-next-notrans, goto-prev-notrans, overview-next, overview-prev")
             MouseWheelZoom = True
         if opt in ("--noquit", "--no-quit"):
             if not DefaultControls:
-                print >>sys.stderr, "Note: The default control settings have been modified, the `--noquit' option might not work as expected."
+                print("Note: The default control settings have been modified, the `--noquit' option might not work as expected.", file=sys.stderr)
             BindEvent("q,escape -= quit")            
         if opt in ("-e", "--bind"):
             BindEvent(arg, error_prefix="--bind")

@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+from __future__ import print_function
+
 PROJECT_NAME = "impressive"
 IN_FILE_NAME = PROJECT_NAME + "_dev.py"
 OUT_FILE_NAME = PROJECT_NAME + ".py"
@@ -22,13 +24,13 @@ for line in open(IN_FILE_NAME, "r"):
                 raise RuntimeError("not a working copy")
             rev = max([int(r.strip("SMP \r\n\t\f\v")) for r in rev.split(':')])
             line = line[:m.start(1)] + str(rev) + line[m.end(1):]
-            print "SVN revision:", rev
+            print("SVN revision:", rev)
         except Exception as e:
-            print >>sys.stderr, "WARNING: could not get SVN revision -", e
+            print("WARNING: could not get SVN revision -", e, file=sys.stderr)
     m = re_exec.match(line)
     if m:
         if was_include: out.write("\n\n")
-        print m.group(1)
+        print(m.group(1))
         out.write(open(m.group(1), "rb").read().replace("\r\n", "\n").strip("\n") + "\n")
     else:
         out.write(line.replace("\r\n", "\n"))

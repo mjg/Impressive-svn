@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+
+from __future__ import print_function
+
 import sys, re, optparse, os, HTMLParser
 __version__ = "0.1.1"
 
@@ -65,7 +68,7 @@ class Converter(HTMLParser.HTMLParser):
             self.f.write(".IX %s \"%s\"\n" % (index, heading))
 
     def handle_starttag(self, tag, attrs):
-        if DEBUG: print "starttag:", tag, attrs
+        if DEBUG: print("starttag:", tag, attrs)
         tag = tag.lower()
         if (tag == "p") and (tag in self.stack):
             raise HTMLParser.HTMLParseError("nested <p> found")
@@ -85,14 +88,14 @@ class Converter(HTMLParser.HTMLParser):
             self.newblock()
 
     def handle_startendtag(self, tag, attrs):
-        if DEBUG: print "startendtag:", tag, attrs
+        if DEBUG: print("startendtag:", tag, attrs)
         if not self.enabled: return
         tag = tag.lower()
         if tag == "br":
             self.newblock(cmd=".br")
 
     def handle_endtag(self, tag):
-        if DEBUG: print "endtag:", tag
+        if DEBUG: print("endtag:", tag)
         tag = tag.lower()
         if not(self.stack) or (self.stack[-1] != tag):
             raise HTMLParser.HTMLParseError("line %s: start/end tag mismatch\nstack is %r, got %r" % (self.getpos()[0], self.stack, tag))
@@ -114,7 +117,7 @@ class Converter(HTMLParser.HTMLParser):
             self.endheading("Subsection", 4)
 
     def handle_data(self, data):
-        if DEBUG: print "data:", repr(data)
+        if DEBUG: print("data:", repr(data))
         if not self.enabled: return
         if self.stack:
             tag = self.stack[-1]
@@ -135,15 +138,15 @@ class Converter(HTMLParser.HTMLParser):
             self.data += data
 
     def handle_charref(self, name):
-        if DEBUG: print "charref:", name
+        if DEBUG: print("charref:", name)
 
     def handle_entityref(self, name):
-        if DEBUG: print "entityref:", name
+        if DEBUG: print("entityref:", name)
         if not self.enabled: return
         self.data += ENTITIES.get(name, "")
 
     def handle_comment(self, data):
-        if DEBUG: print "comment:", repr(data)
+        if DEBUG: print("comment:", repr(data))
         data = data.strip()
         if data[:3].lower() != "man": return
         commands = data.split()[0]
@@ -173,7 +176,7 @@ class Converter(HTMLParser.HTMLParser):
                 self.data = arg.replace('_', ' ')
                 self.endheading("Subsection", 4)
             elif cmd != "man":
-                print >>sys.stderr, "unknown command `%s'" % cmd
+                print("unknown command `%s'" % cmd, file=sys.stderr)
         data = data[len(commands):].lstrip().replace("\r\n", "\n")
         if data:
             if self.data:
@@ -182,10 +185,10 @@ class Converter(HTMLParser.HTMLParser):
                 self.f.write(data + "\n")
 
     def handle_decl(self, decl):
-        if DEBUG: print "decl:", decl
+        if DEBUG: print("decl:", decl)
 
     def handle_pi(self, data):
-        if DEBUG: print "PI:", data
+        if DEBUG: print("PI:", data)
 
 
 if __name__ == "__main__":

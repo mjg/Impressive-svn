@@ -141,13 +141,13 @@ def InitPCache():
     # check the cache magic
     UpdateCacheMagic()
     if CacheFile and (CacheFile.read(32) != CacheMagic):
-        print >>sys.stderr, "Cache file mismatch, recreating cache."
+        print("Cache file mismatch, recreating cache.", file=sys.stderr)
         CacheFile.close()
         CacheFile = None
 
     if CacheFile:
         # if the magic was valid, import cache data
-        print >>sys.stderr, "Using already existing persistent cache file."
+        print("Using already existing persistent cache file.", file=sys.stderr)
         for page in range(1, PageCount+1):
             offset = int(CacheFile.read(8), 16)
             if offset:
@@ -158,7 +158,7 @@ def InitPCache():
         try:
             CacheFile = file(CacheFileName, "wb+")
         except IOError:
-            print >>sys.stderr, "Error: cannot write the persistent cache file (`%s')" % CacheFileName
-            print >>sys.stderr, "Falling back to temporary file cache."
+            print("Error: cannot write the persistent cache file (`%s')" % CacheFileName, file=sys.stderr)
+            print("Falling back to temporary file cache.", file=sys.stderr)
             CacheMode = FileCache
         WritePCacheHeader()

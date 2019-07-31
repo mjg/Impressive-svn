@@ -210,7 +210,7 @@ class GLFont:
             return
         char_count = len(self.vertices) / 16
         if char_count > 16383:
-            print >>sys.stderr, "Internal Error: too many characters (%d) to display in one go, truncating." % char_count
+            print("Internal Error: too many characters (%d) to display in one go, truncating." % char_count, file=sys.stderr)
             char_count = 16383
 
         # create an index buffer large enough for the text

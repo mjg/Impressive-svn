@@ -77,7 +77,7 @@ def BoxFade(func):
 def ResetTimer():
     global StartTime, PageEnterTime
     if TimeTracking and not(FirstPage):
-        print "--- timer was reset here ---"
+        print("--- timer was reset here ---")
     StartTime = Platform.GetTicks()
     PageEnterTime = 0
 
@@ -99,8 +99,8 @@ def PlayVideo(video):
             if Fullscreen:
                 opts.append("-fs")
             else:
-                print >>sys.stderr, "Sorry, but Impressive only supports video on your operating system if fullscreen"
-                print >>sys.stderr, "mode is used."
+                print("Sorry, but Impressive only supports video on your operating system if fullscreen", file=sys.stderr)
+                print("mode is used.", file=sys.stderr)
                 VideoPlaying = False
                 MPlayerProcess = None
                 return
@@ -202,9 +202,9 @@ def PageLeft(overview=False):
             p = "over"
         else:
             p = "%4d" % Pcurrent
-        print "%s%9s%9s%9s" % (p, FormatTime(dt), \
+        print("%s%9s%9s%9s" % (p, FormatTime(dt), \
                                   FormatTime(PageEnterTime / 1000), \
-                                  FormatTime(t1 / 1000))
+                                  FormatTime(t1 / 1000)))
 
 # create an instance of a transition class
 def InstantiateTransition(trans_class):
@@ -213,7 +213,7 @@ def InstantiateTransition(trans_class):
     except GLInvalidShaderError:
         return None
     except GLShaderCompileError:
-        print >>sys.stderr, "Note: all %s transitions will be disabled" % trans_class.__name__
+        print("Note: all %s transitions will be disabled" % trans_class.__name__, file=sys.stderr)
         return None
 
 # perform a transition to a specified page
@@ -355,10 +355,10 @@ def ReRenderZoom(factor):
         pass  # clear all OpenGL errors
     gl.TexImage2D(gl.TEXTURE_2D, 0, gl.RGB, int(ResZoomFactor * TexWidth), int(ResZoomFactor * TexHeight), 0, gl.RGB, gl.UNSIGNED_BYTE, PageImage(Pcurrent, True))
     if gl.GetError():
-        print >>sys.stderr, "I'm sorry, but your graphics card is not capable of rendering presentations"
-        print >>sys.stderr, "in this resolution. Either the texture memory is exhausted, or there is no"
-        print >>sys.stderr, "support for large textures (%dx%d). Please try to run Impressive in a" % (TexWidth, TexHeight)
-        print >>sys.stderr, "smaller resolution using the -g command-line option."
+        print("I'm sorry, but your graphics card is not capable of rendering presentations", file=sys.stderr)
+        print("in this resolution. Either the texture memory is exhausted, or there is no", file=sys.stderr)
+        print("support for large textures (%dx%d). Please try to run Impressive in a" % (TexWidth, TexHeight), file=sys.stderr)
+        print("smaller resolution using the -g command-line option.", file=sys.stderr)
         HighResZoomFailed = True
         return
     DrawCurrentPage()
@@ -463,10 +463,10 @@ def TimerTick():
 def EnableTimeTracking(force=False):
     global TimeTracking
     if force or (TimeDisplay and not(TimeTracking) and not(ShowClock) and FirstPage):
-        print >>sys.stderr, "Time tracking mode enabled."
+        print("Time tracking mode enabled.", file=sys.stderr)
         TimeTracking = True
-        print "page duration    enter    leave"
-        print "---- -------- -------- --------"
+        print("page duration    enter    leave")
+        print("---- -------- -------- --------")
 
 # set cursor visibility
 def SetCursor(visible):

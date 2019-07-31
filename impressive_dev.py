@@ -17,6 +17,8 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
+from __future__ import print_function
+
 __title__   = "Impressive"
 __version__ = "0.12.1"
 __rev__     = None
@@ -28,7 +30,7 @@ import sys
 if __rev__ and (("WIP" in __version__) or ("rc" in __version__) or ("alpha" in __version__) or ("beta" in __version__)):
     __version__ += " (SVN r%s)" % __rev__
 def greet():
-    print >>sys.stderr, "Welcome to", __title__, "version", __version__
+    print("Welcome to", __title__, "version", __version__, file=sys.stderr)
 if __name__ == "__main__":
     greet()
 
@@ -77,5 +79,5 @@ if __name__ == "__main__":
         run_main()
     finally:
         if not(CleanExit) and (os.name == 'nt') and getattr(sys, "frozen", False):
-            print
+            print()
             raw_input("<-- press ENTER to quit the program --> ")
