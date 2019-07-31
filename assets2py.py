@@ -2,6 +2,11 @@
 
 from __future__ import print_function
 
+def execfile(f, c):
+    with open(f) as h:
+        code = compile(h.read(), f, 'exec')
+        exec(code, c)
+
 Assets = [
     ("logo.png", "LOGO"),
     ("cursor.png", "DEFAULT_CURSOR")

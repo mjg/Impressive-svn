@@ -34,6 +34,10 @@ def greet():
 if __name__ == "__main__":
     greet()
 
+def execfile(f, c):
+    with open(f) as h:
+        code = compile(h.read(), f, 'exec')
+        exec(code, c)
 
 execfile("src/defaults.py", globals())
 execfile("src/init.py", globals())
