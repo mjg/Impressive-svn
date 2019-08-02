@@ -15,16 +15,16 @@ Assets = [
 
 if __name__ == "__main__":
     contents = {}
-    f = open("assets.tmp.py", "wb")
+    f = open("assets.tmp.py", "w")
     for filename, varname in Assets:
         print("encoding %s into %s ..." % (filename, varname))
         contents[filename] = open(filename, "rb").read()
-        data = codecs.encode(contents[filename], 'base64').replace('\n', '')
+        data = codecs.encode(contents[filename], 'base64').decode().replace('\n', '')
         brk = 247 - len(varname)
         while brk < len(data):
             data = data[:brk] + "\r\n" + data[brk:]
             brk += 256
-        f.write('%s = """%s"""\r\n' % (varname, data))
+        f.write('%s = b"""%s"""\r\n' % (varname, data))
     f.close()
 
     execfile("assets.tmp.py", globals())
