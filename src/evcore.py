@@ -1,6 +1,6 @@
 ##### EVENT-TO-ACTION BINDING CODE #############################################
 
-SpecialKeyNames = set(filter(None, """
+SpecialKeyNames = set("""
 ampersand asterisk at backquote backslash backspace break capslock caret clear
 comma down escape euro end exclaim greater hash help home insert kp_divide
 kp_enter kp_equals kp_minus kp_multiply kp_plus lalt last lctrl left leftbracket
@@ -8,12 +8,12 @@ leftparen less lmeta lshift lsuper menu minus mode numlock pagedown pageup pause
 period plus power print question quote quotedbl ralt rctrl return right
 rightbracket rightparen rmeta rshift rsuper scrollock semicolon slash space
 sysreq tab underscore up
-""".split()))
-KnownEvents = set(list(SpecialKeyNames) + filter(None, """
+""".split())
+KnownEvents = set(list(SpecialKeyNames) + """
 a b c d e f g h i j k l m n o p q r s t u v w x y z 0 1 2 3 4 5 6 7 8 9
 kp0 kp1 kp2 kp3 kp4 kp5 kp6 kp7 kp8 kp9 f1 f2 f3 f4 f5 f6 f7 f8 f9 f10 f11 f12
 lmb mmb rmb wheeldown wheelup
-""".split()) + ["btn%d" % i for i in xrange(1, 20)])
+""".split() + ["btn%d" % i for i in range(1, 20)])
 
 # event handling model:
 # - Platform.GetEvent() generates platform-neutral event (= string) that

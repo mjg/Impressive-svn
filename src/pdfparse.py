@@ -122,7 +122,7 @@ class PDFParser:
         data = data.replace("<<", " << ").replace("[", " [ ").replace("(", " (")
         data = data.replace(">>", " >> ").replace("]", " ] ").replace(")", ") ")
         data = data.replace("/", " /").replace("><", "> <")
-        return self.parse_tokens(filter(None, data.split()))
+        return self.parse_tokens(list(filter(None, data.split())))
 
     def getobj(self, obj, force_type=None):
         if isinstance(obj, PDFref):
@@ -296,7 +296,7 @@ class PDFParser:
         res = {}
         for page in self.annots:
             try:
-                a = filter(None, map(self.get_href, self.annots[page]))
+                a = list(filter(None, map(self.get_href, self.annots[page])))
             except (PDFError, TypeError, ValueError):
                 self.errors += 1
                 a = None

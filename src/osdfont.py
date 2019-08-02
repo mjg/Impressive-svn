@@ -17,7 +17,7 @@ def SearchFont(root, name):
     infix = ""
     fontfile = []
     while (len(infix) < 10) and not(fontfile):
-        fontfile = filter(os.path.isfile, glob.glob(root + infix + name))
+        fontfile = list(filter(os.path.isfile, glob.glob(root + infix + name)))
         infix += "*/"
     if not fontfile:
         return None

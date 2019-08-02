@@ -4,7 +4,7 @@ import sys, re, subprocess
 
 if __name__ == "__main__":
     info = dict((k, eval(v)) for k, v in re.findall(r'^__(.*?)__\s*=\s*(.*)', open(sys.argv[1]).read(), re.M))
-    version = map(int, re.findall(r'\d+', info['version']))[:3]
+    version = list(map(int, re.findall(r'\d+', info['version'])))[:3]
     assert len(version) == 3
 
     fullversion = info['version']

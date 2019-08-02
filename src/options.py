@@ -131,7 +131,7 @@ def ListTransitions():
 def TryTime(s, regexp, func):
     m = re.match(regexp, s, re.I)
     if not m: return 0
-    return func(map(int, m.groups()))
+    return func(list(map(int, m.groups())))
 def ParseTime(s):
     return TryTime(s, r'([0-9]+)s?$', lambda m: m[0]) \
         or TryTime(s, r'([0-9]+)m$', lambda m: m[0] * 60) \
@@ -511,7 +511,7 @@ def ParseOptions(argv):
                     arg = arg.split(':')
                     assert len(arg) > 1
                     CursorImage = ':'.join(arg[:-1])
-                    CursorHotspot = map(int, arg[-1].split(','))
+                    CursorHotspot = tuple(map(int, arg[-1].split(',')))
                 else:
                     CursorImage = arg
                 assert (BlackLevel >= 0) and (BlackLevel < 255)

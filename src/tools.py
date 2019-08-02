@@ -122,7 +122,7 @@ def analyze_pdf(filename):
     f = file(filename,"rb")
     pdf = f.read()
     f.close()
-    box = map(float, pdf.split("/MediaBox",1)[1].split("]",1)[0].split("[",1)[1].strip().split())
+    box = tuple(map(float, pdf.split("/MediaBox",1)[1].split("]",1)[0].split("[",1)[1].strip().split()))
     return (max(map(num, pdf.split("/Count")[1:])), box[2]-box[0], box[3]-box[1])
 
 # unescape &#123; literals in PDF files

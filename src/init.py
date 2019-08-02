@@ -16,7 +16,7 @@ except ImportError:
 # initialize some platform-specific settings
 if os.name == "nt":
     root = os.path.split(sys.argv[0])[0] or "."
-    _find_paths = [root, os.path.join(root, "win32"), os.path.join(root, "gs")] + filter(None, os.getenv("PATH").split(';'))
+    _find_paths = [root, os.path.join(root, "win32"), os.path.join(root, "gs")] + list(filter(None, os.getenv("PATH").split(';')))
     def FindBinary(binary):
         if not binary.lower().endswith(".exe"):
             binary += ".exe"
