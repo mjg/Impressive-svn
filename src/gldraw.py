@@ -321,7 +321,7 @@ def PrepareCustomCursor(cimg):
     global CursorTexture, CursorHotspot, CursorSX, CursorSY, CursorTX, CursorTY
     if not cimg:
         CursorHotspot = (1,0)
-        cimg = Image.open(cStringIO.StringIO(codecs.decode(DEFAULT_CURSOR, 'base64')))
+        cimg = Image.open(io.BytesIO(codecs.decode(DEFAULT_CURSOR, 'base64')))
     w, h = cimg.size
     tw, th = map(npot, cimg.size)
     if (tw > 256) or (th > 256):

@@ -253,7 +253,7 @@ def main():
     ScreenAspect = float(ScreenWidth) / float(ScreenHeight)
 
     # prepare logo image
-    LogoImage = Image.open(cStringIO.StringIO(codecs.decode(LOGO, 'base64')))
+    LogoImage = Image.open(io.BytesIO(codecs.decode(LOGO, 'base64')))
     LogoTexture = gl.make_texture(gl.TEXTURE_2D, filter=gl.NEAREST, img=LogoImage)
     DrawLogo()
     Platform.SwapBuffers()

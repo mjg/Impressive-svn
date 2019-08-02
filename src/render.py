@@ -112,7 +112,7 @@ class MuPDFRenderer(PDFRendererBase):
                 raise RenderError("could not run renderer - %s" % e)
             if not out:
                 raise RenderError("renderer returned empty image")
-            return self.load(cStringIO.StringIO(out))
+            return self.load(io.BytesIO(out))
         else:
             return self.load(imgfile, autoremove=True)
 AvailableRenderers.append(MuPDFRenderer)
@@ -136,7 +136,7 @@ class MuPDFLegacyRenderer(PDFRendererBase):
             if self.buffer:
                 return self.buffer
             # the reader thread might still be busy reading the last
-            # chunks of the data and converting them into a StringIO;
+            # chunks of the data and converting them into a BytesIO;
             # let's give it some time
             maxwait = time.time() + (0.1 if self.error else 0.5)
             while not(self.buffer) and (time.time() < maxwait):
@@ -147,7 +147,7 @@ class MuPDFLegacyRenderer(PDFRendererBase):
     def ReaderThread(comm):
         try:
             f = open(comm.imgfile, 'rb')
-            comm.buffer = cStringIO.StringIO(f.read())
+            comm.buffer = io.BytesIO(f.read())
             f.close()
         except IOError as e:
             comm.error = "could not open FIFO for reading - %s" % e
@@ -478,7 +478,7 @@ def LoadVideoPreview(page, zoom):
                             stdout=subprocess.PIPE).communicate()
             ffmpegWorks = True
             reason = "FFmpeg output is not valid"
-            out = cStringIO.StringIO(out)
+            out = io.BytesIO(out)
             img = Image.open(out)
             img.load()
         except (KeyboardInterrupt, SystemExit):
