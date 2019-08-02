@@ -1,4 +1,4 @@
-import Image
+from PIL import Image
 
 Height = 32
 Width = 64
@@ -43,7 +43,7 @@ def makeimg(name, color, trans):
                 i = (1.0 - t + t * c) * b
                 i = lf + ilf * i
                 data.append(chr(max(0, min(255, int(i * 255 + d)))))
-    Image.fromstring('RGB', (len(trans), Height), "".join(data)).save(name)
+    Image.frombytes('RGB', (len(trans), Height), "".join(data)).save(name)
 
 makeimg("n", NormalColor, NoTransition)
 makeimg("c_c", CurrentColor, NoTransition)
