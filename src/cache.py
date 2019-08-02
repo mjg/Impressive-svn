@@ -134,7 +134,7 @@ def InitPCache():
 
     # try to open the pre-existing cache file
     try:
-        CacheFile = file(CacheFileName, "rb+")
+        CacheFile = open(CacheFileName, "rb+")
     except IOError:
         CacheFile = None
 
@@ -156,7 +156,7 @@ def InitPCache():
     else:
         # if the magic was invalid or the file didn't exist, (re-)create it
         try:
-            CacheFile = file(CacheFileName, "wb+")
+            CacheFile = open(CacheFileName, "wb+")
         except IOError:
             print("Error: cannot write the persistent cache file (`%s')" % CacheFileName, file=sys.stderr)
             print("Falling back to temporary file cache.", file=sys.stderr)

@@ -532,7 +532,7 @@ def run_main():
                 print("Python platform:", sys.platform, file=sys.stderr)
             if os.path.isfile("/usr/bin/lsb_release"):
                 lsb_release = subprocess.Popen(["/usr/bin/lsb_release", "-sd"], stdout=subprocess.PIPE)
-                print("Linux distribution:", lsb_release.stdout.read().strip(), file=sys.stderr)
+                print("Linux distribution:", lsb_release.stdout.read().decode().strip(), file=sys.stderr)
                 lsb_release.wait()
             print("Command line:", ' '.join(('"%s"'%arg if (' ' in arg) else arg) for arg in sys.argv), file=sys.stderr)
             traceback.print_exc(file=sys.stderr)

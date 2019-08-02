@@ -3,6 +3,7 @@ import random, getopt, os, types, re, codecs, tempfile, glob, io, re
 import traceback, subprocess, time, itertools, ctypes.util, zlib, urllib
 from math import *
 from ctypes import *
+from builtins import bytes
 
 # import hashlib for MD5 generation, but fall back to old md5 lib if unavailable
 # (this is the case for Python versions older than 2.5)

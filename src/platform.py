@@ -53,7 +53,7 @@ class Platform_PyGame(object):
             raise ImportError("failed to load SDL_GL_GetProcAddress from the SDL library")
         def loadsym(name, prototype):
             try:
-                addr = get_proc_address(name)
+                addr = get_proc_address(name.encode())
             except EnvironmentError:
                 return None
             if not addr:
@@ -70,11 +70,12 @@ class Platform_PyGame(object):
         pygame.quit()
 
     def SetWindowTitle(self, text):
-        if not isinstance(text, unicode):
-            try:
-                text = unicode(text, 'utf-8')
-            except UnicodeDecodeError:
-                text = unicode(text, 'windows-1252', 'replace')
+        try:
+            text = text.decode('utf-8')
+        except UnicodeDecodeError:
+            text = text.decode('windows-1252', 'replace')
+        except AttributeError:
+            pass # nothing to decode
         try:
             pygame.display.set_caption(text, __title__)
         except UnicodeEncodeError:
@@ -229,7 +230,7 @@ class Platform_Unix(Platform_PyGame):
         try:
             xrandr = subprocess.Popen(["xrandr"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             for line in xrandr.stdout:
-                m = re_res.match(line)
+                m = re_res.match(line.decode())
                 if m:
                     res = tuple(map(int, m.groups()))
             xrandr.wait()

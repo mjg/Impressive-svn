@@ -147,7 +147,7 @@ def BindEvent(events, actions=None, clear=False, remove=False, error_prefix=None
         (that's what the basedirs option is for)
     """
     global EventMap
-    if isinstance(events, basestring):
+    if isinstance(events, str):
         if not actions:
             if (';' in events) or ('\n' in events):
                 for cmd in events.replace('\n', ';').split(';'):
@@ -168,7 +168,7 @@ def BindEvent(events, actions=None, clear=False, remove=False, error_prefix=None
         events = events.split(',')
     if actions is None:
         actions = []
-    elif isinstance(actions, basestring):
+    elif isinstance(actions, str):
         actions = actions.split(',')
     actions = [b.replace('_', '-').strip(' \t$+-').lower() for b in actions]
     actions = [a for a in actions if ValidateAction(a, error_prefix)]

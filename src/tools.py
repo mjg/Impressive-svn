@@ -3,7 +3,7 @@
 # read and write the PageProps and FileProps meta-dictionaries
 def GetProp(prop_dict, key, prop, default=None):
     if not key in prop_dict: return default
-    if type(prop) == types.StringType:
+    if isinstance(prop, str):
         return prop_dict[key].get(prop, default)
     for subprop in prop:
         try:
@@ -96,9 +96,9 @@ def b2s(b):
 # extract a number at the beginning of a string
 def num(s):
     s = s.strip()
-    r = ""
-    while s[0] in "0123456789":
-        r += s[0]
+    r = b""
+    while s[0:1] in b"0123456789":
+        r += s[0:1]
         s = s[1:]
     try:
         return int(r)
@@ -119,11 +119,11 @@ def my_stat(filename):
 
 # determine (pagecount,width,height) of a PDF file
 def analyze_pdf(filename):
-    f = file(filename,"rb")
+    f = open(filename,"rb")
     pdf = f.read()
     f.close()
-    box = tuple(map(float, pdf.split("/MediaBox",1)[1].split("]",1)[0].split("[",1)[1].strip().split()))
-    return (max(map(num, pdf.split("/Count")[1:])), box[2]-box[0], box[3]-box[1])
+    box = tuple(map(float, pdf.split(b"/MediaBox",1)[1].split(b"]",1)[0].split(b"[",1)[1].strip().split()))
+    return (max(map(num, pdf.split(b"/Count")[1:])), box[2]-box[0], box[3]-box[1])
 
 # unescape &#123; literals in PDF files
 re_unescape = re.compile(r'&#[0-9]+;')
@@ -141,7 +141,7 @@ def unescape_pdf(s):
 
 # parse pdftk output
 def pdftkParse(filename, page_offset=0):
-    f = file(filename, "r")
+    f = open(filename, "r")
     InfoKey = None
     BookmarkTitle = None
     Title = None
@@ -183,6 +183,7 @@ def mutoolParse(f, page_offset=0):
     title = None
     pages = 0
     for line in f:
+        line = line.decode()
         m = re.match("pages:\s*(\d+)", line, re.I)
         if m and not(pages):
             pages = int(m.group(1))

@@ -213,7 +213,7 @@ class Wipe(Transition):
             for y in yy:
                 for x in xx:
                     yield (x, y)
-        return ''.join(chr(max(0, min(255, int(self.f(x, y) * 255.0 + 0.5)))) for x, y in iter2d())
+        return bytes([max(0, min(255, int(self.f(x, y) * 255.0 + 0.5))) for x, y in iter2d()])
     def f(self, x, y):
         return 0.5
 class WipeLeft(Wipe):

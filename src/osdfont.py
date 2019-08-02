@@ -1,12 +1,19 @@
 ##### OSD FONT RENDERER ########################################################
 
+typesUnicodeType = type(u'unicode')
+typesStringType = type(b'bytestring')
+
 # force a string or sequence of ordinals into a unicode string
 def ForceUnicode(s, charset='iso8859-15'):
-    if type(s) == types.UnicodeType:
+    if type(s) == typesUnicodeType:
         return s
-    if type(s) == types.StringType:
-        return unicode(s, charset, 'ignore')
-    if type(s) in (types.TupleType, types.ListType):
+    if type(s) == typesStringType:
+        return s.decode(charset, 'ignore')
+    if isinstance(s, (tuple, list, range)):
+        try:
+            unichr
+        except NameError:
+            unichr = chr
         return u''.join(map(unichr, s))
     raise TypeError("string argument not convertible to Unicode")
 
@@ -67,7 +74,7 @@ class GLFont:
         self.widths = {}
         self.line_height = 0
         self.default_charset = default_charset
-        if isinstance(name, basestring):
+        if isinstance(name, str):
             self.font = LoadFont(search_path, name, size)
         else:
             for check_name in name:

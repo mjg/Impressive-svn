@@ -1,5 +1,8 @@
 ##### PDF PARSER ###############################################################
 
+typesUnicodeType = type(u'unicode')
+typesStringType = type(b'bytestring')
+
 class PDFError(Exception):
     pass
 
@@ -23,14 +26,14 @@ def pdf_unmaskstring(s):
 
 class PDFParser:
     def __init__(self, filename):
-        self.f = file(filename, "rb")
+        self.f = open(filename, "rb")
         self.errors = 0
 
         # find the first cross-reference table
         self.f.seek(0, 2)
         filesize = self.f.tell()
         self.f.seek(filesize - 128)
-        trailer = self.f.read()
+        trailer = self.f.read().decode()
         i = trailer.rfind("startxref")
         if i < 0:
             raise PDFError("cross-reference table offset missing")
@@ -133,7 +136,7 @@ class PDFParser:
         if not offset:
             raise PDFError("referenced non-existing PDF object")
         self.f.seek(offset)
-        header = self.getline().split(None, 3)
+        header = self.getline().decode().split(None, 3)
         if (len(header) < 3) or (header[2] != "obj") or (header[0] != str(obj)):
             raise PDFError("object does not start where it's supposed to")
         if len(header) == 4:
@@ -141,7 +144,7 @@ class PDFParser:
         else:
             data = []
         while True:
-            line = self.getline()
+            line = self.getline().decode()
             if line in ("endobj", "stream"): break
             data.append(line)
         data = self.parse(" ".join(data))
@@ -175,20 +178,20 @@ class PDFParser:
         xref = {}
         rootref = 0
         offset = 0
-        if self.getline() != "xref":
+        if self.getline() != b"xref":
             raise PDFError("cross-reference table does not start where it's supposed to")
             return (xref, rootref, offset)   # no xref table found, abort
         # parse xref sections
         while True:
             line = self.getline()
-            if line == "trailer": break
+            if line == b"trailer": break
             start, count = map(int, line.split())
             xref.update(self.parse_xref_section(start, count))
         # parse trailer
         trailer = ""
         while True:
-            line = self.getline()
-            if line in ("startxref", "%%EOF"): break
+            line = self.getline().decode()
+            if line in ("startxref", "b%%EOF"): break
             trailer += line
         trailer = self.parse(trailer)
         try:
@@ -237,7 +240,7 @@ class PDFParser:
                 elif 'Names' in node:
                     nlist = node['Names']
                     while (len(nlist) >= 2) \
-                    and (type(nlist[0]) == types.StringType) \
+                    and (type(nlist[0]) == str) \
                     and (nlist[1].__class__ == PDFref):
                         self.scan_names_tree(nlist[1], come_from, nlist[0])
                         del nlist[:2]
@@ -250,7 +253,7 @@ class PDFParser:
             self.errors += 1
 
     def dest2page(self, dest):
-        if type(dest) in (types.StringType, types.UnicodeType):
+        if type(dest) in (typesStringType, typesUnicodeType):
             return self.names.get(dest, None)
         if type(dest) != types.ListType:
             return dest
@@ -283,7 +286,7 @@ class PDFParser:
                         dest = self.getobj(dest)
                     if isinstance(dest, dict):
                         dest = dest.get('F', None) or dest.get('Unix', None)
-                    if not isinstance(dest, basestring):
+                    if not isinstance(dest, str):
                         dest = None  # still an unknown type -> ignore it
                 elif action == 'GoTo':
                     dest = self.dest2page(a.get('D', None))

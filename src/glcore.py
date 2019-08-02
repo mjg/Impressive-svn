@@ -163,9 +163,9 @@ class OpenGL(object):
             else:
                 setattr(self, func.name, funcptr)
             if func.name == "GetString":
-                GLVendor = self.GetString(self.VENDOR) or ""
-                GLRenderer = self.GetString(self.RENDERER) or ""
-                GLVersion = self.GetString(self.VERSION) or ""
+                GLVendor = self.GetString(self.VENDOR).decode() or ""
+                GLRenderer = self.GetString(self.RENDERER).decode() or ""
+                GLVersion = self.GetString(self.VERSION).decode() or ""
         self._init()
 
     def GenTextures(self, n=1):
@@ -200,7 +200,7 @@ class OpenGL(object):
         self._BufferData(target, cast(size, c_void_p), cast(data, c_void_p), usage)
 
     def ShaderSource(self, shader, source):
-        source = c_char_p(source)
+        source = c_char_p(source.encode())
         self._ShaderSource(shader, 1, pointer(source), None)
 
     def GetShaderi(self, shader, pname):
@@ -314,7 +314,7 @@ class GLShader(object):
             uniforms = self.uniforms
         if isinstance(uniforms, dict):
             uniforms = uniforms.items()
-        uniforms = [((u, None) if isinstance(u, basestring) else u) for u in uniforms]
+        uniforms = [((u, None) if isinstance(u, str) else u) for u in uniforms]
         if (loglevel is None) and hasattr(self, 'loglevel'):
             loglevel = self.loglevel
         if loglevel is None:
@@ -351,25 +351,25 @@ class GLShader(object):
         handle_shader(gl.VERTEX_SHADER, "vertex", vs)
         handle_shader(gl.FRAGMENT_SHADER, "fragment", fs)
         for attr in attributes:
-            if not isinstance(attr, basestring):
+            if not isinstance(attr, str):
                 loc, name = attr
-                if isinstance(loc, basestring):
+                if isinstance(loc, str):
                     loc, name = name, loc
                 setattr(self, name, loc)
             elif hasattr(self, attr):
                 name = attr
                 loc = getattr(self, name)
-            gl.BindAttribLocation(self.program, loc, name)
+            gl.BindAttribLocation(self.program, loc, name.encode())
         gl.LinkProgram(self.program)
         handle_shader_log(gl.GetProgrami(self.program, gl.LINK_STATUS),
                           lambda: gl.GetProgramInfoLog(self.program),
                           "linking")
         gl.UseProgram(self.program)
         for name in attributes:
-            if isinstance(name, basestring) and not(hasattr(self, attr)):
+            if isinstance(name, str) and not(hasattr(self, attr)):
                 setattr(self, name, int(gl.GetAttribLocation(self.program, name)))
         for u in uniforms:
-            loc = int(gl.GetUniformLocation(self.program, u[0]))
+            loc = int(gl.GetUniformLocation(self.program, u[0].encode()))
             setattr(self, u[0], loc)
             if u[1] is not None:
                 gl.Uniform(loc, *u[1:])

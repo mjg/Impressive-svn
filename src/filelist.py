@@ -18,7 +18,7 @@ def AddFile(name, title=None, implicit=False):
         name = name[1:]
         dirname = os.path.dirname(name)
         try:
-            f = file(name, "r")
+            f = open(name, "r")
             next_title = None
             for line in f:
                 line = [part.strip() for part in line.split('#', 1)]

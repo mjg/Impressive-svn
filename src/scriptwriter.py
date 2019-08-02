@@ -116,7 +116,7 @@ def CountDictChars(s, start=0):
 def SaveInfoScript(filename):
     # read the old info script
     try:
-        f = file(filename, "r")
+        f = open(filename, "r")
         script = f.read()
         f.close()
     except IOError:
@@ -140,7 +140,7 @@ def SaveInfoScript(filename):
 
     # write the script back
     try:
-        f = file(filename, "w")
+        f = open(filename, "w")
         f.write(script)
         f.close()
     except:

@@ -32,7 +32,7 @@ class PDFRendererBase(object):
             test_binary = FindBinary(program_spec[0])
             try:
                 p = subprocess.Popen([test_binary] + program_spec[1:] + self.test_run_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-                data = p.stdout.read()
+                data = p.stdout.read().decode()
                 p.wait()
             except OSError:
                 continue
