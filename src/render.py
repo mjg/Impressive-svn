@@ -647,7 +647,7 @@ def RenderThread(p1, p2):
             if RTrestart: break
             SafeCall(ParsePDF, [pdf])
         if RTrestart: continue
-        for page in xrange(1, PageCount + 1):
+        for page in range(1, PageCount + 1):
             if RTrestart: break
             if (page != p1) and (page != p2) \
             and (page >= PageRangeStart) and (page <= PageRangeEnd):
@@ -678,7 +678,7 @@ def DoRender():
         print(e.strerror, file=sys.stderr)
         return 1
     print("Rendering presentation into `%s'" % RenderToDirectory, file=sys.stderr)
-    for page in xrange(1, PageCount + 1):
+    for page in range(1, PageCount + 1):
         PageImage(page, RenderMode=True).save("%s/page%04d.png" % (RenderToDirectory, page))
         sys.stdout.write("[%d] " % page)
         sys.stdout.flush()

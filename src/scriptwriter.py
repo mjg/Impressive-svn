@@ -91,7 +91,7 @@ def PagePropRepr():
 def CountDictChars(s, start=0):
     context = None
     level = 0
-    for i in xrange(start, len(s)):
+    for i in range(start, len(s)):
         c = s[i]
         if context is None:
             if c == '{': level += 1

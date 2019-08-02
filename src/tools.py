@@ -172,7 +172,7 @@ def pdftkParse(filename, page_offset=0):
     f.close()
     if AutoOverview:
         SetPageProp(page_offset + 1, '_overview', True)
-        for page in xrange(page_offset + 2, page_offset + Pages):
+        for page in range(page_offset + 2, page_offset + Pages):
             SetPageProp(page, '_overview', \
                         not(not(GetPageProp(page + AutoOverview - 1, '_title'))))
         SetPageProp(page_offset + Pages, '_overview', True)
@@ -204,7 +204,7 @@ def NormalizeRect(X0, Y0, X1, Y1):
 def InsideBox(x, y, box):
     return (x >= box[0]) and (y >= box[1]) and (x < box[2]) and (y < box[3])
 def FindBox(x, y, boxes):
-    for i in xrange(len(boxes)):
+    for i in range(len(boxes)):
         if InsideBox(x, y, boxes[i]):
             return i
     raise ValueError
@@ -238,7 +238,7 @@ def StopMPlayer():
         else:
             MPlayerProcess.stdin.write('quit\n')
         MPlayerProcess.stdin.flush()
-        for i in xrange(10):
+        for i in range(10):
             if MPlayerProcess.poll() is None:
                 time.sleep(0.1)
             else:

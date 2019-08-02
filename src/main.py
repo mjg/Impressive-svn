@@ -303,14 +303,14 @@ def main():
     # overview preparations
     if EnableOverview:
         # initialize overview metadata
-        OverviewPageMap=[i for i in xrange(1, PageCount + 1) \
+        OverviewPageMap=[i for i in range(1, PageCount + 1) \
             if GetPageProp(i, ('overview', '_overview'), True) \
             and (i >= PageRangeStart) and (i <= PageRangeEnd)]
         OverviewPageCount = max(len(OverviewPageMap), 1)
         OverviewPageMapInv = {}
-        for page in xrange(1, PageCount + 1):
+        for page in range(1, PageCount + 1):
             OverviewPageMapInv[page] = len(OverviewPageMap) - 1
-            for i in xrange(len(OverviewPageMap)):
+            for i in range(len(OverviewPageMap)):
                 if OverviewPageMap[i] >= page:
                     OverviewPageMapInv[page] = i
                     break

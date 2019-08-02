@@ -425,11 +425,11 @@ def IncrementSpotSize(delta):
 def PrepareTransitions():
     Unspecified = 0xAFFED00F
     # STEP 1: randomly assign transitions where the user didn't specify them
-    cnt = sum([1 for page in xrange(1, PageCount + 1) \
+    cnt = sum([1 for page in range(1, PageCount + 1) \
                if GetPageProp(page, 'transition', Unspecified) == Unspecified])
     newtrans = ((cnt / len(AvailableTransitions) + 1) * AvailableTransitions)[:cnt]
     random.shuffle(newtrans)
-    for page in xrange(1, PageCount + 1):
+    for page in range(1, PageCount + 1):
         if GetPageProp(page, 'transition', Unspecified) == Unspecified:
             SetPageProp(page, '_transition', newtrans.pop())
     # STEP 2: instantiate transitions

@@ -217,7 +217,7 @@ class GLFont:
         if not(self.index_buffer) or (self.index_buffer_capacity < char_count):
             self.index_buffer_capacity = (char_count + 63) & (~63)
             data = []
-            for b in xrange(0, self.index_buffer_capacity * 4, 4):
+            for b in range(0, self.index_buffer_capacity * 4, 4):
                 data.extend([b+0, b+2, b+1, b+1, b+2, b+3])
             if not self.index_buffer:
                 self.index_buffer = gl.GenBuffers()

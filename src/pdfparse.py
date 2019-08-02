@@ -19,7 +19,7 @@ def pdf_maskstring(s):
 def pdf_mask_all_strings(s):
     return re_pdfstring.sub(lambda x: pdf_maskstring(x.group(0)), s)
 def pdf_unmaskstring(s):
-    return "".join([chr(int(s[i:i+2], 16)) for i in xrange(1, len(s)-1, 2)])
+    return "".join([chr(int(s[i:i+2], 16)) for i in range(1, len(s)-1, 2)])
 
 class PDFParser:
     def __init__(self, filename):
@@ -71,7 +71,7 @@ class PDFParser:
 
     def find_length(self, tokens, begin, end):
         level = 1
-        for i in xrange(1, len(tokens)):
+        for i in range(1, len(tokens)):
             if tokens[i] == begin:  level += 1
             if tokens[i] == end:    level -= 1
             if not level: break
@@ -162,7 +162,7 @@ class PDFParser:
 
     def parse_xref_section(self, start, count):
         xref = {}
-        for obj in xrange(start, start + count):
+        for obj in range(start, start + count):
             line = self.getline()
             if line[-1] == 'f':
                 xref[obj] = 0
