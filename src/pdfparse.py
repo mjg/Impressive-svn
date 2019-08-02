@@ -33,11 +33,11 @@ class PDFParser:
         trailer = self.f.read()
         i = trailer.rfind("startxref")
         if i < 0:
-            raise PDFError, "cross-reference table offset missing"
+            raise PDFError("cross-reference table offset missing")
         try:
             offset = int(trailer[i:].split("\n")[1].strip())
         except (IndexError, ValueError):
-            raise PDFError, "malformed cross-reference table offset"
+            raise PDFError("malformed cross-reference table offset")
 
         # follow the trailer chain
         self.xref = {}
@@ -58,7 +58,7 @@ class PDFParser:
         try:
             self.scan_page_tree(root['Pages'].ref)
         except KeyError:
-            raise PDFError, "root page tree node missing"
+            raise PDFError("root page tree node missing")
         try:
             self.scan_names_tree(root['Names'].ref)
         except KeyError:
@@ -128,14 +128,14 @@ class PDFParser:
         if isinstance(obj, PDFref):
             obj = obj.ref
         if type(obj) != types.IntType:
-            raise PDFError, "object is not a valid reference"
+            raise PDFError("object is not a valid reference")
         offset = self.xref.get(obj, 0)
         if not offset:
-            raise PDFError, "referenced non-existing PDF object"
+            raise PDFError("referenced non-existing PDF object")
         self.f.seek(offset)
         header = self.getline().split(None, 3)
         if (len(header) < 3) or (header[2] != "obj") or (header[0] != str(obj)):
-            raise PDFError, "object does not start where it's supposed to"
+            raise PDFError("object does not start where it's supposed to")
         if len(header) == 4:
             data = [header[3]]
         else:
@@ -151,7 +151,7 @@ class PDFParser:
             except (KeyError, IndexError, ValueError):
                 t = None
             if t != force_type:
-                raise PDFError, "object does not match the intended type"
+                raise PDFError("object does not match the intended type")
         return data
 
     def resolve(self, obj):
@@ -176,7 +176,7 @@ class PDFParser:
         rootref = 0
         offset = 0
         if self.getline() != "xref":
-            raise PDFError, "cross-reference table does not start where it's supposed to"
+            raise PDFError("cross-reference table does not start where it's supposed to")
             return (xref, rootref, offset)   # no xref table found, abort
         # parse xref sections
         while True:
@@ -194,9 +194,9 @@ class PDFParser:
         try:
             rootref = trailer['Root'].ref
         except KeyError:
-            raise PDFError, "root catalog entry missing"
+            raise PDFError("root catalog entry missing")
         except AttributeError:
-            raise PDFError, "root catalog entry is not a reference"
+            raise PDFError("root catalog entry is not a reference")
         return (xref, rootref, trailer.get('Prev', 0))
 
     def scan_page_tree(self, obj, mbox=None, cbox=None, rotate=0):

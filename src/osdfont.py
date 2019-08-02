@@ -8,7 +8,7 @@ def ForceUnicode(s, charset='iso8859-15'):
         return unicode(s, charset, 'ignore')
     if type(s) in (types.TupleType, types.ListType):
         return u''.join(map(unichr, s))
-    raise TypeError, "string argument not convertible to Unicode"
+    raise TypeError("string argument not convertible to Unicode")
 
 # search a system font path for a font file
 def SearchFont(root, name):
@@ -74,7 +74,7 @@ class GLFont:
                 self.font = LoadFont(search_path, check_name, size)
                 if self.font: break
         if not self.font:
-            raise IOError, "font file not found"
+            raise IOError("font file not found")
         self.img = Image.new('LA', (width, height))
         self.alpha = Image.new('L', (width, height))
         self.extend = ImageFilter.MaxFilter()
@@ -134,7 +134,7 @@ class GLFont:
             self.current_y += self.max_height
             self.max_height = 0
         if self.current_y + h > self.height:
-            raise ValueError, "bitmap too small for all the glyphs"
+            raise ValueError("bitmap too small for all the glyphs")
         box = self.GlyphBox()
         box.orig_x = self.current_x
         box.orig_y = self.current_y

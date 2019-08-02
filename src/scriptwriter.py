@@ -110,7 +110,7 @@ def CountDictChars(s, start=0):
             if c == "\\": context = "\\'"
             if c == "'": context = None
         if level < 0: return i
-    raise ValueError, "the dictionary never ends"
+    raise ValueError("the dictionary never ends")
 
 # modify and save a file's info script
 def SaveInfoScript(filename):
