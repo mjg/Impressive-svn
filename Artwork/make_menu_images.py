@@ -1,6 +1,7 @@
 from __future__ import print_function
 
 from PIL import Image
+from builtins import bytes
 
 Height = 32
 Width = 64
@@ -44,8 +45,8 @@ def makeimg(name, color, trans):
             for c in color:
                 i = (1.0 - t + t * c) * b
                 i = lf + ilf * i
-                data.append(chr(max(0, min(255, int(i * 255 + d)))))
-    Image.frombytes('RGB', (len(trans), Height), "".join(data)).save(name)
+                data.append(max(0, min(255, int(i * 255 + d))))
+    Image.frombytes('RGB', (len(trans), Height), bytes(data)).save(name)
 
 makeimg("n", NormalColor, NoTransition)
 makeimg("c_c", CurrentColor, NoTransition)
