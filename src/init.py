@@ -79,7 +79,10 @@ intend to use PDF input.""", file=sys.stderr)
     sys.exit(1)
 
 try:
-    import thread
+    try:
+        import thread
+    except ImportError:
+        import _thread as thread
     HaveThreads = True
     def create_lock(): return thread.allocate_lock()
     def get_thread_id(): return thread.get_ident()
