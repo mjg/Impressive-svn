@@ -365,7 +365,7 @@ def main():
                 time_left -= GetPageProp(p, 'transtime', TransitionDuration)
             p = pnext
         if pages and (time_left >= pages):
-            AutoAdvanceTime = time_left / pages
+            AutoAdvanceTime = int(time_left / pages)
             AutoAdvanceEnabled = True
             print("Setting auto-advance timeout to %.1f seconds." % (0.001 * AutoAdvanceTime), file=sys.stderr)
         else:
@@ -453,9 +453,9 @@ def main():
 def DoEventTestMode():
     last_event = "(None)"
     need_redraw = True
-    cx = ScreenWidth / 2
-    y1 = ScreenHeight / 5
-    y2 = (ScreenHeight * 4) / 5
+    cx = int(ScreenWidth / 2)
+    y1 = int(ScreenHeight / 5)
+    y2 = int((ScreenHeight * 4) / 5)
     if OSDFont:
         dy = OSDFont.GetLineHeight()
     Platform.ScheduleEvent('$dummy', 1000)  # required to ensure that time measurement works :(

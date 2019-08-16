@@ -140,6 +140,7 @@ class PageDisplayActions(BaseDisplayActions):
         if PanValid and ZoomMode:
             if not(Panning) and (abs(x - PanBaseX) > 1) and (abs(y - PanBaseY) > 1):
                 Panning = True
+            # ZoomArea is guaranteed to be float
             ZoomX0 = PanAnchorX + (PanBaseX - x) * ZoomArea / ScreenWidth
             ZoomY0 = PanAnchorY + (PanBaseY - y) * ZoomArea / ScreenHeight
             ZoomX0 = min(max(ZoomX0, 0.0), 1.0 - ZoomArea)
@@ -351,6 +352,7 @@ class PageDisplayActions(BaseDisplayActions):
     def _zoom_out(self):
         "zoom out a small bit"
         ActionValidIf((MouseWheelZoom or ZoomMode) and not(BoxZoom))
+        # ZoomStep is guaranteed to be float
         ChangeZoom(ViewZoomFactor / ZoomStep, Platform.GetMousePos())
 
     def _zoom_update(self):
@@ -444,6 +446,7 @@ class PageDisplayActions(BaseDisplayActions):
 
     def _gamma_decrease(self):
         "decrease gamma"
+        # GammaStep is guaranteed to be float
         SetGamma(new_gamma=Gamma / GammaStep)
     def _gamma_increase(self):
         "increase gamma"

@@ -328,7 +328,7 @@ def AddHyperlink(page_offset, page, target, linkbox, pagebox, rotate):
     y1 = (pagebox[3] - linkbox[1]) * h
 
     # get effective rotation
-    rotate /= 90
+    rotate = int(rotate / 90)
     page_rot = GetPageProp(page, 'rotate')
     if page_rot is None:
         page_rot = Rotation

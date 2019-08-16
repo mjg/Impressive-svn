@@ -225,7 +225,7 @@ def DrawLogo():
     )
     if OSDFont:
         gl.Enable(gl.BLEND)
-        OSDFont.Draw((int(ScreenWidth * x0), ScreenHeight / 2 + 48), \
+        OSDFont.Draw((int(ScreenWidth * x0), int(ScreenHeight / 2) + 48), \
                      __version__.split()[0], align=Center, alpha=0.25, beveled=False)
         gl.Disable(gl.BLEND)
 

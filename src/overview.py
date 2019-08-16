@@ -107,7 +107,7 @@ def OverviewKeyboardNav(delta):
         return
     OverviewSelection = dest
     x, y = OverviewPos(OverviewSelection)
-    Platform.SetMousePos((x + (OverviewCellX / 2), y + (OverviewCellY / 2)))
+    Platform.SetMousePos((x + int(OverviewCellX / 2), y + int(OverviewCellY / 2)))
 
 # overview mode PageProp toggle
 def OverviewTogglePageProp(prop, default):
@@ -237,8 +237,8 @@ def DoOverview():
                 if page:
                     OverviewSelection = OverviewPageMapInv[page]
                     x, y = OverviewPos(OverviewSelection)
-                    Platform.SetMousePos((x + (OverviewCellX / 2), \
-                                          y + (OverviewCellY / 2)))
+                    Platform.SetMousePos((x + int(OverviewCellX / 2), \
+                                          y + int(OverviewCellY / 2)))
                     DrawOverview()
     except ExitOverview:
         PageLeft(overview=True)

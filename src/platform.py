@@ -388,8 +388,8 @@ class Platform_BCM2835(Platform_EGL):
         if WindowPos:
             x0, y0 = WindowPos
         else:
-            x0 = (self.screen_size[0] - width)  / 2
-            y0 = (self.screen_size[1] - height) / 2
+            x0 = int((self.screen_size[0] - width)  / 2)
+            y0 = int((self.screen_size[1] - height) / 2)
         x0 = max(min(x0, self.screen_size[0] - width),  0)
         y0 = max(min(y0, self.screen_size[1] - height), 0)
 
@@ -408,7 +408,7 @@ class Platform_BCM2835(Platform_EGL):
 
         # finally, tell PyGame what just happened
         pygame.display.set_mode((width, height), 0)
-        pygame.mouse.set_pos((width / 2, height / 2))
+        pygame.mouse.set_pos((int(width / 2), int(height / 2)))
 
 
 libbcm_host = ctypes.util.find_library("bcm_host")

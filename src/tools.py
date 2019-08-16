@@ -275,15 +275,16 @@ def ClockTime(minutes):
         return time.strftime("%H:%M:%S")
 
 def FormatTime(t, minutes=False):
+    t = int(t)
     if minutes and (t < 3600):
-        return "%d min" % (t / 60)
+        return "%d min" % int(t / 60)
     elif minutes:
-        return "%d:%02d" % (t / 3600, (t / 60) % 60)
+        return "%d:%02d" % (int(t / 3600), int(t / 60) % 60)
     elif t < 3600:
-        return "%d:%02d" % (t / 60, t % 60)
+        return "%d:%02d" % (int(t / 60), t % 60)
     else:
         ms = t % 3600
-        return "%d:%02d:%02d" % (t / 3600, ms / 60, ms % 60)
+        return "%d:%02d:%02d" % (int(t / 3600), int(ms / 60), ms % 60)
 
 def SafeCall(func, args=[], kwargs={}):
     if not func: return None

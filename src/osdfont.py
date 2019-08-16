@@ -186,7 +186,7 @@ class GLFont:
 
     def AlignTextEx(self, x, u, align=Left):
         if not align: return x
-        return x - (self.GetTextWidthEx(u) / align)
+        return x - int(self.GetTextWidthEx(u) / align)
 
     class FontShader(GLShader):
         vs = """
@@ -215,7 +215,7 @@ class GLFont:
         if not self.vertices:
             self.vertices = None
             return
-        char_count = len(self.vertices) / 16
+        char_count = int(len(self.vertices) / 16)
         if char_count > 16383:
             print("Internal Error: too many characters (%d) to display in one go, truncating." % char_count, file=sys.stderr)
             char_count = 16383
@@ -293,7 +293,7 @@ def DrawOSD(x, y, text, halign=Auto, valign=Auto, alpha=1.0):
         else:
             halign = Left
     if HalfScreen and (halign == Left):
-        x += ScreenWidth / 2
+        x += int(ScreenWidth / 2)
     if valign == Auto:
         if y < 0:
             y += ScreenHeight
@@ -301,7 +301,7 @@ def DrawOSD(x, y, text, halign=Auto, valign=Auto, alpha=1.0):
         else:
             valign = Down
         if valign != Down:
-            y -= OSDFont.GetLineHeight() / valign
+            y -= int(OSDFont.GetLineHeight() / valign)
     OSDFont.Draw((x, y), text, align=halign, alpha=alpha)
 
 # very high-level draw function
@@ -312,7 +312,7 @@ def DrawOSDEx(position, text, alpha_factor=1.0):
         x = (1 - 2 * xpos) * OSDMargin
         halign = Auto
     else:
-        x = ScreenWidth / 2
+        x = int(ScreenWidth / 2)
         halign = Center
     DrawOSD(x, y, text, halign, alpha = OSDAlpha * alpha_factor)
 

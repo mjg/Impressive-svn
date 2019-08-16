@@ -427,7 +427,7 @@ def PrepareTransitions():
     # STEP 1: randomly assign transitions where the user didn't specify them
     cnt = sum([1 for page in range(1, PageCount + 1) \
                if GetPageProp(page, 'transition', Unspecified) == Unspecified])
-    newtrans = ((cnt / len(AvailableTransitions) + 1) * AvailableTransitions)[:cnt]
+    newtrans = (int(cnt / len(AvailableTransitions) + 1) * AvailableTransitions)[:cnt]
     random.shuffle(newtrans)
     for page in range(1, PageCount + 1):
         if GetPageProp(page, 'transition', Unspecified) == Unspecified:
