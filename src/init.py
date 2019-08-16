@@ -1,5 +1,5 @@
 # import basic modules
-import random, getopt, os, types, re, codecs, tempfile, glob, io, re
+import random, getopt, os, re, codecs, tempfile, glob, io, re
 import traceback, subprocess, time, itertools, ctypes.util, zlib, urllib
 from math import *
 from ctypes import *

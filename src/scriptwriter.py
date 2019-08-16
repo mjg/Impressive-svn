@@ -53,9 +53,16 @@ def GetPublicProps(props):
 
 # Generate a string representation of a property value. Mainly this converts
 # classes or instances to the name of the class.
+class dummyClass:
+    pass
+
+typesClassType = type(dummyClass)
+typesInstanceType = type(dummyClass())
+typesFunctionType = type(GetPublicProps)
+
 def PropValueRepr(value):
     global ScriptTainted
-    if type(value) == types.FunctionType:
+    if type(value) == typesFunctionType:
         if value.__name__ != "<lambda>":
             return value.__name__
         if not ScriptTainted:
@@ -64,11 +71,11 @@ def PropValueRepr(value):
             print("         minimize data loss.", file=sys.stderr)
             ScriptTainted = True
         return "here_was_a_lambda_expression_that_could_not_be_saved"
-    elif type(value) == types.ClassType:
+    elif isinstance(value, typesClassType):
         return value.__name__
-    elif type(value) == types.InstanceType:
+    elif isinstance(value, typesInstanceType):
         return value.__class__.__name__
-    elif type(value) == types.DictType:
+    elif type(value) == dict:
         return "{ " + ", ".join([PropValueRepr(k) + ": " + PropValueRepr(value[k]) for k in value]) + " }"
     else:
         return repr(value)

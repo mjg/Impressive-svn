@@ -130,7 +130,7 @@ class PDFParser:
     def getobj(self, obj, force_type=None):
         if isinstance(obj, PDFref):
             obj = obj.ref
-        if type(obj) != types.IntType:
+        if type(obj) != int:
             raise PDFError("object is not a valid reference")
         offset = self.xref.get(obj, 0)
         if not offset:
@@ -255,7 +255,7 @@ class PDFParser:
     def dest2page(self, dest):
         if type(dest) in (typesStringType, typesUnicodeType):
             return self.names.get(dest, None)
-        if type(dest) != types.ListType:
+        if not isinstance(dest, list):
             return dest
         elif dest[0].__class__ == PDFref:
             return self.obj2page.get(dest[0].ref, None)
@@ -316,7 +316,7 @@ def rotate_coord(x, y, rot):
 
 def AddHyperlink(page_offset, page, target, linkbox, pagebox, rotate):
     page += page_offset
-    if type(target) == types.IntType:
+    if isinstance(target, int):
         target += page_offset
 
     # compute relative position of the link on the page
