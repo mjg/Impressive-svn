@@ -82,7 +82,7 @@ def SinglePagePropRepr(page):
 
 # generate a nicely formatted string representation of all page properties
 def PagePropRepr():
-    pages = PageProps.keys()
+    pages = list(PageProps.keys())
     pages.sort()
     return "PageProps = {%s\n}" % (",".join(filter(None, map(SinglePagePropRepr, pages))))
 

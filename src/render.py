@@ -658,7 +658,7 @@ def RenderThread(p1, p2):
               (CacheFilePos / 1048576.0), file=sys.stderr)
     elif CacheMode >= MemCache:
         print("Background rendering finished, using %.1f MiB of memory." %\
-              (sum(map(len, PageCache.itervalues())) / 1048576.0), file=sys.stderr)
+              (sum(map(len, PageCache.values())) / 1048576.0), file=sys.stderr)
 
 
 ##### RENDER MODE ##############################################################

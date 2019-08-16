@@ -264,7 +264,7 @@ def main():
         DrawLogo()
         titles = []
         for key in ('title', '_title'):
-            titles.extend([p[key] for p in PageProps.itervalues() if key in p])
+            titles.extend([p[key] for p in PageProps.values() if key in p])
         if titles:
             OSDFont.AddString("".join(titles))
     except ValueError:
@@ -389,7 +389,7 @@ def main():
         def prerender_action_handler(action):
             if action in ("$quit", "*quit"):
                 Quit()
-        for page in range(InitialPage, PageCount + 1) + range(1, InitialPage):
+        for page in list(range(InitialPage, PageCount + 1)) + list(range(1, InitialPage)):
             while True:
                 ev = Platform.GetEvent(poll=True)
                 if not ev: break

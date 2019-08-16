@@ -488,7 +488,7 @@ def HandleShortcutKey(key, current=0):
     if (len(key) == 1) or ((key >= "f1") and (key <= "f9")):
         # Note: F10..F12 are implicitly included due to lexicographic sorting
         page = None
-        for check_page, props in PageProps.iteritems():
+        for check_page, props in PageProps.items():
             if props.get('shortcut') == key:
                 page = check_page
                 break

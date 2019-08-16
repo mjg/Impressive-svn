@@ -61,7 +61,7 @@ class BaseDisplayActions(BaseActions):
                 return
             # invalidate everything we used to know about the input files
             InvalidateCache()
-            for props in PageProps.itervalues():
+            for props in PageProps.values():
                 for prop in ('_overview_rendered', '_box', '_href'):
                     if prop in props: del props[prop]
             LoadInfoScript()

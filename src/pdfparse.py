@@ -406,7 +406,7 @@ def ParsePDF(filename):
     try:
         try:
             pdf = PDFParser(analyze)
-            for page, annots in pdf.GetHyperlinks().iteritems():
+            for page, annots in pdf.GetHyperlinks().items():
                 for page_offset in FileProps[filename]['offsets']:
                     for a in annots:
                         AddHyperlink(page_offset, page, a[4], a[:4], pdf.box[page], pdf.rotate[page])
