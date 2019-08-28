@@ -3,16 +3,6 @@ import random, getopt, os, re, codecs, tempfile, glob, io, re
 import traceback, subprocess, time, itertools, ctypes.util, zlib, urllib
 from math import *
 from ctypes import *
-from builtins import bytes
-
-# import hashlib for MD5 generation, but fall back to old md5 lib if unavailable
-# (this is the case for Python versions older than 2.5)
-try:
-    import hashlib
-    md5obj = hashlib.md5
-except ImportError:
-    import md5
-    md5obj = md5.new
 
 # initialize some platform-specific settings
 if os.name == "nt":

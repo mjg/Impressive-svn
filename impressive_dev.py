@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 # -*- coding: iso-8859-1 -*-
 #
 # Impressive, a fancy presentation tool
@@ -20,7 +20,7 @@
 from __future__ import print_function
 
 __title__   = "Impressive"
-__version__ = "0.12.1"
+__version__ = "0.13.0-WIP"
 __rev__     = None
 __author__  = "Martin J. Fiedler"
 __email__   = "martin.fiedler@gmx.net"
