@@ -1,12 +1,11 @@
 #!/usr/bin/env python
-
 from __future__ import print_function
+import sys, re, os, stat, subprocess
 
 PROJECT_NAME = "impressive"
 IN_FILE_NAME = PROJECT_NAME + "_dev.py"
 OUT_FILE_NAME = PROJECT_NAME + ".py"
 
-import sys, re, os, stat, subprocess
 re_rev = re.compile(r'\s*__rev__\s*=\s*(None|\d+|"[^"]*"|\'[^\']*\')\s*$')
 re_exec = re.compile(r'\s*execfile\s*\(\s*[\'"](.*?)[\'"]\s*,\s*globals\s*\(\s*\)\s*\)\s*$')
 

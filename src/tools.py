@@ -211,7 +211,7 @@ def FindBox(x, y, boxes):
     raise ValueError
 
 # zoom an image size to a destination size, preserving the aspect ratio
-def ZoomToFit(size, dest=None):
+def ZoomToFit(size, dest=None, force_int=False):
     if not dest:
         dest = (ScreenWidth + Overscan, ScreenHeight + Overscan)
     newx = dest[0]
@@ -219,14 +219,14 @@ def ZoomToFit(size, dest=None):
     if newy > dest[1]:
         newy = dest[1]
         newx = size[0] * newy / size[1]
+    if force_int:
+        return (int(newx), int(newy))
     return (newx, newy)
 
 # get the overlay grid screen coordinates for a specific page
 def OverviewPos(page):
-    return ( \
-        int(page % OverviewGridSize) * OverviewCellX + OverviewOfsX, \
-        int(page / OverviewGridSize) * OverviewCellY + OverviewOfsY  \
-    )
+    return ((page %  OverviewGridSize) * OverviewCellX + OverviewOfsX,
+            (page // OverviewGridSize) * OverviewCellY + OverviewOfsY)
 
 def StopMPlayer():
     global MPlayerProcess, VideoPlaying, NextPageAfterVideo
@@ -277,14 +277,14 @@ def ClockTime(minutes):
 def FormatTime(t, minutes=False):
     t = int(t)
     if minutes and (t < 3600):
-        return "%d min" % int(t / 60)
+        return "%d min" % (t // 60)
     elif minutes:
-        return "%d:%02d" % (int(t / 3600), int(t / 60) % 60)
+        return "%d:%02d" % (t // 3600, (t // 60) % 60)
     elif t < 3600:
-        return "%d:%02d" % (int(t / 60), t % 60)
+        return "%d:%02d" % (t // 60, t % 60)
     else:
         ms = t % 3600
-        return "%d:%02d:%02d" % (int(t / 3600), int(ms / 60), ms % 60)
+        return "%d:%02d:%02d" % (t // 3600, ms // 60, ms % 60)
 
 def SafeCall(func, args=[], kwargs={}):
     if not func: return None

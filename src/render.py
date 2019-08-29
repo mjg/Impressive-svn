@@ -298,8 +298,8 @@ def ApplyRotation(img, rot):
 # generate a dummy image
 def DummyPage():
     img = Image.new('RGB', (ScreenWidth, ScreenHeight))
-    img.paste(LogoImage, (int((ScreenWidth  - LogoImage.size[0]) / 2),
-                          int((ScreenHeight - LogoImage.size[1]) / 2)))
+    img.paste(LogoImage, ((ScreenWidth  - LogoImage.size[0]) // 2,
+                          (ScreenHeight - LogoImage.size[1]) // 2))
     return img
 
 # load a page from a PDF file
@@ -366,7 +366,7 @@ def RenderPDF(page, MayAdjustResolution, ZoomMode):
     # if the image size is strange, re-adjust the rendering resolution
     tolerance = max(4, (ScreenWidth + ScreenHeight) / 400)
     if MayAdjustResolution and (max(abs(got[0] - out[0]), abs(got[1] - out[1])) >= tolerance):
-        newout = ZoomToFit((img.size[0], img.size[1] * PAR))
+        newout = ZoomToFit((img.size[0], img.size[1] * PAR), force_int=True)
         rscale = (float(newout[0]) / img.size[0], float(newout[1]) / img.size[1])
         if rot & 1:
             newres = (res[0] * rscale[1], res[1] * rscale[0])
@@ -417,8 +417,8 @@ def RenderPDF(page, MayAdjustResolution, ZoomMode):
             w = int(img.size[0] * scale + 0.5)
             h = int(img.size[1] * scale + 0.5)
             if (w <= img.size[0]) and (h <= img.size[1]):
-                x0 = (img.size[0] - w) / 2
-                y0 = (img.size[1] - h) / 2
+                x0 = (img.size[0] - w) // 2
+                y0 = (img.size[1] - h) // 2
                 img = img.crop((x0, y0, x0 + w, y0 + h))
 
     return img
@@ -442,7 +442,7 @@ def LoadImage(page, zoom=False, img=None):
 
     # determine destination size
     newsize = ZoomToFit((img.size[0], int(img.size[1] * PAR + 0.5)),
-                        (ScreenWidth, ScreenHeight))
+                        (ScreenWidth, ScreenHeight), force_int=True)
     # don't scale if the source size is too close to the destination size
     if abs(newsize[0] - img.size[0]) < 2: newsize = img.size
     # don't scale if the source is smaller than the destination
@@ -560,12 +560,12 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
         # create black background image to paste real image onto
         if ZoomMode:
             TextureImage = Image.new('RGB', (int(ResZoomFactor * TexWidth), int(ResZoomFactor * TexHeight)))
-            TextureImage.paste(img, (int((ResZoomFactor * ScreenWidth  - img.size[0]) / 2), \
-                                     int((ResZoomFactor * ScreenHeight - img.size[1]) / 2)))
+            TextureImage.paste(img, ((ResZoomFactor * ScreenWidth  - img.size[0]) // 2,
+                                     (ResZoomFactor * ScreenHeight - img.size[1]) // 2))
         else:
             TextureImage = Image.new('RGB', (TexWidth, TexHeight))
-            x0 = int((ScreenWidth  - img.size[0]) / 2)
-            y0 = int((ScreenHeight - img.size[1]) / 2)
+            x0 = (ScreenWidth  - img.size[0]) // 2
+            y0 = (ScreenHeight - img.size[1]) // 2
             TextureImage.paste(img, (x0, y0))
             SetPageProp(page, '_box', (x0, y0, x0 + img.size[0], y0 + img.size[1]))
             FixHyperlinks(page)
@@ -580,14 +580,14 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
             Loverview.acquire()
             try:
                 # first, fill the underlying area with black (i.e. remove the dummy logo)
-                blackness = Image.new('RGB', (OverviewCellX - OverviewBorder, \
+                blackness = Image.new('RGB', (OverviewCellX - OverviewBorder,
                                               OverviewCellY - OverviewBorder))
-                OverviewImage.paste(blackness, (pos[0] + int(OverviewBorder / 2), \
+                OverviewImage.paste(blackness, (pos[0] + OverviewBorder // 2,
                                                 pos[1] + OverviewBorder))
                 del blackness
                 # then, scale down the original image and paste it
                 if HalfScreen:
-                    img = img.crop((0, 0, int(img.size[0] / 2), img.size[1]))
+                    img = img.crop((0, 0, img.size[0] // 2, img.size[1]))
                 sx = OverviewCellX - 2 * OverviewBorder
                 sy = OverviewCellY - 2 * OverviewBorder
                 if HighQualityOverview:
@@ -600,9 +600,9 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
                 else:
                     img.thumbnail((sx * 2, sy * 2), Image.NEAREST)
                     img.thumbnail((sx, sy), Image.BILINEAR)
-                OverviewImage.paste(img, \
-                   (pos[0] + int((OverviewCellX - img.size[0]) / 2), \
-                    pos[1] + int((OverviewCellY - img.size[1]) / 2)))
+                OverviewImage.paste(img,
+                   (pos[0] + (OverviewCellX - img.size[0]) // 2,
+                    pos[1] + (OverviewCellY - img.size[1]) // 2))
             finally:
                 Loverview.release()
             SetPageProp(page, '_overview_rendered', True)

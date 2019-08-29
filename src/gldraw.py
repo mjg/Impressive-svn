@@ -51,11 +51,11 @@ def DrawOverlays(trans_time=0.0):
             if ShowClock:
                 DrawOSDEx(OSDTimePos, ClockTime(MinutesOnly))
             else:
-                t = reltime / 1000
+                t = reltime // 1000
                 DrawOSDEx(OSDTimePos, FormatTime(t, MinutesOnly))
         if CurrentOSDComment and (OverviewMode or not(TransitionRunning)):
-            DrawOSD(ScreenWidth/2, \
-                    ScreenHeight - 3*OSDMargin - FontSize, \
+            DrawOSD(ScreenWidth // 2,
+                    ScreenHeight - 3*OSDMargin - FontSize,
                     CurrentOSDComment, Center, Up)
         OSDFont.EndDraw()
 
@@ -225,7 +225,7 @@ def DrawLogo():
     )
     if OSDFont:
         gl.Enable(gl.BLEND)
-        OSDFont.Draw((int(ScreenWidth * x0), int(ScreenHeight / 2) + 48), \
+        OSDFont.Draw((int(ScreenWidth * x0), ScreenHeight // 2 + 48), \
                      __version__.split()[0], align=Center, alpha=0.25, beveled=False)
         gl.Disable(gl.BLEND)
 

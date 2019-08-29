@@ -197,14 +197,14 @@ def PageLeft(overview=False):
         SafeCall(GetPageProp(Pcurrent, 'OnLeave'))
     if TimeTracking:
         t1 = Platform.GetTicks() - StartTime
-        dt = (t1 - PageEnterTime + 500) / 1000
+        dt = (t1 - PageEnterTime + 500) // 1000
         if overview:
             p = "over"
         else:
             p = "%4d" % Pcurrent
-        print("%s%9s%9s%9s" % (p, FormatTime(dt), \
-                                  FormatTime(PageEnterTime / 1000), \
-                                  FormatTime(t1 / 1000)))
+        print("%s%9s%9s%9s" % (p, FormatTime(dt),
+                                  FormatTime(PageEnterTime // 1000),
+                                  FormatTime(t1 // 1000)))
 
 # create an instance of a transition class
 def InstantiateTransition(trans_class):
@@ -427,7 +427,7 @@ def PrepareTransitions():
     # STEP 1: randomly assign transitions where the user didn't specify them
     cnt = sum([1 for page in range(1, PageCount + 1) \
                if GetPageProp(page, 'transition', Unspecified) == Unspecified])
-    newtrans = (int(cnt / len(AvailableTransitions) + 1) * AvailableTransitions)[:cnt]
+    newtrans = ((cnt // len(AvailableTransitions) + 1) * AvailableTransitions)[:cnt]
     random.shuffle(newtrans)
     for page in range(1, PageCount + 1):
         if GetPageProp(page, 'transition', Unspecified) == Unspecified:

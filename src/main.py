@@ -322,10 +322,10 @@ def main():
         if HalfScreen:
             # in half-screen mode, temporarily override ScreenWidth
             saved_screen_width = ScreenWidth
-            ScreenWidth /= 2
-        OverviewCellX = int(ScreenWidth  / OverviewGridSize)
-        OverviewCellY = int(ScreenHeight / OverviewGridSize)
-        OverviewOfsX = int((ScreenWidth  - OverviewCellX * OverviewGridSize)/2)
+            ScreenWidth //= 2
+        OverviewCellX = ScreenWidth  // OverviewGridSize
+        OverviewCellY = ScreenHeight // OverviewGridSize
+        OverviewOfsX = (ScreenWidth  - OverviewCellX * OverviewGridSize) // 2
         OverviewOfsY = int((ScreenHeight - OverviewCellY * \
                        int((OverviewPageCount + OverviewGridSize - 1) / OverviewGridSize)) / 2)
         while OverviewBorder and (min(OverviewCellX - 2 * OverviewBorder, OverviewCellY - 2 * OverviewBorder) < 16):
@@ -340,9 +340,9 @@ def main():
         border = max(OverviewLogoBorder, 2 * OverviewBorder)
         maxsize = (OverviewCellX - border, OverviewCellY - border)
         if (dummy.size[0] > maxsize[0]) or (dummy.size[1] > maxsize[1]):
-            dummy.thumbnail(ZoomToFit(dummy.size, maxsize), Image.ANTIALIAS)
-        margX = int((OverviewCellX - dummy.size[0]) / 2)
-        margY = int((OverviewCellY - dummy.size[1]) / 2)
+            dummy.thumbnail(ZoomToFit(dummy.size, maxsize, force_int=True), Image.ANTIALIAS)
+        margX = (OverviewCellX - dummy.size[0]) // 2
+        margY = (OverviewCellY - dummy.size[1]) // 2
         dummy = dummy.convert(mode='RGB')
         for page in range(OverviewPageCount):
             pos = OverviewPos(page)
@@ -365,7 +365,7 @@ def main():
                 time_left -= GetPageProp(p, 'transtime', TransitionDuration)
             p = pnext
         if pages and (time_left >= pages):
-            AutoAdvanceTime = int(time_left / pages)
+            AutoAdvanceTime = time_left // pages
             AutoAdvanceEnabled = True
             print("Setting auto-advance timeout to %.1f seconds." % (0.001 * AutoAdvanceTime), file=sys.stderr)
         else:
@@ -453,9 +453,9 @@ def main():
 def DoEventTestMode():
     last_event = "(None)"
     need_redraw = True
-    cx = int(ScreenWidth / 2)
-    y1 = int(ScreenHeight / 5)
-    y2 = int((ScreenHeight * 4) / 5)
+    cx = ScreenWidth // 2
+    y1 = ScreenHeight // 5
+    y2 = (ScreenHeight * 4) // 5
     if OSDFont:
         dy = OSDFont.GetLineHeight()
     Platform.ScheduleEvent('$dummy', 1000)  # required to ensure that time measurement works :(

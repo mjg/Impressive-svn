@@ -170,7 +170,7 @@ class PageDisplayActions(BaseDisplayActions):
         ActionValidIf(not(ZoomMode))
         tx, ty = MouseToScreen(Platform.GetMousePos())
         EnterZoomMode(DefaultZoomFactor,
-                      (1.0 - 1.0 / DefaultZoomFactor) * tx, \
+                      (1.0 - 1.0 / DefaultZoomFactor) * tx,
                       (1.0 - 1.0 / DefaultZoomFactor) * ty)
     def _zoom_exit(self):
         "leave zoom mode"
