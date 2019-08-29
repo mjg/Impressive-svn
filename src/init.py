@@ -1,5 +1,5 @@
 # import basic modules
-import random, getopt, os, re, codecs, tempfile, glob, io, re
+import random, getopt, os, re, codecs, tempfile, glob, io, re, hashlib
 import traceback, subprocess, time, itertools, ctypes.util, zlib, urllib
 from math import *
 from ctypes import *
@@ -64,7 +64,7 @@ except (ValueError, ImportError) as err:
  - PIL      [python-imaging]  http://www.pythonware.com/products/pil/
    or Pillow                  http://pypi.python.org/pypi/Pillow/
  - PyWin32  (OPTIONAL, Win32) http://sourceforge.net/projects/pywin32/
-Additionally, please be sure to have pdftoppm or GhostScript installed if you
+Additionally, please be sure to have mupdf-tools and pdftk installed if you
 intend to use PDF input.""", file=sys.stderr)
     sys.exit(1)
 

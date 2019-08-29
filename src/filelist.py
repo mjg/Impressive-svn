@@ -56,7 +56,7 @@ def AddFile(name, title=None, implicit=False):
 
     elif os.path.isdir(name):
         images = [os.path.join(name, f) for f in os.listdir(name) if IsImageFile(f)]
-        images.sort(lambda a, b: cmp(a.lower(), b.lower()))
+        images.sort(key=lambda f: f.lower())
         if not images:
             print("Warning: no image files in directory `%s'" % name, file=sys.stderr)
         for img in images:

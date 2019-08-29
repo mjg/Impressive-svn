@@ -27,11 +27,11 @@ def UpdateCacheMagic():
     global CacheMagic
     pool = [PageCount, ScreenWidth, ScreenHeight, b2s(Scaling), b2s(Supersample), b2s(Rotation)]
     flist = list(FileProps.keys())
-    flist.sort(lambda a,b: cmp(a.lower(), b.lower()))
+    flist.sort(key=lambda f: f.lower())
     for f in flist:
         pool.append(f)
         pool.extend(list(GetFileProp(f, 'stat', [])))
-    CacheMagic = hashlib.md5("\0".join(map(str, pool))).hexdigest()
+    CacheMagic = hashlib.md5(b'\0'.join(str(x).encode('utf-8') for x in pool)).hexdigest().encode('ascii')
 
 # set the persistent cache file position to the current end of the file
 def UpdatePCachePos():
@@ -41,9 +41,9 @@ def UpdatePCachePos():
 
 # rewrite the header of the persistent cache
 def WritePCacheHeader(reset=False):
-    pages = ["%08x" % PageCache.get(page, 0) for page in range(1, PageCount+1)]
+    pages = [b"%08x" % PageCache.get(page, 0) for page in range(1, PageCount+1)]
     CacheFile.seek(0)
-    CacheFile.write(CacheMagic + "".join(pages))
+    CacheFile.write(CacheMagic + b"".join(pages))
     if reset:
         CacheFile.truncate()
     UpdatePCachePos()
