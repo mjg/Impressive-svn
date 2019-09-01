@@ -252,13 +252,19 @@ def ParseOptions(argv):
     global TimeDisplay, MouseWheelZoom, ZoomBoxEdgeSize
     DefaultControls = True
 
+    # on Python 2, ensure that all command-line strings are encoded properly
+    if basestring != str:
+        enc = sys.getfilesystemencoding()
+        if enc in ('cp437', 'cp852'): enc = 'cp1252'  # work-around for latin Win32
+        argv = [a.decode(enc, 'replace') for a in argv]
+
     try:  # unused short options: jnJKRUY
-        opts, args = getopt.getopt(argv, \
-            "vhfg:sc:i:wa:t:lo:r:T:D:B:Z:P:A:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykWe:E:N", \
+        opts, args = getopt.getopt(argv,
+            "vhfg:sc:i:wa:t:lo:r:T:D:B:Z:P:A:mbp:u:F:S:G:d:C:ML:I:O:z:xXqV:QHykWe:E:N",
            ["help", "fullscreen", "geometry=", "scale", "supersample",
             "nocache", "initialpage=", "wrap", "auto=", "listtrans", "output=",
             "rotate=", "transition=", "transtime=", "mousedelay=", "boxfade=",
-            "zoom=", "gspath=", "renderer=", "aspect=", "memcache", \
+            "zoom=", "gspath=", "renderer=", "aspect=", "memcache",
             "noback", "pages=", "poll=", "font=", "fontsize=", "gamma=",
             "duration=", "cursor=", "minutes", "layout=", "script=", "cache=",
             "cachefile=", "autooverview=", "zoomtime=", "fade", "nologo",

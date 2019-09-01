@@ -31,7 +31,7 @@ def UpdateCacheMagic():
     for f in flist:
         pool.append(f)
         pool.extend(list(GetFileProp(f, 'stat', [])))
-    CacheMagic = hashlib.md5(b'\0'.join(str(x).encode('utf-8') for x in pool)).hexdigest().encode('ascii')
+    CacheMagic = hashlib.md5(b'\0'.join(repr(x).encode('utf-8') for x in pool)).hexdigest().encode('ascii')
 
 # set the persistent cache file position to the current end of the file
 def UpdatePCachePos():

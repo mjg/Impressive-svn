@@ -22,7 +22,11 @@ def pdf_maskstring(s):
 def pdf_mask_all_strings(s):
     return re_pdfstring.sub(lambda x: pdf_maskstring(x.group(0)), s)
 def pdf_unmaskstring(s):
-    return "".join([chr(int(s[i:i+2], 16)) for i in range(1, len(s)-1, 2)])
+    s = bytes(bytearray(int(s[i:i+2], 16) for i in range(1, len(s)-1, 2)))
+    try:
+        return s.decode('utf-8')
+    except UnicodeDecodeError:
+        return s.decode('windows-1252', 'replace')
 
 class PDFParser:
     def __init__(self, filename):
@@ -286,7 +290,7 @@ class PDFParser:
                         dest = self.getobj(dest)
                     if isinstance(dest, dict):
                         dest = dest.get('F', None) or dest.get('Unix', None)
-                    if not isinstance(dest, str):
+                    if not isinstance(dest, basestring):
                         dest = None  # still an unknown type -> ignore it
                 elif action == 'GoTo':
                     dest = self.dest2page(a.get('D', None))
@@ -385,7 +389,7 @@ def ParsePDF(filename):
         if not args[0]:
             continue  # program not found
         try:
-            assert 0 == subprocess.Popen(args).wait()
+            assert 0 == Popen(args).wait()
             err = not(os.path.isfile(uncompressed))
         except (OSError, AssertionError):
             err = True

@@ -28,10 +28,10 @@ class PDFRendererBase(object):
 
         # search for a working binary and run it to get a list of its options
         self.command = None
-        for program_spec in map(str.split, ([binary] if binary else self.binaries)):
+        for program_spec in (x.split() for x in ([binary] if binary else self.binaries)):
             test_binary = FindBinary(program_spec[0])
             try:
-                p = subprocess.Popen([test_binary] + program_spec[1:] + self.test_run_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+                p = Popen([test_binary] + program_spec[1:] + self.test_run_args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
                 data = p.stdout.read().decode()
                 p.wait()
             except OSError:
@@ -56,9 +56,9 @@ class PDFRendererBase(object):
             args = Nice + args
         try:
             if redirect:
-                process = subprocess.Popen(args, stdout=subprocess.PIPE)
+                process = Popen(args, stdout=subprocess.PIPE)
             else:
-                process = subprocess.Popen(args)
+                process = Popen(args)
             if not wait:
                 return process
             if process.wait() != 0:
@@ -470,7 +470,7 @@ def LoadVideoPreview(page, zoom):
         try:
             ffmpegWorks = False
             reason = "failed to call FFmpeg"
-            out, dummy = subprocess.Popen([ffmpegPath,
+            out, dummy = Popen([ffmpegPath,
                             "-loglevel", "fatal",
                             "-i", GetPageProp(page, '_file'),
                             "-vframes", "1", "-pix_fmt", "rgb24",
@@ -495,7 +495,7 @@ def LoadVideoPreview(page, zoom):
                 if TempFileName:
                     os.chdir(os.path.dirname(TempFileName))
                 reason = "failed to call MPlayer"
-                dummy = subprocess.Popen([MPlayerPath,
+                dummy = Popen([MPlayerPath,
                             "-really-quiet", "-nosound",
                             "-frames", "1", "-vo", "png",
                             GetPageProp(page, '_file')],

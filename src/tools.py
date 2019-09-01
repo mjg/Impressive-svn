@@ -3,7 +3,7 @@
 # read and write the PageProps and FileProps meta-dictionaries
 def GetProp(prop_dict, key, prop, default=None):
     if not key in prop_dict: return default
-    if isinstance(prop, str):
+    if isinstance(prop, basestring):
         return prop_dict[key].get(prop, default)
     for subprop in prop:
         try:
@@ -75,13 +75,6 @@ def img2str(img):
     else:
         return img.tostring()
 
-# create a PIL image from a string
-def str2img(mode, size, data):
-    if hasattr(Image, "frombytes"):
-        return Image.frombytes(mode, size, data)
-    else:
-        return Image.fromstring(mode, size, data)
-
 # determine the next power of two
 def npot(x):
     res = 1
@@ -141,12 +134,16 @@ def unescape_pdf(s):
 
 # parse pdftk output
 def pdftkParse(filename, page_offset=0):
-    f = open(filename, "r")
+    f = open(filename, "rb")
     InfoKey = None
     BookmarkTitle = None
     Title = None
     Pages = 0
     for line in f:
+        try:
+            line = line.decode('utf-8')
+        except UnicodeDecodeError:  # pdftk's output may not be UTF-8-clean
+            line = line.decode('windows-1252', 'replace')
         try:
             key, value = [item.strip() for item in line.split(':', 1)]
         except ValueError:

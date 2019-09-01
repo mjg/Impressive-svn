@@ -71,12 +71,6 @@ class Platform_PyGame(object):
 
     def SetWindowTitle(self, text):
         try:
-            text = text.decode('utf-8')
-        except UnicodeDecodeError:
-            text = text.decode('windows-1252', 'replace')
-        except AttributeError:
-            pass # nothing to decode
-        try:
             pygame.display.set_caption(text, __title__)
         except UnicodeEncodeError:
             pygame.display.set_caption(text.encode('utf-8'), __title__)
@@ -212,7 +206,7 @@ class Platform_Win32(Platform_PyGame):
                 pass
             # if that fails, load the extension function via wglGetProcAddress
             try:
-                addr = get_proc_address(name)
+                addr = get_proc_address(name.encode())
             except EnvironmentError:
                 addr = None
             if not addr:
@@ -228,7 +222,7 @@ class Platform_Unix(Platform_PyGame):
         re_res = re.compile(r'\s*(\d+)x(\d+)\s+\d+\.\d+\*')
         res = None
         try:
-            xrandr = subprocess.Popen(["xrandr"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+            xrandr = Popen(["xrandr"], stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
             for line in xrandr.stdout:
                 m = re_res.match(line.decode())
                 if m:

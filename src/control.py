@@ -108,7 +108,7 @@ def PlayVideo(video):
         video = [video]
     NextPageAfterVideo = False
     try:
-        MPlayerProcess = subprocess.Popen(opts + video, stdin=subprocess.PIPE)
+        MPlayerProcess = Popen(opts + video, stdin=subprocess.PIPE)
         if Platform.use_omxplayer:
             gl.Clear(gl.COLOR_BUFFER_BIT)
             Platform.SwapBuffers()
@@ -171,8 +171,8 @@ def PageEntered(update_time=True):
             if sound and not(video):
                 StopMPlayer()
                 try:
-                    MPlayerProcess = subprocess.Popen( \
-                        [MPlayerPath, "-quiet", "-really-quiet", "-novideo", sound], \
+                    MPlayerProcess = Popen(
+                        [MPlayerPath, "-quiet", "-really-quiet", "-novideo", sound],
                         stdin=subprocess.PIPE)
                 except OSError:
                     MPlayerProcess = None

@@ -314,7 +314,7 @@ class GLShader(object):
             uniforms = self.uniforms
         if isinstance(uniforms, dict):
             uniforms = uniforms.items()
-        uniforms = [((u, None) if isinstance(u, str) else u) for u in uniforms]
+        uniforms = [((u, None) if isinstance(u, basestring) else u) for u in uniforms]
         if (loglevel is None) and hasattr(self, 'loglevel'):
             loglevel = self.loglevel
         if loglevel is None:
@@ -351,9 +351,9 @@ class GLShader(object):
         handle_shader(gl.VERTEX_SHADER, "vertex", vs)
         handle_shader(gl.FRAGMENT_SHADER, "fragment", fs)
         for attr in attributes:
-            if not isinstance(attr, str):
+            if not isinstance(attr, basestring):
                 loc, name = attr
-                if isinstance(loc, str):
+                if isinstance(loc, basestring):
                     loc, name = name, loc
                 setattr(self, name, loc)
             elif hasattr(self, attr):
@@ -366,7 +366,7 @@ class GLShader(object):
                           "linking")
         gl.UseProgram(self.program)
         for name in attributes:
-            if isinstance(name, str) and not(hasattr(self, attr)):
+            if isinstance(name, basestring) and not(hasattr(self, attr)):
                 setattr(self, name, int(gl.GetAttribLocation(self.program, name)))
         for u in uniforms:
             loc = int(gl.GetUniformLocation(self.program, u[0].encode()))

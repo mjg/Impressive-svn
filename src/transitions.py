@@ -287,7 +287,7 @@ class WipeClouds(Wipe):
     blur = 5
     def prepare_mask(self):
         assert self.rx == self.ry
-        noise = str2img('L', (self.rx * 4, self.ry * 2), ''.join(map(chr, (random.randrange(256) for i in range(self.rx * self.ry * 8)))))
+        noise = Image.frombytes('L', (self.rx * 4, self.ry * 2), bytes(bytearray(random.randrange(256) for i in range(self.rx * self.ry * 8))))
         img = Image.new('L', (1, 1), random.randrange(256))
         alpha = 1.0
         npos = 0

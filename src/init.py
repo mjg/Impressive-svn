@@ -47,7 +47,7 @@ else:
     Nice = ["nice", "-n", "7"]
     def RunURL(url):
         try:
-            subprocess.Popen(["xdg-open", url])
+            Popen(["xdg-open", url])
         except OSError:
             print("Error: cannot open URL `%s'" % url, file=sys.stderr)
 
@@ -67,6 +67,18 @@ except (ValueError, ImportError) as err:
 Additionally, please be sure to have mupdf-tools and pdftk installed if you
 intend to use PDF input.""", file=sys.stderr)
     sys.exit(1)
+
+# Python 2/3 compatibility regarding strings
+try:
+    basestring  # only exists in Python 2
+    def Popen(cmdline, *args, **kwargs):
+        # Python 2's subprocess.Popen needs manual unicode->str conversion
+        enc = sys.getfilesystemencoding()
+        cmdline = [arg.encode(enc, 'replace') for arg in cmdline]
+        return subprocess.Popen(cmdline, *args, **kwargs)
+except:
+    basestring = str
+    Popen = subprocess.Popen
 
 try:
     try:

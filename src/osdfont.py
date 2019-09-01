@@ -74,7 +74,7 @@ class GLFont:
         self.widths = {}
         self.line_height = 0
         self.default_charset = default_charset
-        if isinstance(name, str):
+        if isinstance(name, basestring):
             self.font = LoadFont(search_path, name, size)
         else:
             for check_name in name:

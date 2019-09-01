@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: iso-8859-1 -*-
+# -*- coding: utf-8 -*-
 #
 # Impressive, a fancy presentation tool
 # Copyright (C) 2005-2019 Martin J. Fiedler <martin.fiedler@gmx.net>
@@ -17,7 +17,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-from __future__ import print_function, division
+from __future__ import print_function, division, unicode_literals
 
 __title__   = "Impressive"
 __version__ = "0.13.0-WIP"
@@ -35,7 +35,7 @@ if __name__ == "__main__":
     greet()
 
 def execfile(f, c):
-    with open(f) as h:
+    with open(f, 'rb') as h:
         code = compile(h.read(), f, 'exec')
         exec(code, c)
 

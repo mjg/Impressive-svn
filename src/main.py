@@ -92,19 +92,20 @@ def main():
             # phase 2: use pdftk
             if pdftkPath and TempFileName:
                 try:
-                    assert 0 == subprocess.Popen([pdftkPath, name, "dump_data", "output", TempFileName + ".txt"]).wait()
+                    assert 0 == Popen([pdftkPath, name, "dump_data_utf8", "output", TempFileName + ".txt"]).wait()
                     title, pages = pdftkParse(TempFileName + ".txt", PageCount)
                     if title and (len(FileList) == 1):
                         DocumentTitle = title
                 except KeyboardInterrupt:
                     raise
                 except:
+                    print("pdftkParse() FAILED")
                     pass
 
             # phase 3: use mutool (if pdftk wasn't successful)
             if not(pages) and mutoolPath:
                 try:
-                    proc = subprocess.Popen([mutoolPath, "info", name], stdout=subprocess.PIPE)
+                    proc = Popen([mutoolPath, "info", name], stdout=subprocess.PIPE)
                     title, pages = mutoolParse(proc.stdout)
                     assert 0 == proc.wait()
                     if title and (len(FileList) == 1):
@@ -531,10 +532,14 @@ def run_main():
             else:
                 print("Python platform:", sys.platform, file=sys.stderr)
             if os.path.isfile("/usr/bin/lsb_release"):
-                lsb_release = subprocess.Popen(["/usr/bin/lsb_release", "-sd"], stdout=subprocess.PIPE)
+                lsb_release = Popen(["/usr/bin/lsb_release", "-sd"], stdout=subprocess.PIPE)
                 print("Linux distribution:", lsb_release.stdout.read().decode().strip(), file=sys.stderr)
                 lsb_release.wait()
-            print("Command line:", ' '.join(('"%s"'%arg if (' ' in arg) else arg) for arg in sys.argv), file=sys.stderr)
+            if basestring != str:
+                cmdline = b' '.join((b'"%s"'%arg if (b' ' in arg) else arg) for arg in sys.argv)
+            else:
+                cmdline = ' '.join(('"%s"'%arg if (' ' in arg) else arg) for arg in sys.argv)
+            print("Command line:", cmdline, file=sys.stderr)
             traceback.print_exc(file=sys.stderr)
     finally:
         StopMPlayer()
