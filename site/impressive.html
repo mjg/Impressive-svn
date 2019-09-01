@@ -13,12 +13,12 @@ code.pre { white-space:pre; }
 <!--VERSION-->
 <p style="text-indent:0;">
 <a href="http://impressive.sourceforge.net/">http://impressive.sourceforge.net/</a><br />
-<b>Version:</b> 0.12.1<br />
+<b>Version:</b> 0.13.0<br />
 <b>Author:</b> <a href="mailto:martin.fiedler@gmx.net">Martin J. Fiedler</a><br />
-<b>Last updated:</b> 2019-08-28</p>
+<b>Last updated:</b> 2019-09-02</p>
 <!--END-->
 <!--man
-.TH IMPRESSIVE 1 2019-08-28 "Martin J. Fiedler" "Impressive Documentation">
+.TH IMPRESSIVE 1 2019-09-02 "Martin J. Fiedler" "Impressive Documentation">
 .SH "NAME"
 Impressive \- presentation tool with eye candy
 .SH "SYNOPSIS"
@@ -70,7 +70,7 @@ A more comfortable method is installing Impressive in the &raquo;Send To&laquo; 
 
 <p>Another way to get Impressive is downloading the platform-independent source code version. The most important file in this archive is <code>impressive.py</code>, which contains all the code of Impressive and can be run like any executable on Unix-like systems. However, the following external libraries and utilities have to be installed as well for Impressive to work:</p>
 <ul>
-<li><strong>Python 2</strong>.7 &mdash; <a href="http://www.python.org/">www.python.org</a> <em>(required)</em> &ndash; Python 3.x will <em>not</em> work!</li>
+<li><strong>Python</strong> 2.7, 3.6 or newer &mdash; <a href="http://www.python.org/">www.python.org</a> <em>(required)</em></li>
 <li><strong>PyGame</strong> (the SDL binding for Python) &mdash; <a href="http://www.pygame.org/">www.pygame.org</a> <em>(required)</em></li>
 <li><strong>PIL</strong>, the Python Imaging Library, or <strong>Pillow</strong>, a compatible fork of it &mdash; <a href="http://www.pythonware.com/products/pil/">www.pythonware.com/products/pil</a> <em>(required)</em></li>
 <li><strong>pdftk</strong> 1.44 or higher for retrieving PDF metadata (page titles) &mdash; <a href="http://www.accesspdf.com/pdftk/">www.accesspdf.com/pdftk</a> <em>(recommended; required if MuPDF is not available)</em></li>
@@ -769,7 +769,7 @@ In other words, it is a sequence of event names joined with commas, followed by 
 <p>Impressive offers a powerful way to customize individual presentations using so-called info scripts. An info script is a text file having the same name and located in the same directory as the presentation file itself, except for the additional suffix <code>.info</code>. Thus, a presentation file called <code>BrandNewProduct.pdf</code> would have a info script with the name <code>BrandNewProduct.pdf.info</code>. If multiple arguments were specified on the command line, the info script will be called just <code>.info</code> (a dot file, so to speak). If a directory name was specified as the only argument, either a file called <code><em>DirectoryName</em>.info</code> or a file called <code>.info</code> <em>inside</em> the directory will be used, depending on whether a path separator was specified at the end of the directory name or not &ndash; Impressive simply appends <code>.info</code> to whatever the input path name was.<br />
 In any case, the default file name can be overridden by the <code>-I</code> command line option.</p>
 
-<p>Info scripts are actually Python scripts with full access to Impressive's global data structures and functions. (It is possible to write real interactive applications using info scripts.) Thus, they can modify a broad range of settings concerning Impressive. This manual will only cover the most basic ones.</p>
+<p>Info scripts are actually Python scripts with full access to Impressive's global data structures and functions. (It is possible, though heavily discouraged, to write real interactive applications using info scripts.) This has some good and bad side effects. The bad news first: The info scripts must be compatible with the Python version used by Impressive itself; it's best to write them in a way that's compatible with both Python 2.7 (with the <code>__future__</code> imports <code>print_function</code>, <code>unicode_literals</code> and <code>division</code>) and Python 3.x. Furthermore, there's no built-in security; in other words: <strong>don't trust info scripts you received from somebody else.</strong> The good news, however, is that they can modify a broad range of settings concerning Impressive. This manual will only cover the most basic ones.</p>
 
 <h3>Page Properties</h3>
 
