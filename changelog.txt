@@ -1,3 +1,8 @@
+0.13.0 [2019-??-??]
+- Python 3 compatibility: should work with Python 2.7 and >= 3.6 now
+- improved support for non-ASCII characters in page titles (as extracted
+  with pdftk)
+
 0.12.1 [2019-08-28]
 - fixed crash in crash reporter with recent Pillow versions
 - fixed crash with recent PyGame versions when non-latin characters appeared
