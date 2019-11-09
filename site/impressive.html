@@ -172,7 +172,7 @@ If the name of an external file is specified, the position of the hotspot (the p
 
 <dt><code>-d <em>&lt;time&gt;</em></code> or <code>--duration <em>&lt;time&gt;</em></code></dt>
 <dd>Specifies the expected run time of the presentation. The <em>time</em> parameter can be either a number of seconds or a human-readable time like <code>1:23</code> (1 minute and 23 seconds), <code>4:56h</code> (4 hours and 56 minutes), <code>3m45s</code> (3 minutes and 45 seconds), <code>5m</code> (5 minutes) or <code>1:23:45</code> (1 hour, 23 minutes and 45 seconds).<br />
-If an expected duration is specified, Impressive will show a semi-transparent green progress bar at the lower edge of the screen, indicating how much time has already passed. If the time is up, the bar will occupy the whole edge and fade to yellow (at 125% of the expected time) to red (at 150% or more).</dd>
+If an expected duration is specified, Impressive will show a semi-transparent green progress bar at the bottom edge of the screen, indicating how much time has already passed. If the time is up, the bar will occupy the whole edge and fade to yellow (at 125% of the expected time) to red (at 150% or more).</dd>
 
 <dt><code>-D <em>&lt;ms&gt;</em></code> or <code>--mousedelay <em>&lt;ms&gt;</em></code></dt>
 <dd>Sets the time (in milliseconds) the mouse cursor is shown in fullscreen mode if it is not moved. There are two special values: 0 (zero) shows the mouse cursor permanently, 1 (one) hides it completely. The default value is 3000&nbsp;ms.</dd>
@@ -234,8 +234,8 @@ Another limitation is that the allocation of the screen halves (slides left, ove
 <dd>This option makes Impressive invert the colors of each page, turning black to white and vice-versa. Note that it is a full RGB inversion, so it will, for example, turn dark green to light purple (and vice-versa) too.</dd>
 
 <dt><code>-k</code> or <code>--auto-progress</code></dt>
-<dd>This option makes Impressive show a progress bar at the bottom of the screen, visualizing the timeout on pages that have one (either specified as a page property or using the <code>--auto</code> command-line option). Nothing is done on pages that don't have a timeout.<br />
-The progress bar shown by this option takes precedence over the <code>--duration</code> or <code>--page-progress</code> bars: If one of these options is specified as well, the timeout progress bar will be shown on pages with a timeout, and the other progress bar will be shown on pages without one.</dd>
+<dd>This option makes Impressive show a progress bar, visualizing the timeout on pages that have one (either specified as a page property or using the <code>--auto</code> command-line option). Nothing is done on pages that don't have a timeout.<br />
+If the <code>--duration</code> or <code>--page-progress</code> bars are enabled too, the <code>--auto-progress</code> bar is shown on the top of the screen; otherwise, it's shown on the bottom.</dd>
 
 <dt><code>-l</code> or <code>--listtrans</code></dt>
 <dd>If this option is specified, Impressive writes a list of all available transition classes to standard output and does not start a presentation. Transitions that are enabled by default are marked with a star (<code>*</code>) left of the class name.</dd>
@@ -295,7 +295,8 @@ The following modes are available:<dl>
 <dd>This option can be used to override the Xpdf / GhostScript path autodetection. The full path to the executable of either GhostScript (<code>gs</code> or <code>gs.exe</code>) or Xpdf's <code>pdftoppm</code> utility must be specified.</dd>
 
 <dt><code>-q</code> or <code>--page-progress</code></dt>
-<dd>If this option is enabled, Impressive will show a light-blue semi-transparent progress bar at the lower edge of the screen that shows the position inside the presentation, i.e. the relation between the current page number and the total number of pages. Note that this progress bar will not be shown if the duration progress bar (<code>-d</code> option) is also enabled.</dd>
+<dd>If this option is enabled, Impressive will show a light-blue semi-transparent progress bar at the bottom edge of the screen that shows the position inside the presentation, i.e. the relation between the current page number and the total number of pages.<br />
+If the <code>-d</code>/<code>--duration</code> progress bar is enabled too, the <code>--page-progress</code> bar will be stacked above that.</dd>
 
 <dt><code>--progress-last <em>&lt;number&gt;</em></code></dt>
 <dd>This option sets the page number at which the slide the <code>--page-progress</code> progress bar should end. This can be useful to ignore backup slides.<br />
@@ -828,7 +829,7 @@ Please not that this function is still somewhat experimental. It uses an externa
 <dd>If this property is present and set to 1 or <code>True</code>, the media file specified in the <code>sound</code> or <code>video</code> properties will be played every time the page is entered, not just the first time.</dd>
 
 <dt><code>progress</code></dt>
-<dd>If this property is set to zero, the presentation progress bar (which is usually set up with the <code>-d</code>/<code>--duration</code> command line switch) will not be shown on this page. In practice, it might be useful to hide the bar from the first page so that it is not visible during the introduction.</dd>
+<dd>If this property is set to zero, the presentation progress bars (which are set up with the <code>-d</code>/<code>--duration</code>, <code>-q</code>/<code>--page-progress</code> or <code>-k</code>/<code>--auto-progress</code> command line switches) will not be shown on this page. In practice, it might be useful to hide the bar(s) from the first page so that they are not visible during the introduction.</dd>
 
 <dt><code>reset</code></dt>
 <dd>If this property is set to 1 or <code>True</code>, the timer will be reset each time this page is left, just as if the <strong>R</strong> has been pressed. If the special value 2 or <code>FirstTimeOnly</code> is used, the reset will only take place if the page was shown for the first time. Again, this is particularly useful on the first page: A combination of <code>progress:False, reset:FirstTimeOnly</code> makes it possible to set up the presentation long before it actually begins &ndash; the first page can be showed as long as desired, actual timing starts at the second page.</dd>
