@@ -30,7 +30,7 @@ def DrawOverlays(trans_time=0.0):
             else:
                 r, g, b = ProgressBarColorCritical
         else:  # must be PageProgress
-            rel = (Pcurrent + trans_time * (Pnext - Pcurrent)) / PageCount
+            rel = (Pcurrent + trans_time * (Pnext - Pcurrent)) / (ProgressLast or PageCount)
         if HalfScreen:
             zero = 0.5
             rel = 0.5 + 0.5 * rel

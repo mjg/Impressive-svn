@@ -294,6 +294,10 @@ The following modes are available:<dl>
 <dt><code>-q</code> or <code>--page-progress</code></dt>
 <dd>If this option is enabled, Impressive will show a light-blue semi-transparent progress bar at the lower edge of the screen that shows the position inside the presentation, i.e. the relation between the current page number and the total number of pages. Note that this progress bar will not be shown if the duration progress bar (<code>-d</code> option) is also enabled.</dd>
 
+<dt><code>--progress-last <em>&lt;number&gt;</em></code></dt>
+<dd>This option sets the page number at which the slide the <code>--page-progress</code> progress bar should end. This can be useful to ignore backup slides.<br />
+This option does not have any effect if <code>-q</code>/<code>--page-progress</code> is not used.</dd>
+
 <dt><code>-Q</code> or <code>--autoquit</code></dt>
 <dd>If this option is specified, Impressive quits automatically when trying to navigate to the page after the last page or the page before the first page.<br />
 This option does not have any effect if <code>--wrap</code> is used.</dd>

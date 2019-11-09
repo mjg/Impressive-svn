@@ -72,6 +72,7 @@ Timing options:
                           that it will be reached exactly
   -q,  --page-progress    shows a progress bar based on the position in the
                           presentation (based on pages, not time)
+       --progress-last    set the last page for --page-progress
   -k,  --auto-progress    shows a progress bar for each page for auto-advance
        --time-display     enable time display (implies --tracking)
        --tracking         enable time tracking mode
@@ -248,7 +249,7 @@ def ParseOptions(argv):
     global QuitAtEnd, ShowClock, HalfScreen, SpotRadius, InvertPages
     global MinBoxSize, AutoAdvanceProgress, BoxFadeDarkness
     global WindowPos, FakeFullscreen, UseBlurShader, Bare, EnableOverview
-    global PageProgress, BoxZoomDarkness, MaxZoomFactor, BoxEdgeSize
+    global PageProgress, ProgressLast, BoxZoomDarkness, MaxZoomFactor, BoxEdgeSize
     global TimeDisplay, MouseWheelZoom, ZoomBoxEdgeSize
     DefaultControls = True
 
@@ -268,7 +269,7 @@ def ParseOptions(argv):
             "noback", "pages=", "poll=", "font=", "fontsize=", "gamma=",
             "duration=", "cursor=", "minutes", "layout=", "script=", "cache=",
             "cachefile=", "autooverview=", "zoomtime=", "fade", "nologo",
-            "shuffle", "page-progress", "overscan=", "autoquit", "noclicks",
+            "shuffle", "page-progress", "progress-last=", "overscan=", "autoquit", "noclicks",
             "clock", "half-screen", "spot-radius=", "invert", "min-box-size=",
             "auto-auto", "auto-progress", "darkness=", "no-clicks", "nowheel",
             "no-wheel", "fake-fullscreen", "windowed", "verbose", "noblur",
@@ -491,6 +492,12 @@ def ParseOptions(argv):
             except:
                 opterr("invalid parameter for --pages")
             InitialPage = PageRangeStart
+        if opt == "--progress-last":
+            try:
+                ProgressLast = int(arg)
+                assert ProgressLast > 0
+            except:
+                opterr("invalid parameter for --progress-last")
         if opt in ("-A", "--aspect"):
             try:
                 if ':' in arg:

@@ -57,6 +57,7 @@ GammaStep = 1.1
 BlackLevelStep = 8
 EstimatedDuration = None
 PageProgress = False
+ProgressLast = None
 AutoAdvanceProgress = False
 ProgressBarSizeFactor = 0.02
 ProgressBarAlpha = 0.5
