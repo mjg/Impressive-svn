@@ -236,10 +236,14 @@ class PageDisplayActions(BaseDisplayActions):
         Marking = False
         if BoxTooSmall():
             raise ActionNotHandled()
-        z = min(1.0 / abs(MarkUL[0] - MarkLR[0]), 1.0 / abs(MarkUL[1] - MarkLR[1]))
+        zxRatio = 0.5 if HalfScreen else 1.0
+        z = min(zxRatio / abs(MarkUL[0] - MarkLR[0]), 1.0 / abs(MarkUL[1] - MarkLR[1]))
         if z <= 1:
             return DrawCurrentPage()
-        tx = (MarkUL[0] + MarkLR[0]) * 0.5
+        if HalfScreen:
+            tx = MarkLR[0]
+        else:
+            tx = (MarkUL[0] + MarkLR[0]) * 0.5
         ty = (MarkUL[1] + MarkLR[1]) * 0.5
         tx = tx + (tx - 0.5) / (z - 1.0)
         ty = ty + (ty - 0.5) / (z - 1.0)

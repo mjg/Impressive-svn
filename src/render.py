@@ -560,8 +560,8 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
         # create black background image to paste real image onto
         if ZoomMode:
             TextureImage = Image.new('RGB', (int(ResZoomFactor * TexWidth), int(ResZoomFactor * TexHeight)))
-            TextureImage.paste(img, ((ResZoomFactor * ScreenWidth  - img.size[0]) // 2,
-                                     (ResZoomFactor * ScreenHeight - img.size[1]) // 2))
+            TextureImage.paste(img, (int((ResZoomFactor * ScreenWidth  - img.size[0]) / 2),
+                                     int((ResZoomFactor * ScreenHeight - img.size[1]) / 2)))
         else:
             TextureImage = Image.new('RGB', (TexWidth, TexHeight))
             x0 = (ScreenWidth  - img.size[0]) // 2
