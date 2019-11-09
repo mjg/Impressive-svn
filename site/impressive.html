@@ -285,6 +285,9 @@ The following modes are available:<dl>
 <dt><code>last</code></dt><dd>All pages <strong>before</strong> a page with a PDF title will be shown on the overview page. The purpose is to show the <strong>final</strong> state of multi-step slides on the overview page.</dd>
 </dl>Again, the mode may be abbreviated arbitrarily, down to one character, just like with the <code>-c</code> option above..</dd>
 
+<dt><code>--overtime <em>&lt;ms&gt;</em></code></dt>
+<dd>Sets the duration (in milliseconds) of the overview page zoom-in/zoom-out effects, without affecting the zoom or box-zoom animation time. Default value: 250 ms.</dd>
+
 <dt><code>-p <em>&lt;start&gt;</em>-<em>&lt;end&gt;</em></code> or <code>--pages <em>&lt;start&gt;</em>-<em>&lt;end&gt;</em></code></dt>
 <dd>Using this option, the range of the page displayed can be narrowed down. The presentation will start at the first page in the range. All pages outside of the range will not be shown on the overview page and will not be cached. However, they can be entered manually when cycling through the presentation. Due to the fact that these pages are uncached, preparation of the display will take considerably longer.</dd>
 
@@ -368,7 +371,8 @@ Note that this option only works properly if the default controls are used. If t
 <dd>Specifies how much the non-selected parts of the screen shall become darker in box-zoom mode. The value is specified in percent, with 90 being the default. A value of zero would mean no darkening at all (parts outside of the zoom box would still be perfectly visible), and a value of 100 would make everything but the selected region black.</dd>
 
 <dt><code>-Z <em>&lt;ms&gt;</em></code> or <code>--zoomtime <em>&lt;ms&gt;</em></code></dt>
-<dd>Sets the duration (in milliseconds) of the overview page zoom-in/zoom-out effects. Default value: 250 ms.</dd>
+<dd>Sets the duration (in milliseconds) of the zoom, box-zoom and overview page zoom-in/zoom-out effects, all at once. Default value: 250 ms.<br />
+If separate animation time settings for overview zoom and zoom/box-zoom are desired, the <code>-Z</code>/<code>--zoomtime</code> option must be specified <em>before</em> the <code>--overtime</code> option.</dd>
 
 <dt><code>--cachefile <em>&lt;filename&gt;</em></code></dt>
 <dd>Activates persistent cache mode and specifies the name of the cache file to use.</dd>

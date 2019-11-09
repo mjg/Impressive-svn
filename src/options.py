@@ -82,7 +82,8 @@ Timing options:
   -D,  --mousedelay <ms>  set mouse hide delay for fullscreen mode (in ms)
                           (0 = show permanently, 1 = don't show at all)
   -B,  --boxfade <ms>     set highlight box fade duration in milliseconds
-  -Z,  --zoomtime <ms>    set zoom animation duration in milliseconds
+  -Z,  --zoomtime <ms>    set zoom and overview animation time in milliseconds
+       --overtime <ms>    set only overview animation duration in milliseconds
 
 Control options:
        --control-help     display help about control configuration and exit
@@ -237,7 +238,7 @@ def ParseAutoOverview(arg):
 
 def ParseOptions(argv):
     global FileName, FileList, Fullscreen, Scaling, Supersample, CacheMode
-    global TransitionDuration, MouseHideDelay, BoxFadeDuration, ZoomDuration
+    global TransitionDuration, MouseHideDelay, BoxFadeDuration, ZoomDuration, OverviewDuration
     global ScreenWidth, ScreenHeight, InitialPage, Wrap, TimeTracking
     global AutoAdvanceTime, AutoAdvanceEnabled, AutoAutoAdvance
     global RenderToDirectory, Rotation, DAR, Verbose
@@ -268,7 +269,7 @@ def ParseOptions(argv):
             "zoom=", "gspath=", "renderer=", "aspect=", "memcache",
             "noback", "pages=", "poll=", "font=", "fontsize=", "gamma=",
             "duration=", "cursor=", "minutes", "layout=", "script=", "cache=",
-            "cachefile=", "autooverview=", "zoomtime=", "fade", "nologo",
+            "cachefile=", "autooverview=", "zoomtime=", "overtime=", "fade", "nologo",
             "shuffle", "page-progress", "progress-last=", "overscan=", "autoquit", "noclicks",
             "clock", "half-screen", "spot-radius=", "invert", "min-box-size=",
             "auto-auto", "auto-progress", "darkness=", "no-clicks", "nowheel",
@@ -375,7 +376,7 @@ def ParseOptions(argv):
         if opt in ("-H", "--half-screen"):
             HalfScreen = not(HalfScreen)
             if HalfScreen:
-                ZoomDuration = 0
+                OverviewDuration = 0
         if opt == "--invert":
             InvertPages = not(InvertPages)
         if opt in ("-P", "--gspath", "--renderer"):
@@ -433,10 +434,16 @@ def ParseOptions(argv):
                 opterr("invalid parameter for --boxfade")
         if opt in ("-Z", "--zoomtime"):
             try:
-                ZoomDuration = int(arg)
+                ZoomDuration = OverviewDuration = int(arg)
                 assert (ZoomDuration >= 0) and (ZoomDuration < 32768)
             except:
                 opterr("invalid parameter for --zoomtime")
+        if opt in ("--overtime"):
+            try:
+                OverviewDuration = int(arg)
+                assert (OverviewDuration >= 0) and (OverviewDuration < 32768)
+            except:
+                opterr("invalid parameter for --overtime")
         if opt == "--spot-radius":
             try:
                 SpotRadius = int(arg)

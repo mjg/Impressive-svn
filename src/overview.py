@@ -44,7 +44,7 @@ def DrawOverview():
 # overview zoom effect, time mapped through func
 def OverviewZoom(func):
     global TransitionRunning
-    if ZoomDuration <= 0:
+    if OverviewDuration <= 0:
         return
     pos = OverviewPos(OverviewSelection)
     X0 = PixelX * (pos[0] + OverviewBorder)
@@ -56,7 +56,7 @@ def OverviewZoom(func):
     TransitionRunning = True
     t0 = Platform.GetTicks()
     while not(VideoPlaying):
-        t = (Platform.GetTicks() - t0) * 1.0 / ZoomDuration
+        t = (Platform.GetTicks() - t0) * 1.0 / OverviewDuration
         if t >= 1.0: break
         t = func(t)
         t1 = t*t

@@ -18,6 +18,7 @@ TransitionDuration = 1000
 MouseHideDelay = 3000
 BoxFadeDuration = 100
 ZoomDuration = 250
+OverviewDuration = 250
 BlankFadeDuration = 250
 BoxFadeBlur = 1.5
 BoxFadeDarkness = 0.25
