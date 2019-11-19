@@ -68,17 +68,18 @@ Additionally, please be sure to have mupdf-tools and pdftk installed if you
 intend to use PDF input.""", file=sys.stderr)
     sys.exit(1)
 
-# Python 2/3 compatibility regarding strings
-try:
+# Python 2/3 compatibility fixes
+try:  # Python 2 path
     basestring  # only exists in Python 2
     def Popen(cmdline, *args, **kwargs):
         # Python 2's subprocess.Popen needs manual unicode->str conversion
         enc = sys.getfilesystemencoding()
         cmdline = [arg.encode(enc, 'replace') for arg in cmdline]
         return subprocess.Popen(cmdline, *args, **kwargs)
-except:
+except:  # Python 3 path
     basestring = str
     Popen = subprocess.Popen
+    raw_input = input
 
 try:
     try:

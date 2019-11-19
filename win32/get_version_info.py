@@ -2,6 +2,11 @@
 # This tool is useful on Win32 only.
 import sys, re, subprocess
 
+try:
+    unicode
+except NameError:
+    unicode = str
+
 if __name__ == "__main__":
     info = dict((k, eval(v)) for k, v in re.findall(r'^__(.*?)__\s*=\s*(.*)', open(sys.argv[1]).read(), re.M))
     version = list(map(int, re.findall(r'\d+', info['version'])))[:3]
