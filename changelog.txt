@@ -1,3 +1,8 @@
+0.13.0-beta1a [2019-11-21]
+- hotfix for a segfault when using Impressive on Linux with PyGame installed
+  from pip (instead of the distribution's package manager)
+
+
 0.13.0-beta1 [2019-11-20]
 - Python 3 compatibility: should work with Python 2.7 and >= 3.6 now
 - Win32 build uses 64-bit Python 3

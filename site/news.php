@@ -1,5 +1,8 @@
 <?php include("menu.php"); ?>
 
+<h1><span class="date">2019-11-21</span>A Linux-specific hotfix in 0.13.0-beta1a</h1>
+<p>While testing on various machines, a rather nasty bug has been found on Linux: If the PyGame library has been installed using pip (Python's own package manager) instead of a distribution package, it would simply crash hard. 0.13.0-beta1a explicitly fixes this. Windows is not affected at all, so there's no new Win32 package.</p>
+
 <h1><span class="date">2019-11-20</span>Towards Python 3 with 0.13.0-beta1</h1>
 <p>The next major version bump is immanent, but this time, it isn't much about features on the surface, but rather profound changes under the hood: With a lot of help from the Fedora project, Impressive has finally been made compatible with Python 3.x. This is important because Python 2.x is discontinued and will no longer be supported in 2020. The amount of changes needed to ensure this Python 3 compatibility is quite large though, and as the version string indicates, there may still be some issues lurking around, even though it proved stable in my testing so far.</p>
 <p>Other than that, there aren't many changes: The Win32 package is now built with Python 3 too, and for 64-bit architectures. The page count for the <code>--page-progress</code> option can now be limited (to compensate for backup slides, for example), the overview animation time can be configured independently from the zoom animation time, and more than one progress bar can now be displayed at once.</p>
