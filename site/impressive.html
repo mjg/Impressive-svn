@@ -190,10 +190,10 @@ If an expected duration is specified, Impressive will show a semi-transparent gr
 <dd>If this option is specified, Impressive will not start a normal presentation, but instead enter the so-called &raquo;Event Test Mode&laquo; after the display has been initialized. In this mode, Impressive will simply capture all keyboard and mouse events and display the name of the last event on the screen. In addition, events will be logged to standard output. This mode helps with determining the event names for each key when creating a custom control configuration (see the <a href="#controls">Control Configuration</a> section).</dd>
 
 <dt><code>-f</code></dt>
-<dd>Sets the window/fullscreen mode Impressive shall start up with. This option can be specified multiple times; each times it is found, the next of the three options is selected, in the follwing order:<ul style="margin-top:0; margin-bottom:0;">
+<dd>Sets the window/fullscreen mode Impressive shall start up with. This option can be specified multiple times; each times it is found, the next of the three options is selected, in the following order:<ul style="margin-top:0; margin-bottom:0;">
 <li><!--man (1.) -->True <strong>fullscreen mode</strong>, including setting the video mode. This is the default mode.</li>
 <li><!--man (2.) --><strong>Windowed</strong> mode, where Impressive runs in a standard window.</li>
-<li><!--man (3.) -->&raquo;<strong>Fake-fullscreen</strong>&laquo; mode, where fullscreen is emulated by uding a window without border that fills the whole screen. Setting the display resolution is not possible in this mode.</li>
+<li><!--man (3.) -->&raquo;<strong>Fake-fullscreen</strong>&laquo; mode, where fullscreen is emulated by using a window without border that fills the whole screen. Setting the display resolution is not possible in this mode.</li>
 </ul>Each of these modes has a corresponding long option that enables it directly (<code>--fullscreen</code>, <code>--windowed</code> and <code>--fake-fullscreen</code>).<br />
 <!--man:off-->
 <strong>Note:</strong> On Windows systems, toggling fullscreen mode while Impressive runs does <em>not</em> work. So, the command-line options are the only way to set whether fullscreen mode shall be used or not.
@@ -255,7 +255,7 @@ Note that regardless of this setting, Impressive always checks the graphics hard
 
 <dt><code>--noblur</code></dt>
 <dd>By default, Impressive uses a fragment shader to blur and desaturate the image when in highlight box or spotlight mode. This is usually the faster and nicer-looking method; however, some very old hardware implementations can't deal with that shader and fall back to an unusably slow software implementation. Impressive tries to detect scenarios where this would happen and automatically falls back to a different implementation.<br />
-There might be situations where this machanism fails and Impressive tries to use the non-functional shader anyway. In these cases, the <code>--noblur</code> option can be used to enforce the fallback implementation.</dd>
+There might be situations where this mechanism fails and Impressive tries to use the non-functional shader anyway. In these cases, the <code>--noblur</code> option can be used to enforce the fallback implementation.</dd>
 
 <dt><code>-N</code> or <code>--nocursor</code></dt>
 <dd>This option disables any display of a mouse cursor, i.e. neither the system (&raquo;hardware&laquo;) not bitmap (&raquo;software&laquo;) cursor is shown at any time. This is mainly useful for automated presentations, where no mouse interaction is needed.</dd>
@@ -324,7 +324,7 @@ This option does not have any effect if <code>--wrap</code> is used.</dd>
 <dt><code>--time-display</code></dt>
 <dd>This option enables display of the elapsed presentation time, as if the <strong>T</strong> key has been pressed immediately after startup. This implies time tracking mode (<code>--tracking</code> option).</dd>
 
-<dt><code>-t <em>&lt;ms&gt;</em></code> or <code>--transition <em>&lt;trans1[,trans2...]&gt;</em></code></dt>
+<dt><code>-t <em>&lt;trans1[,trans2...]&gt;</em></code> or <code>--transition <em>&lt;trans1[,trans2...]&gt;</em></code></dt>
 <dd>Using this switch, the set of transitions Impressive will randomly draw at page changes can be specified. If only one transition class is specified, this class will be used for all pages that do not have another transition explicitly assigned in their page properties. Multiple transitions have to be separated by commas; they will be used in random order. The <code>-l</code> option can be used to get a list of available transitions.</dd>
 
 <dt><code>-T <em>&lt;ms&gt;</em></code> or <code>--transtime <em>&lt;ms&gt;</em></code></dt>
@@ -372,7 +372,7 @@ Note that this option only works properly if the default controls are used. If t
 <dd>Specifies how much the non-selected parts of the screen shall become darker in box-zoom mode. The value is specified in percent, with 90 being the default. A value of zero would mean no darkening at all (parts outside of the zoom box would still be perfectly visible), and a value of 100 would make everything but the selected region black.</dd>
 
 <dt><code>-Z <em>&lt;ms&gt;</em></code> or <code>--zoomtime <em>&lt;ms&gt;</em></code></dt>
-<dd>Sets the duration (in milliseconds) of the zoom, box-zoom and overview page zoom-in/zoom-out effects, all at once. Default value: 250 ms.<br />
+<dd>Sets the duration (in milliseconds) of the zoom, box-zoom and overview page zoom-in/zoom-out effects, all at once. Default value: 250&nbsp;ms.<br />
 If separate animation time settings for overview zoom and zoom/box-zoom are desired, the <code>-Z</code>/<code>--zoomtime</code> option must be specified <em>before</em> the <code>--overtime</code> option.</dd>
 
 <dt><code>--cachefile <em>&lt;filename&gt;</em></code></dt>
@@ -839,7 +839,7 @@ Please not that this function is still somewhat experimental. It uses an externa
 
 <dt><code>OnEnter</code>, <code>OnLeave</code>, <code>OnEnterOnce</code>, <code>OnLeaveOnce</code></dt>
 <dd>These properties can contain a Python callable (i.e. a function reference or lambda expression) that is executed when the page is entered or left. The <code>~Once</code> variants will only be executed when the page is entered or left for the first time. The callable must not take any arguments. This feature can be used to associate arbitrary Python code with specific pages, for example to execute external programs.<br />
-<strong>Warning:</strong> Lambda expressions cannot be properly processed by the Info Script save function (<strong>S</strong> key). If Impressive encounters lambda expressions when saving, it will remove them. In addition, it will not overwrite the original info script, but generate an extra file that needs to be merged withe the original script by hand.</dd>
+<strong>Warning:</strong> Lambda expressions cannot be properly processed by the Info Script save function (<strong>S</strong> key). If Impressive encounters lambda expressions when saving, it will remove them. In addition, it will not overwrite the original info script, but generate an extra file that needs to be merged with the original script by hand.</dd>
 
 <dt><code>keys</code></dt>
 <dd>This property can be assigned a dictionary that maps alphanumerical keys to Python functions. For example, <code>'keys': { 'x': SomeFunction }</code> will invoke <code>SomeFunction()</code> if the lowercase character 'x' is typed while the page is displayed. Regarding the functions, the same restrictions as for the <code>OnEnter</code>/<code>OnLeave</code> family apply: the function must not take any parameters and lambda functions can not be saved. Also note that it is not possible to overwrite Impressive's pre-defined key bindings with this method.</dd>
@@ -927,7 +927,7 @@ See the GNU General Public License for more details.</p>
 <li>bug reports</li>
 <li>feature suggestions</li>
 <li>fan mail</li>
-<li>corrections regarding the web page (I'm not a native speaker &ndash; any grammatical, ortographical or stylistic corrections or suggestions are welcome!)</li>
+<li>corrections regarding the web page (I'm not a native speaker &ndash; any grammatical, orthographical or stylistic corrections or suggestions are welcome!)</li>
 <li>new silly quotations for the web page's title bar :)</li>
 </ul>
 
