@@ -70,7 +70,7 @@ class Platform_PyGame(object):
 
         # generic case: load the system-wide SDL
         if pygame.get_sdl_version() >= (2, 0, 0):
-            sdl = sdl or ctypes.util.find_library("SDL2") or ctypes.util.find_library("SDL-2.0") or "SDL2"
+            sdl = sdl or ctypes.util.find_library("SDL2") or ctypes.util.find_library("SDL2-2.0") or ctypes.util.find_library("SDL-2.0") or "SDL2"
         else:
             sdl = sdl or ctypes.util.find_library("SDL") or ctypes.util.find_library("SDL-1.2") or "SDL"
 
