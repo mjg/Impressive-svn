@@ -154,7 +154,7 @@ def pdftkParse(filename, page_offset=0):
         elif key == "infokey":
             InfoKey = value.lower()
         elif (key == "infovalue") and (InfoKey == "title"):
-            Title = unescape_pdf(value)
+            Title = unescape_pdf(value).split(u'\x00', 1)[0]
             InfoKey = None
         elif key == "bookmarktitle":
             BookmarkTitle = unescape_pdf(value)
