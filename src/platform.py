@@ -49,7 +49,11 @@ class Platform_PyGame(object):
         if WindowPos:
             os.environ["SDL_VIDEO_WINDOW_POS"] = ','.join(map(str, WindowPos))
         pygame.display.set_mode((ScreenWidth, ScreenHeight), flags)
-        pygame.key.set_repeat(500, 30)
+
+        # Do *not* set key repeat. We used to do that, but there are some
+        # broken(?) PyGame 2.x versions that produce spurious key-down
+        # messages after transition animations when enabled.
+        # pygame.key.set_repeat(500, 30)
 
     def LoadOpenGL(self):
         sdl = None
