@@ -37,7 +37,12 @@ def main():
         DocumentTitle = os.path.splitext(os.path.split(FileName)[1])[0]
 
     # early graphics initialization
-    Platform.Init()
+    try:
+        Platform.Init()
+    except Exception as e:
+        print("FATAL: failed to initialize the platform library", file=sys.stderr)
+        print("       detailed error message:", e, file=sys.stderr)
+        sys.exit(1)
 
     # detect screen size and compute aspect ratio
     if Fullscreen and (UseAutoScreenSize or not(Platform.allow_custom_fullscreen_res)):
@@ -99,7 +104,6 @@ def main():
                 except KeyboardInterrupt:
                     raise
                 except:
-                    print("pdftkParse() FAILED")
                     pass
 
             # phase 3: use mutool (if pdftk wasn't successful)

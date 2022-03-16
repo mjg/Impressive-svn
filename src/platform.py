@@ -274,7 +274,8 @@ class Platform_Unix(Platform_PyGame):
         return Platform_PyGame.GetScreenSize(self)
 
 
-class Platform_RasPi4(Platform_Unix):
+class Platform_RasPiKMS(Platform_Unix):
+    name = 'pygame-unix-pi4'
     use_omxplayer = True
 
 
@@ -283,20 +284,30 @@ class Platform_EGL(Platform_Unix):
     egllib = "EGL"
     gles2lib = "GLESv2"
 
+    def _findlib(self, lib, desc):
+        path = ctypes.util.find_library(lib)
+        if not path:
+            raise ImportError(desc + " library (lib" + lib + ") not found")
+        return path
+
     def StartDisplay(self, display=None, window=None, width=None, height=None):
         global ScreenWidth, ScreenHeight
         width  = width  or ScreenWidth
         height = height or ScreenHeight
 
+        # resolve library names
+        egllib = self._findlib(self.egllib, "EGL")
+        gles2lib = self._findlib(self.gles2lib, "GLESv2")
+
         # load the GLESv2 library before the EGL library (required on the BCM2835)
         try:
-            self.gles = ctypes.CDLL(ctypes.util.find_library(self.gles2lib))
+            self.gles = CDLL(gles2lib)
         except OSError:
             raise ImportError("failed to load the OpenGL ES 2.0 library")
 
         # import all functions first
         try:
-            egl = CDLL(ctypes.util.find_library(self.egllib))
+            egl = CDLL(egllib)
             def loadfunc(func, ret, *args):
                 return CFUNCTYPE(ret, *args)((func, egl))
             eglGetDisplay = loadfunc("eglGetDisplay", c_void_p, c_void_p)
@@ -447,14 +458,25 @@ class Platform_BCM2835(Platform_EGL):
 
 libbcm_host = ctypes.util.find_library("bcm_host")
 if libbcm_host:
+    kms_enabled = False
     try:
+        # Raspberry Pi 4 always uses the KMS driver
         with open("/sys/firmware/devicetree/base/model") as f:
             model = f.read()
+        m = re.search(r'pi\s*(\d+)', model, flags=re.I)
+        if m and (int(m.group(1)) >= 4):
+            kms_enabled = True
+        # on older Pis, it's optional
+        if not kms_enabled:
+            for d in os.listdir("/proc/device-tree/soc"):
+                if not d.startswith("v3d"): continue
+                with open("/proc/device-tree/soc/" + d + "/status", "r") as f:
+                    if "ok" in f.read().lower():
+                        kms_enabled = True
     except EnvironmentError:
-        model = ""
-    m = re.search(r'pi\s*(\d+)', model, flags=re.I)
-    if m and (int(m.group(1)) >= 4):
-        Platform = Platform_RasPi4()
+        pass
+    if kms_enabled:
+        Platform = Platform_RasPiKMS()
     else:
         Platform = Platform_BCM2835(libbcm_host)
 elif os.name == "nt":
