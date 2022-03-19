@@ -142,6 +142,10 @@ Note that this option will not interrupt video playback: If a video is longer th
 <dt><code>-b</code> or <code>--noback</code></dt>
 <dd>Disables background rendering. By default, Impressive will pre-render all pages in a separate background thread while the presentation runs. If this option is specified, it will instead render all pages immediately on startup. This option has no effect if caching is disabled (<code>--cache none</code>, see below).</dd>
 
+<dt><code>--background <em>&lt;color&gt;</em></code></dt>
+<dd>Sets the background color of the overview page and the page border that's visible if the page's and the screen's aspect ratios don't match.<br />
+The color is specified using HTML/CSS 3-digit or 6-digit hexadecimal RGB syntax: <code>#f00</code> or <code>#ff0000</code> is bright red, for example. The leading hash sign (<code>#</code>) is optional. In addition, the words <code>black</code> (which is also the default) and <code>white</code> are recognized.</dd>
+
 <dt><code>-bare</code></dt>
 <dd>Disables all functionality that relies on temporary files, specifically video frame extraction using MPlayer (extracting video frames with FFmpeg still works), PDF page title extraction, PDF hyperlinks, and even PDF rendering for all backends except MuPDF 1.4 or newer on Unix-like operating systems.</dd>
 

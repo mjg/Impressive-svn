@@ -297,7 +297,7 @@ def ApplyRotation(img, rot):
 
 # generate a dummy image
 def DummyPage():
-    img = Image.new('RGB', (ScreenWidth, ScreenHeight))
+    img = Image.new('RGB', (ScreenWidth, ScreenHeight), BackgroundColor)
     img.paste(LogoImage, ((ScreenWidth  - LogoImage.size[0]) // 2,
                           (ScreenHeight - LogoImage.size[1]) // 2))
     return img
@@ -559,11 +559,11 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
 
         # create black background image to paste real image onto
         if ZoomMode:
-            TextureImage = Image.new('RGB', (int(ResZoomFactor * TexWidth), int(ResZoomFactor * TexHeight)))
+            TextureImage = Image.new('RGB', (int(ResZoomFactor * TexWidth), int(ResZoomFactor * TexHeight)), BackgroundColor)
             TextureImage.paste(img, (int((ResZoomFactor * ScreenWidth  - img.size[0]) / 2),
                                      int((ResZoomFactor * ScreenHeight - img.size[1]) / 2)))
         else:
-            TextureImage = Image.new('RGB', (TexWidth, TexHeight))
+            TextureImage = Image.new('RGB', (TexWidth, TexHeight), BackgroundColor)
             x0 = (ScreenWidth  - img.size[0]) // 2
             y0 = (ScreenHeight - img.size[1]) // 2
             TextureImage.paste(img, (x0, y0))
@@ -581,7 +581,7 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
             try:
                 # first, fill the underlying area with black (i.e. remove the dummy logo)
                 blackness = Image.new('RGB', (OverviewCellX - OverviewBorder,
-                                              OverviewCellY - OverviewBorder))
+                                              OverviewCellY - OverviewBorder), BackgroundColor)
                 OverviewImage.paste(blackness, (pos[0] + OverviewBorder // 2,
                                                 pos[1] + OverviewBorder))
                 del blackness

@@ -264,6 +264,12 @@ def main():
     LogoTexture = gl.make_texture(gl.TEXTURE_2D, filter=gl.NEAREST, img=LogoImage)
     DrawLogo()
     Platform.SwapBuffers()
+    if BackgroundColor != (0, 0, 0):
+        mask = LogoImage
+        luma = sum(c*w for c,w in zip(BackgroundColor, (299, 587, 114)))
+        LogoImage = Image.new('RGB', LogoImage.size, BackgroundColor)
+        LogoImage.paste(Image.new('RGB', LogoImage.size, (0, 0, 0) if (luma > 128000) else (255, 255, 255)), mask=mask)
+        del mask
 
     # initialize OSD font
     try:
@@ -337,7 +343,7 @@ def main():
                        int((OverviewPageCount + OverviewGridSize - 1) / OverviewGridSize)) / 2)
         while OverviewBorder and (min(OverviewCellX - 2 * OverviewBorder, OverviewCellY - 2 * OverviewBorder) < 16):
             OverviewBorder -= 1
-        OverviewImage = Image.new('RGB', (TexWidth, TexHeight))
+        OverviewImage = Image.new('RGB', (TexWidth, TexHeight), BackgroundColor)
         if HalfScreen:
             OverviewOfsX += ScreenWidth
             ScreenWidth = saved_screen_width

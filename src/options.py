@@ -63,6 +63,7 @@ Display options:
        --zbox-edge <px>   size of zoom box borders, in pixels
        --darkness <p>     set highlight box mode darkness to <p> percent
        --zoomdarkness <p> set box-zoom mode darkness to <p> percent
+       --background <c>   set background color (HTML/CSS hex style: rgb/rrggbb)
 
 Timing options:
   -a,  --auto <seconds>   automatically advance to next page after some seconds
@@ -251,7 +252,7 @@ def ParseOptions(argv):
     global MinBoxSize, AutoAdvanceProgress, BoxFadeDarkness
     global WindowPos, FakeFullscreen, UseBlurShader, Bare, EnableOverview
     global PageProgress, ProgressLast, BoxZoomDarkness, MaxZoomFactor, BoxEdgeSize
-    global TimeDisplay, MouseWheelZoom, ZoomBoxEdgeSize
+    global TimeDisplay, MouseWheelZoom, ZoomBoxEdgeSize, BackgroundColor
     DefaultControls = True
 
     # on Python 2, ensure that all command-line strings are encoded properly
@@ -278,7 +279,7 @@ def ParseOptions(argv):
             "noquit", "bare", "no-overview", "nooverview", "no-cursor",
             "nocursor", "zoomdarkness=", "zoom-darkness=", "box-edge=",
             "maxzoom=", "max-zoom=", "time-display", "zbox-edge=",
-            "vht0=", "vht1="])
+            "vht0=", "vht1=", "background="])
     except getopt.GetoptError as message:
         opterr(message)
 
@@ -572,6 +573,17 @@ def ParseOptions(argv):
             EnableOverview = not(EnableOverview)
         if opt in ("-N", "--no-cursor", "--nocursor"):
             MouseHideDelay = 1
+        if opt == "--background":
+            if arg.startswith("#"): arg = arg[1:]
+            if    arg == "white": arg = "fff"
+            elif  arg == "black": arg = "000"
+            if    len(arg) == 3:  arg = [d+d for d in arg]
+            elif  len(arg) == 6:  arg = [arg[n:n+2] for n in (0,2,4)]
+            else: opterr("invalid  parameter for --background")
+            try:
+                BackgroundColor = tuple(int(c, 16) for c in arg)
+            except:
+                opterr("invalid  parameter for --background")
         if opt.startswith("--vht"):  # DEBUG OPTION ONLY
             Win32FullscreenVideoHackTiming[int(opt[5:])] = float(arg)
 

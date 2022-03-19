@@ -71,6 +71,7 @@ ProgressBarWarningFactor = 1.25
 ProgressBarCriticalFactor = 1.5
 CursorImage = None
 CursorHotspot = (0, 0)
+BackgroundColor = (0, 0, 0)
 MinutesOnly = False
 OSDMargin = 16
 OSDAlpha = 1.0
