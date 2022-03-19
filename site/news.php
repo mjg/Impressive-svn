@@ -1,5 +1,9 @@
 <?php include("menu.php"); ?>
 
+<h1><span class="date">2022-03-19</span>0.13.1 brings SDL 2 support</h1>
+<p>There hasn't been an update for a long time, and you might wonder what happened to the &raquo;final&laquo; version of 0.13.0. I decided to skip it, because 0.13.1 introduces another important compatibility feature: suport for PyGame 2 and SDL 2. Other than that, it's mostly bug fixes and little enhancements here and there.</p>
+<p>Unfortunately, there are some caveats with PyGame 2 support, which are out of my control; specifically, there's frequently trouble with PyGame 2.0 on Linux systems, but those seem to be fixed with PyGame 2.1. And if you're using a Raspberry Pi of generation 1 to 3, do yourself a favor and stay at the older <code>buster</code> version of Raspbian, &raquo;Raspbery Pi OS (Legacy)&laquo;. While Impressive has been adapted to work with the current <code>bullseye</code> version, that doesn't offer 3D acceleration on those older Pi models (yet?), and only shows a black screen if you force it. Raspberry Pi 4 users are not affected.</p>
+
 <h1><span class="date">2020-05-31</span>Some maintenance in 0.13.0-beta2</h1>
 <p>The second beta version brings the expected bugfixes (mainly crashes on Python 3 due to oversights during porting), but also a few minor new features: High-DPI scaling is now disabled on Windows, so that the display isn't as blurry as it used to be on affected systems. New <code>prev</code> and <code>next</code> PageProps have been introduced to change the playback order of pages. Finally, there's now a &raquo;pseudo-binary&laquo; file called <code>impressive</code> in the <code>.tar.gz</code> release archive that's more compact and with slightly quicker startup time than the standard source code file.</p>
 

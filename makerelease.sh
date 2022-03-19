@@ -16,7 +16,6 @@ rm -rf $base/$dir
 mkdir -p $base/$dir
 chmod -x demo.pdf
 cp demo.pdf $base/$dir
-cp impressive $base/$dir/
 for file in $exe $hlp license.txt changelog.txt impressive.1 ; do
   tr -d '\r' <$file >$base/$dir/$(basename $file)
 done
