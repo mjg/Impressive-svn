@@ -456,30 +456,30 @@ class Platform_BCM2835(Platform_EGL):
         pygame.mouse.set_pos((width // 2, height // 2))
 
 
-libbcm_host = ctypes.util.find_library("bcm_host")
-if libbcm_host:
-    kms_enabled = False
+def GetPlatform():
+    default_class = Platform_Win32 if (os.name == "nt") else Platform_Unix
+    libbcm_host = ctypes.util.find_library("bcm_host")
+    if not libbcm_host:
+        return default_class()
+    # libbcm_host is present -> this might be a Raspberry Pi
     try:
-        # Raspberry Pi 4 always uses the KMS driver
         with open("/sys/firmware/devicetree/base/model") as f:
             model = f.read()
-        m = re.search(r'pi\s*(\d+)', model, flags=re.I)
-        if m and (int(m.group(1)) >= 4):
-            kms_enabled = True
-        # on older Pis, it's optional
-        if not kms_enabled:
-            for d in os.listdir("/proc/device-tree/soc"):
-                if not d.startswith("v3d"): continue
-                with open("/proc/device-tree/soc/" + d + "/status", "r") as f:
-                    if "ok" in f.read().lower():
-                        kms_enabled = True
+    except EnvironmentError:
+        return default_class()  # no model ID file -> no RasPi
+    m = re.match(r'raspberry pi\s*(\d+)?', model, flags=re.I)
+    if not m:
+        return default_class()  # different model ID string -> not a RasPi
+    elif int(m.group(1) or "1") >= 4:
+        return Platform_RasPiKMS()  # RasPi 4 -> always uses KMS
+    # if we arrived here, it's an older RasPi, where KMS is optional
+    try:
+        for d in os.listdir("/proc/device-tree/soc"):
+            if not d.startswith("v3d"): continue
+            with open("/proc/device-tree/soc/" + d + "/status", "r") as f:
+                if "ok" in f.read().lower():
+                    return Platform_RasPiKMS()  # KMS device found and active
     except EnvironmentError:
         pass
-    if kms_enabled:
-        Platform = Platform_RasPiKMS()
-    else:
-        Platform = Platform_BCM2835(libbcm_host)
-elif os.name == "nt":
-    Platform = Platform_Win32()
-else:
-    Platform = Platform_Unix()
+    return Platform_BCM2835(libbcm_host)
+Platform = GetPlatform()
