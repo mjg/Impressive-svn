@@ -17,7 +17,7 @@ def SetFullscreen(fs, do_init=True):
 def TogglePageProp(prop, default):
     global WantStatus
     SetPageProp(Pcurrent, prop, not(GetPageProp(Pcurrent, prop, default)))
-    UpdateCaption(page, force=True)
+    UpdateCaption(Pcurrent, force=True)
     WantStatus = True
     DrawCurrentPage()
 
