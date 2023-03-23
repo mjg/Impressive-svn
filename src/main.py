@@ -355,7 +355,7 @@ def main():
         if (dummy.size[0] > maxsize[0]) or (dummy.size[1] > maxsize[1]):
             size = ZoomToFit(dummy.size, maxsize, force_int=True)
             if min(size) > 0:
-                dummy.thumbnail(size, Image.ANTIALIAS)
+                dummy.thumbnail(size, Image.LANCZOS)
             else:
                 dummy = None
         if dummy:

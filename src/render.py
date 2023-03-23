@@ -394,16 +394,16 @@ def RenderPDF(page, MayAdjustResolution, ZoomMode):
     # downsample a supersampled image
     if Supersample and not(ZoomMode):
         img = img.resize((int(float(out[0]) / Supersample + 0.5),
-                          int(float(out[1]) / Supersample + 0.5)), Image.ANTIALIAS)
+                          int(float(out[1]) / Supersample + 0.5)), Image.LANCZOS)
         parscale = False  # don't scale again
 
     # perform PAR scaling (required for pdftoppm which doesn't support different
     # dpi for horizontal and vertical)
     if parscale:
         if PAR > 1.0:
-            img = img.resize((int(img.size[0] / PAR + 0.5), img.size[1]), Image.ANTIALIAS)
+            img = img.resize((int(img.size[0] / PAR + 0.5), img.size[1]), Image.LANCZOS)
         else:
-            img = img.resize((img.size[0], int(img.size[1] * PAR + 0.5)), Image.ANTIALIAS)
+            img = img.resize((img.size[0], int(img.size[1] * PAR + 0.5)), Image.LANCZOS)
 
     # crop the overscan (if present)
     if Overscan:
@@ -456,7 +456,7 @@ def LoadImage(page, zoom=False, img=None):
     if newsize > img.size:
         filter = Image.BICUBIC
     else:
-        filter = Image.ANTIALIAS
+        filter = Image.LANCZOS
     return img.resize(newsize, filter)
 
 
@@ -592,7 +592,7 @@ def PageImage(page, ZoomMode=False, RenderMode=False):
                 sy = OverviewCellY - 2 * OverviewBorder
                 if HighQualityOverview:
                     t0 = time.time()
-                    img.thumbnail((sx, sy), Image.ANTIALIAS)
+                    img.thumbnail((sx, sy), Image.LANCZOS)
                     if (time.time() - t0) > 0.5:
                         print("Note: Your system seems to be quite slow; falling back to a faster,", file=sys.stderr)
                         print("      but slightly lower-quality overview page rendering mode", file=sys.stderr)

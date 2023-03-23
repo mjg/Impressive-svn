@@ -304,7 +304,7 @@ class WipeClouds(Wipe):
         img = ImageOps.equalize(ImageOps.autocontrast(img))
         for i in range(self.blur):
             img = img.filter(ImageFilter.BLUR)
-        img = img.crop((border, border, img.size[0] - 2 * border, img.size[1] - 2 * border)).resize((self.rx, self.ry), Image.ANTIALIAS)
+        img = img.crop((border, border, img.size[0] - 2 * border, img.size[1] - 2 * border)).resize((self.rx, self.ry), Image.LANCZOS)
         return img2str(img)
 class WipeBrightness1(Wipe):
     """wipe based on the current slide's brightness"""
