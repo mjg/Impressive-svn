@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # Impressive, a fancy presentation tool
-# Copyright (C) 2005-2022 Martin J. Fiedler <martin.fiedler@gmx.net>
+# Copyright (C) 2005-2023 Martin J. Fiedler <martin.fiedler@gmx.net>
 #                         and contributors
 #
 # This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 from __future__ import print_function, division, unicode_literals
 
 __title__   = "Impressive"
-__version__ = "0.13.2-WIP"
+__version__ = "0.13.2"
 __rev__     = None
 __author__  = "Martin J. Fiedler"
 __email__   = "martin.fiedler@gmx.net"

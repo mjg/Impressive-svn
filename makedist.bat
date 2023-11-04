@@ -14,6 +14,11 @@ rmdir /s /q dist
 py -3 -m PyInstaller ^
     --noconfirm --onedir --console --name=Impressive ^
     --icon=Artwork\icon.ico --version-file=win32_version.txt ^
+    --exclude-module FixTk ^
+    --exclude-module tcl ^
+    --exclude-module tk ^
+    --exclude-module _tkinter ^
+    --exclude-module tkinter ^
     --exclude-module Tkinter ^
     --exclude-module scipy ^
     --exclude-module numpy ^

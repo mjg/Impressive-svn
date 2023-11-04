@@ -1,3 +1,12 @@
+0.13.2 [2023-11-04]
+- ensured compatibility with Pillow 10.0
+- fixed crash when toggling the 'skip' or 'overview' PageProps
+- made Raspberry Pi platform detection code more robust
+- re-added pseudo-binary version to source release, but with proper sourcecode
+  instead of the rather problematic bytecode we had in 0.13.0
+- remove Tcl/Tk from the Win32 build (it was never used anyway)
+
+
 0.13.1 [2022-03-19]
 - support for SDL 2 via PyGame 2.0
   - had to disable key repeat as a result of that, because it's buggy on
