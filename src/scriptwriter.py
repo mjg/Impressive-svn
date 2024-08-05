@@ -133,7 +133,7 @@ def SaveInfoScript(filename):
 
     # replace the PageProps of the old info script with the current ones
     try:
-        m = re.search("^.*(PageProps)\s*=\s*(\{).*$", script,re.MULTILINE)
+        m = re.search(r"^.*(PageProps)\s*=\s*(\{).*$", script,re.MULTILINE)
         if m:
             script = script[:m.start(1)] + PagePropRepr() + \
                      script[CountDictChars(script, m.end(2)) + 1 :]

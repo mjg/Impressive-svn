@@ -181,10 +181,10 @@ def mutoolParse(f, page_offset=0):
     pages = 0
     for line in f:
         line = line.decode()
-        m = re.match("pages:\s*(\d+)", line, re.I)
+        m = re.match(r"pages:\s*(\d+)", line, re.I)
         if m and not(pages):
             pages = int(m.group(1))
-        m = re.search("/title\s*\(", line, re.I)
+        m = re.search(r"/title\s*\(", line, re.I)
         if m and not(title):
             title = line[m.end():].replace(')', '\0').replace('\\(', '(').replace('\\\0', ')').split('\0', 1)[0].strip()
     return (title, pages)
