@@ -276,9 +276,11 @@ def TransitionTo(page, allow_transition=True, notify_page_left=True):
     tpage = max(Pcurrent, Pnext)
     trans = None
     if allow_transition:
-        trans = GetPageProp(tpage, 'transition', GetPageProp(tpage, '_transition'))
-    else:
-        trans = None
+        tkey = 'transition'
+        trans = GetPageProp(tpage, tkey)
+        if not trans:
+            tkey = '_transition'
+            trans = GetPageProp(tpage, tkey)
     if trans is not None:
         transtime = GetPageProp(tpage, 'transtime', TransitionDuration)
         try:

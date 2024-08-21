@@ -1,20 +1,19 @@
 ##### OSD FONT RENDERER ########################################################
 
-typesUnicodeType = type(u'unicode')
-typesStringType = type(b'bytestring')
+_unicode_string_type = type(u'')
+_byte_string_type = type(b'')
 
 # force a string or sequence of ordinals into a unicode string
 def ForceUnicode(s, charset='iso8859-15'):
-    if type(s) == typesUnicodeType:
+    if type(s) == _unicode_string_type:
         return s
-    if type(s) == typesStringType:
+    if type(s) == _byte_string_type:
         return s.decode(charset, 'ignore')
     if isinstance(s, (tuple, list, range)):
         try:
-            unichr
+            return u''.join(map(unichr, s))
         except NameError:
-            unichr = chr
-        return u''.join(map(unichr, s))
+            return ''.join(map(chr, s))
     raise TypeError("string argument not convertible to Unicode")
 
 # search a system font path for a font file

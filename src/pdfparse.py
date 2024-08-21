@@ -1,7 +1,7 @@
 ##### PDF PARSER ###############################################################
 
-typesUnicodeType = type(u'unicode')
-typesStringType = type(b'bytestring')
+_unicode_string_type = type(u'')
+_byte_string_type = type(b'')
 
 class PDFError(Exception):
     pass
@@ -257,7 +257,7 @@ class PDFParser:
             self.errors += 1
 
     def dest2page(self, dest):
-        if type(dest) in (typesStringType, typesUnicodeType):
+        if type(dest) in (_unicode_string_type, _byte_string_type):
             return self.names.get(dest, None)
         if not isinstance(dest, list):
             return dest
